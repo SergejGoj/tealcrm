@@ -58,7 +58,8 @@ TealCRM 1.0 does not have an auto installer so there are a few steps that need t
 4. Point your web root to the **html** directory.
 5. Upload the **blank_teal.sql** file into MySQL.
 6. Follow database configuration steps below.
-7. Navigate to your web root.
+7. Go to **/files_directory/application/config/config.php** and update your **base_url** to your specific site.
+8. Navigate to your web root.
 
 ### Database Configuration
 All database configurations are found inside of **/files_directory/application/config/database.php**.
