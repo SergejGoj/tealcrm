@@ -1,0 +1,14 @@
+.panel .feed-more{
+	text-align: center;
+	color: #FFF;
+	background-color: #1D7374;
+	padding: 10px 20px;
+	border-radius: 4px;
+	cursor:pointer;
+}
+.panel .feed-more.active{
+	background-color:#7C7C7C;
+}
+.panel .feed-moore span{
+	text-align: center;
+}	

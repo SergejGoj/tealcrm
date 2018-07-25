@@ -1,0 +1,22 @@
+em.error{ color: #a94442; margin-left: 10px;}
+input.error{ border-color: #a94442;
+  -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);
+          box-shadow: inset 0 1px 1px rgba(0, 0, 0, .075);}
+
+em.login_error{ color: #a94442;}          
+
+
+.list-footer-left{float:left; margin-top:20px;}  
+.list-footer-right{float:right; }       
+
+/** Dashboard Charts **/
+
+#sales-chart-last-12months {
+    width: 450px;
+    height: 200px;
+}
+
+a{
+	
+	color:#227979;
+}

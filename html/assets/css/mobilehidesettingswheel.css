@@ -1,0 +1,8 @@
+/*.custom {display: none !important; }*/
+@media (max-width: 480px) {
+.navbar-toggle{ display: none !important}
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+.navbar-toggle{ display: none !important}
+}

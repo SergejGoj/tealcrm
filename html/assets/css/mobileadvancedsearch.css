@@ -1,0 +1,10 @@
+/*.custom {display: none !important; }*/
+@media (max-width: 480px) {
+a[href='#advanced']{ display: none !important}
+#myTabDrop1 { display: none !important }
+}
+
+@media (min-width: 481px) and (max-width: 767px) {
+a[href='#advanced']{ display: none !important}
+#myTabDrop1 { display: none !important }
+}
