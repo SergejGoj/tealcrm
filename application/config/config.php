@@ -520,3 +520,15 @@ $config['rewrite_short_tags'] = FALSE;
 | Array:		array('10.0.1.200', '192.168.5.0/24')
 */
 $config['proxy_ips'] = '';
+
+/*
+|--------------------------------------------------------------------------
+| TealCRM Custom Configurations
+|--------------------------------------------------------------------------
+|
+| These are configurations specific to TealCRM that are required.
+|
+*/
+
+// specify the database prefix if required, default is sc_
+$config['db_prefix'] = 'sc_';

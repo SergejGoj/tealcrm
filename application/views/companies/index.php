@@ -1,8 +1,5 @@
 <link href='css/mobileadvancedsearch.css' rel='stylesheet' />
-<?php
-// Turn off all error reporting
-error_reporting(0);
-?>
+
 <style>
 /*style for the search box, move it to css files later*/
 #search_result_tr, #filter_val_box, #filter_box_btn{
@@ -318,11 +315,11 @@ Please provide an easy to remember name for this saved search<br/>
                       </tr>
                   </thead>
                   <tbody>
-                      <?php if( ! $companies->exists() ) :?>
+                      <?php if( ! $companies->num_rows() > 0 ) :?>
                       <tr>
                           <td colspan="6" align="center">No companies</td>
                       </tr>
-                      <?php else: foreach($companies as $company) :?>
+                      <?php else: foreach($companies->result() as $company) :?>
                       <tr>
                           <td><input type="checkbox" name="ids[]" value="<?php echo $company->company_id?>"></td>
                           <?php if(isset($company_updated_fields)) {

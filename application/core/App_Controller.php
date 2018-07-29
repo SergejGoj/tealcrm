@@ -15,25 +15,24 @@
     var $_data  = array();
     
     // constructor    
-    function __construct()
+    function __construct($model = null,$module = null)
     {
       // load parent
       parent::__construct();     
       // log
-      log_message('debug', 'App_Controller Class Initialized');          
+      log_message('debug', 'App_Controller Class Initialized');       
 
-      // load cache storage, not for cron
-      // cache_load();      
+      $this->auth = new stdClass;
 
-      // IMPORTANT! This global must be defined BEFORE the flexi auth library is loaded! 
-      // It is used as a global that is accessible via both models and both libraries, without it, flexi auth will not work.
-      $this->auth = new stdClass;   
-
-      // Load 'standard' flexi auth library by default.
       $this->load->library('flexi_auth'); 
-
+      
       // Define a global variable to store data that is then used by the end view page.
       $this->data = null;
+      
+      // set active module
+      $this->module['name'] = $module;
+      $this->module['model'] = $model;  
+      
     }  
     
     // set message, status, message
@@ -53,7 +52,130 @@
            // set
            $GLOBALS['errors'] = $message;        
         }
-    }   
+    } 
+    
+	/**
+	 * remap
+	 *
+	 * Functionality to verify that user is authenticated
+	 *
+	 * @param string $method
+	 */
+	function _remap($method)
+	{
+		// auth check
+		if ( ! $this->flexi_auth->is_logged_in() )
+		{
+			redirect('auth/login');
+		}
+
+		// check method exists again
+		if(method_exists($this, $method)){
+			// remove classname and method name form uri
+			call_user_func_array(array($this, $method), array_slice($this->uri->rsegments, 2));
+		}else{
+			// error
+			show_404(sprintf('controller method [%s] not implemented!', $method));
+		}
+	}    
+
+	/**
+	 * index
+	 *
+	 * Functionality to display the modules index page
+	 *
+	 * @param string $method
+	 */  
+	 
+	 function index(){
+
+    // data to display to the view
+		$data = array();
+
+    // build query for index
+    $this->db->select('*')->from($this->config->item('db_prefix').$this->module['name'])
+    ->order_by('date_entered', 'DESC')
+    ->where('deleted','0');
+    
+    $search_tab = "basic";
+
+		//**** CHECK FOR SEARCH SETTINGS *****/
+		// if empty, that means it was cleared out or never there to begin with
+		if(!empty($_SESSION['search'][$this->module['name']])){
+
+			$this->db->group_start();
+
+			foreach($_SESSION['search'][$this->module['name']] as $key => $value){
+
+				if($key != "search_type" && $key != "date_entered_start" && $key != "date_entered_end" && $key != "date_modified_start" && $key != "date_modified_end" && $key != "company_type" && $key != "assigned_user_id" && $key != "industry" && $key != "lead_source_id" && $key != "lead_status_id"){
+					$this->db->like($key, $value);
+				}
+
+				if($key == "assigned_user_id" || $key == "industry" || $key == "lead_source_id" || $key == "lead_status_id" || $key == "company_type")
+				{
+          $this->db->where_in($key, $value);
+				}
+
+				if($key == "date_entered_start" || $key == "date_entered_end" || $key == "date_modified_start" || $key == "date_modified_end"){
+
+					switch($key){
+						case'date_entered_start':$this->db->where('date_entered >=', gmdate('Y-m-d 00:00:00', strtotime($value)));break;
+						case'date_entered_end':$this->db->where('date_entered <=', gmdate('Y-m-d 23:59:59', strtotime($value)));break;
+						case'date_modified_start':$this->db->where('date_modified >=', gmdate('Y-m-d 00:00:00', strtotime($value)));break;
+						case'date_modified_end':$this->db->where('date_modified <=', gmdate('Y-m-d 23:59:59', strtotime($value)));break;
+					}
+				}
+
+			}
+
+			// set display settings
+			if(isset($_SESSION['search'][$this->module['model']]['search_type'])){
+				if($_SESSION['search'][$this->module['model']]['search_type'] == "adv_search_go"){
+					$search_tab = "advanced";
+				}
+				elseif($_SESSION['search'][$this->module['model']]['search_type'] == "saved"){
+					$search_tab = "saved";
+					$data['search_id'] = '';
+				}
+			}
+
+			$this->db->group_end();
+
+		}
+
+    $results = $this->db->get();
+
+		$data['search_tab'] = $search_tab;
+
+
+		// row per page
+		$row_per_page = config_item('row_per_page');
+
+		// uri segment for page
+		$uri_segment = 2;
+
+		// offset
+		$current_page_offset = $this->uri->segment($uri_segment, 0);
+
+    $total_count = $this->db->affected_rows();
+    
+		// links
+		$data['pager_links'] = $this->_create_pager_links($row_per_page, $uri_segment, $total_count, 'companies');
+
+		// set
+		$data[$this->module['name']] = $results;
+
+		//COMPANY FIELD LIST TO DISPLAY
+		$this->load->helper('list_views');
+		list ($label, $company_updated_fields, $custom_values) = company_list_view();
+
+		$data['field_label'] = $label;
+		$data['company_updated_fields'] = $company_updated_fields;
+		$data['custom_values'] = $custom_values;
+		// load view
+		$this->layout->view('/'.$this->module['name'].'/index', $data);
+		 
+	 }      
     
     // set module
     function _set_module_data($module){
