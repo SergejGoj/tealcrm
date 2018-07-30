@@ -15,7 +15,7 @@
     var $_data  = array();
     
     // constructor    
-    function __construct($model = null,$module = null)
+    function __construct($model = null,$module = null, $singular = null)
     {
       // load parent
       parent::__construct();     
@@ -31,7 +31,8 @@
       
       // set active module
       $this->module['name'] = $module;
-      $this->module['model'] = $model;  
+      $this->module['model'] = $model; 
+      $this->module['singular'] = $singular;
       
     }  
     
@@ -175,7 +176,185 @@
 		// load view
 		$this->layout->view('/'.$this->module['name'].'/index', $data);
 		 
-	 }      
+   } // end display of index page for module
+
+	/**
+	 * Add new
+	 *
+	 * @param void
+	 * @return void
+	 */
+	public function add(){
+
+		// data
+		$data = array();
+
+		//logedin user
+		$user_id = $this->flexi_auth->get_user_id();
+
+		//uacc_email
+    $user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+
+		// save
+		if( 'save' == $this->input->post('act', true) ){
+
+			// field validation
+			$this->load->helper(array('form', 'url'));
+      $this->load->library('form_validation');
+      
+      // sort through field dictionary and set all rules for fields
+      foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
+        $this->form_validation->set_rules($fields['field_name'], $fields['field_label'], $fields['validation_rules']);
+      }
+
+			if ($this->form_validation->run() == TRUE){
+
+				// grab the post data
+        $post = $this->input->post(null, true);
+ 
+        // array to hold data
+        $record = array();
+
+        // set unique id for the record
+        $record[$this->module['singular'].'_id'] = $this->uuid->v4();
+
+        // cycle through field dictionary and associate appropriate fields
+        foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
+
+          if(isset($post[$fields['field_name']])){
+            $record[$fields['field_name']] = $post[$fields['field_name']];
+          }
+          else{
+            // set default if any
+            if(isset($fields['default_value'])){
+              $record[$fields['field_name']] = $fields['default_value'];
+            }
+          }
+
+        }        
+
+        // set additional system fields
+				$record['created_by'] = $user['uacc_uid'];
+        $record['assigned_user_id'] = $post['assigned_user_id'];
+        $record['date_entered'] = gmdate('Y-m-d H:i:s');
+
+        if( $this->db->insert($this->config->item('db_prefix').$this->module['name'], $record) ){
+					// set flash
+					notify_set( array('status'=>'success', 'message'=>'Successfully created new '.$this->module['singular'].'.') );
+
+					// redirect
+					redirect( $this->module['name'].'/view/' . $record[$this->module['singular'].'_id'] );
+				}
+			}
+			else{
+
+				// we have errors
+			}
+		}
+
+		$assignedusers1 = getAssignedUsers1();
+		$data['assignedusers1'] = $assignedusers1;
+
+		// //default assigned user for new contact to the admin user of this company
+		// $acct->assigned_user_id = $user['uacc_uid'];
+
+		// // set
+		// $data['company'] = $acct;
+
+		// company type
+		$company_types = dropdownCreator('account_type');
+		$data['company_types'] = $company_types;
+
+		// lead source
+		$lead_sources = dropdownCreator('lead_source');
+		$data['lead_sources'] = $lead_sources;
+
+		// lead status
+		$lead_statuses = dropdownCreator('lead_status');
+		$data['lead_statuses'] = $lead_statuses;
+
+		// industrys - $industry_sources
+		$industry_sources = dropdownCreator('industry');
+		$data['industry_sources'] = $industry_sources;
+
+
+		if (isset($_SESSION['custom_field']['118']))
+		{
+			$custom_field_values = $_SESSION['custom_field']['118'];
+			foreach($custom_field_values as $custom)
+			{
+				if($custom['cf_type'] == "Dropdown")
+				{
+					$custom_field = dropdownCreator($custom['cf_name']);
+					$data[$custom['cf_name']] = $custom_field;
+				}
+			}
+			$data['is_custom_fields'] = 1;
+		}
+		else
+		{
+			$data['is_custom_fields'] = 0;
+		}
+
+		// load view
+		$this->layout->view('/companies/add', $data);
+	} // end module add record
+
+	/**
+	 * Search
+	 *
+	 * @param void
+	 * @return void
+	 */
+	public function search($saved_search_id = NULL, $delete = NULL){
+
+    // set search name default
+    if(!isset($_POST['saved_search_name'])){
+      $saved_search_name = null;
+    }
+    else{
+      $saved_search_name = $_POST['saved_search_name'];
+    }
+
+		unset($_SESSION['search'][$this->module['name']]); // kills search session
+
+		$params = array($this->module['name'],$saved_search_id,$delete,$this->input->post('saved_search_name'),$_POST);
+		$this->load->library('AdvancedSearch', $params); // initiate advancedsearch class
+
+
+		// check if user is trying to save a search parameter
+		if(isset($_POST['saved_search_result'])){
+			$this->advancedsearch->search_string = $_POST;
+			$this->advancedsearch->Insert_Saved_Search();
+			$_SESSION['search'][$this->module['name']]['search_type'] = "advanced";
+		}
+		else if($saved_search_name !="")
+			{
+				$this->advancedsearch->search_string = $_POST;
+				$this->advancedsearch->Insert_Saved_Search();
+				$_SESSION['search'][$this->module['name']]['search_type'] = "advanced";
+			}
+
+		// did the user hit the CLEAR button, if yes skip everything
+		if(!isset($_POST['clear']) && !isset($delete)){
+			$this->advancedsearch->Store_Search_Criteria();
+		}
+
+		$this->advancedsearch->Set_Search_Type(); // sets what type of search to show
+
+		if(!is_null($delete)){
+			$this->advancedsearch->Delete_Saved_Search();
+			unset($_SESSION['search'][$this->module['name']]);
+		}
+
+		// store search ID
+		$_SESSION['search_id'] = $saved_search_id;
+
+		// done all of our search work, redirect to contacts view for the magic
+		header("Location: ".site_url($this->module['name']));
+
+	} // end search function   
     
     // set module
     function _set_module_data($module){

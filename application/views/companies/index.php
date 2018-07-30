@@ -17,12 +17,6 @@
 
 <h3 class="content-title"><?php if(!empty($_SESSION['search']['companies'])){ echo "Showing Search Results: ";}?>Companies</h3>
 
-
-
-
-
-
-
   <div class="row">
 
     <div class="col-md-12">
@@ -101,38 +95,39 @@ foreach($company_types as $option){
 						  <input type="hidden" class="form-control" name="do_not_call" value="<?php if(isset($_SESSION['search']['companies']['do_not_call'])){echo $_SESSION['search']['companies']['do_not_call'];}?>">
 						  <div class="controls">
                               <div class="controls">
-
-						  <?php if(($_SESSION['search']['companies']['do_not_call'])=='Y')
-{
-	?>  <label class="radio" style="padding:0px">
-                                    <input type="radio" id = "do_not_call" name="do_not_call" value="Y" checked="checked">Yes</label>
-									 <div style="clear:both"></div>
-									 <label class="radio">
-                                    <input type="radio" id = "do_not_call" name="do_not_call" value="N" >No</label>
-						<?php
-}
-else if(($_SESSION['search']['companies']['do_not_call'])=='N')
-	{
-?>
-									<label class="radio">
-                                    <input type="radio" id = "do_not_call" name="do_not_call" value="Y">Yes</label>
-									 <div style="clear:both"></div>
-									 <label class="radio">
-                                    <input type="radio" id = "do_not_call" name="do_not_call" value="N" checked="checked">No</label>
-						 <?php }
-else
-	{?>
-
-                                <label class="radio">
+                        <?php 
+                        if(isset($_SESSION['search']['companies']['do_not_call'])){
+                            if(($_SESSION['search']['companies']['do_not_call'])=='Y')
+                                {
+	                                ?>  <label class="radio" style="padding:0px">
+                                        <input type="radio" id = "do_not_call" name="do_not_call" value="Y" checked="checked">Yes</label>
+									    <div style="clear:both"></div>
+									    <label class="radio">
+                                        <input type="radio" id = "do_not_call" name="do_not_call" value="N" >No</label>
+						            <?php
+                                }
+                                else if(($_SESSION['search']['companies']['do_not_call'])=='N')
+	                            {
+                                    ?>
+									    <label class="radio">
+                                        <input type="radio" id = "do_not_call" name="do_not_call" value="Y">Yes</label>
+									    <div style="clear:both"></div>
+									    <label class="radio">
+                                        <input type="radio" id = "do_not_call" name="do_not_call" value="N" checked="checked">No</label>
+                                    <?php 
+                                }
+                            } // end if do not equals Y
+                        else
+                        {
+                                ?>
+                                    <label class="radio">
                                     <input type="radio" name="do_not_call" id="email_opt_out_1" value="Y" >Yes</label>
-                                <div style="clear:both"></div>
-                                <label class="radio">
+                                    <div style="clear:both"></div>
+                                    <label class="radio">
                                     <input type="radio" name="do_not_call" id="email_opt_out_2" value="N" >No</label>
-
-						 <?php
-}?>
-
-
+						        <?php
+                        } // end if do not call exists
+                                ?>
                             </div>
                             </div>
 
@@ -140,37 +135,40 @@ else
 					  	<td width="25%"><span><strong>Email Opt Out</strong>
 						  <input type="hidden" class="form-control" name="email_opt_out" value="<?php if(isset($_SESSION['search']['companies']['email_opt_out'])){echo $_SESSION['search']['companies']['email_opt_out'];}?>">
 						  <div class="controls">
-						  <?php if(($_SESSION['search']['companies']['email_opt_out'])=='Y')
-{
-	?>  <label class="radio">
+                          <?php 
+                        if(isset($_SESSION['search']['companies']['email_opt_out']))
+                        {
+                            if(($_SESSION['search']['companies']['email_opt_out'])=='Y')
+                            {
+	                            ?>  <label class="radio">
                                     <input type="radio" id = "email_opt_out_new_1" name="email_opt_out" value="Y" checked="checked">Yes</label>
 									 <div style="clear:both"></div>
 									 <label class="radio">
                                     <input type="radio" name="email_opt_out" id="email_opt_out_new_2" value="N" >No</label>
-						<?php
-}
-else if(($_SESSION['search']['companies']['email_opt_out'])=='N')
-	{
-?>
+						        <?php
+                            }
+                            else if(($_SESSION['search']['companies']['email_opt_out'])=='N')
+	                        {
+                                ?>
 									<label class="radio">
                                     <input type="radio" name="email_opt_out" id = "email_opt_out_new_1" value="Y">Yes</label>
 									 <div style="clear:both"></div>
 									 <label class="radio">
                                     <input type="radio" name="email_opt_out" id="email_opt_out_new_2" value="N" checked="checked">No</label>
-						 <?php }
-else
-	{?>
-
+                                <?php 
+                            } // end if email opt out equals Y
+                        }
+                        else
+	                    {
+                            ?>
                                 <label class="radio">
-                                    <input type="radio" name="email_opt_out" id="email_opt_out_new_1" value="Y" >Yes</label>
+                                <input type="radio" name="email_opt_out" id="email_opt_out_new_1" value="Y" >Yes</label>
                                 <div style="clear:both"></div>
                                 <label class="radio">
-                                    <input type="radio" name="email_opt_out" id="email_opt_out_new_2" value="N" >No</label>
-
-						 <?php
-}?>
-
-
+                                <input type="radio" name="email_opt_out" id="email_opt_out_new_2" value="N" >No</label>
+						<?php
+                        } // end if email opt out set
+                        ?>
                             </div>
 
 					  	</td>

@@ -25,8 +25,8 @@ echo form_open('companies/add', $attributes);
                 <div class="row">
                     <div class="form-group col-sm-6">
                         <label for="company">Company/Company Name</label>
-                        <input type="text" name="company" id="company" class="form-control"
-                               value="<?php echo set_value('company'); ?>">
+                        <input type="text" name="company_name" id="company_name" class="form-control"
+                               value="<?php echo set_value('company_name'); ?>">
                     </div>
 
                     <div class="form-group col-sm-6">
