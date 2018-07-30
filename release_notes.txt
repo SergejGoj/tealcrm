@@ -1,0 +1,8 @@
+Database Changes for upgrading from 1.0 to 1.1
+
+1. Must add the sc_field_dictionary table
+
+2. Update drop_down_options related_field names
+update sc_drop_down_options SET related_field_name = 'lead_source_id' where related_field_name = 'lead_source'
+update sc_drop_down_options SET related_field_name = 'lead_status_id' where related_field_name = 'lead_status'
+update sc_drop_down_options SET related_field_name = 'company_type' where related_field_name = 'account_type'

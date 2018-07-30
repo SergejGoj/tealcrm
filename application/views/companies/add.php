@@ -49,7 +49,7 @@ echo form_open('companies/add', $attributes);
                         <label for="company_type">Company Type</label>
                         <?php
                             $selected_option = ($this->input->post('company_type')) ? $this->input->post('company_type') : '';
-                            echo form_dropdown('company_type', $company_types, $selected_option, "class='form-control' id='company_type'");
+                            echo form_dropdown('company_type', $company_type, $selected_option, "class='form-control' id='company_type'");
                         ?>
                     </div>
                 </div>
@@ -145,15 +145,15 @@ echo form_open('companies/add', $attributes);
                         <label for="lead_status_id">Lead Status</label>
                         <?php
                             $selected_option = ($this->input->post('lead_status_id')) ? $this->input->post('lead_status_id') : '';
-                            echo form_dropdown('lead_status_id', $lead_statuses, $selected_option, "class='form-control' id='lead_status_id'");
+                            echo form_dropdown('lead_status_id', $lead_status_id, $selected_option, "class='form-control' id='lead_status_id'");
                         ?>
                     </div>
 
                     <div class="form-group col-sm-6">
                         <label for="lead_sources_id">Lead Source</label>
                         <?php
-                            $selected_option = ($this->input->post('lead_sources_id')) ? $this->input->post('lead_sources_id') : '';
-                            echo form_dropdown('lead_sources_id', $lead_sources, $selected_option, "class='form-control' id='lead_sources_id'");
+                            $selected_option = ($this->input->post('lead_source_id')) ? $this->input->post('lead_source_id') : '';
+                            echo form_dropdown('lead_source_id', $lead_source_id, $selected_option, "class='form-control' id='lead_source_id'");
                         ?>
                     </div>
 
@@ -171,7 +171,7 @@ echo form_open('companies/add', $attributes);
                         <label for="industry">Industry</label>
                         <?php
                             $selected_option = ($this->input->post('industry')) ? $this->input->post('industry') : '';
-                            echo form_dropdown('industry', $industry_sources, $selected_option, "class='form-control' id='industry'");
+                            echo form_dropdown('industry', $industry, $selected_option, "class='form-control' id='industry'");
                         ?>
                     </div>
 

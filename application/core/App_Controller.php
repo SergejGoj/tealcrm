@@ -212,7 +212,7 @@
 
 				// grab the post data
         $post = $this->input->post(null, true);
- 
+
         // array to hold data
         $record = array();
 
@@ -223,6 +223,7 @@
         foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
 
           if(isset($post[$fields['field_name']])){
+
             $record[$fields['field_name']] = $post[$fields['field_name']];
           }
           else{
@@ -230,6 +231,7 @@
             if(isset($fields['default_value'])){
               $record[$fields['field_name']] = $fields['default_value'];
             }
+
           }
 
         }        
@@ -248,58 +250,129 @@
 				}
 			}
 			else{
+        notify_set( array('status'=>'error', 'message'=>'Error creating new '.$this->module['singular'].'.') );
 
-				// we have errors
+        // redirect
+        redirect( $this->module['name'].'/index' );
 			}
 		}
+
+    // load assigned users for view
+		$assignedusers1 = getAssignedUsers1();
+		$data['assignedusers1'] = $assignedusers1;
+
+    // load drop down values for any drop downs
+    foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
+      $data[$fields['field_name']] = dropdownCreator($fields['field_name']);
+    }   
+
+		// load view
+    $this->layout->view('/'.$this->module['name'].'/add', $data);
+    
+	} // end module add record
+
+	/**
+	 * Edit existing
+	 *
+	 * @param varchar $record_id
+	 * @return void
+	 */
+	public function edit( $record_id ){
+
+		// data
+		$data = array();
+
+		//logedin user
+		$user_id = $this->flexi_auth->get_user_id();
+
+		//uacc_email
+		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
 
 		$assignedusers1 = getAssignedUsers1();
 		$data['assignedusers1'] = $assignedusers1;
 
-		// //default assigned user for new contact to the admin user of this company
-		// $acct->assigned_user_id = $user['uacc_uid'];
+    // find the record
+    $org_record = $this->db->select('*')->from($this->config->item('db_prefix').$this->module['name'])
+    ->where('deleted','0')
+    ->where($this->module['singular'].'_id',$record_id)->get();
 
-		// // set
-		// $data['company'] = $acct;
+    // let's make sure we can find the record being requested
+    if( $this->db->affected_rows() <= 0 ){
 
-		// company type
-		$company_types = dropdownCreator('account_type');
-		$data['company_types'] = $company_types;
+      // can't find the record
+			// set flash
+			notify_set( array('status'=>'error', 'message'=>sprintf('Record does not exist anymore.') ) );
 
-		// lead source
-		$lead_sources = dropdownCreator('lead_source');
-		$data['lead_sources'] = $lead_sources;
+			// redirect, don't continue the code
+			redirect( $this->module['name'] );      
 
-		// lead status
-		$lead_statuses = dropdownCreator('lead_status');
-		$data['lead_statuses'] = $lead_statuses;
+    }
 
-		// industrys - $industry_sources
-		$industry_sources = dropdownCreator('industry');
-		$data['industry_sources'] = $industry_sources;
+		// save
+		if( 'save' == $this->input->post('act', true) ){
 
+			// field validation
+			$this->load->helper(array('form', 'url'));
+      $this->load->library('form_validation');
+      
+      // sort through field dictionary and set all rules for fields
+      foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
+        $this->form_validation->set_rules($fields['field_name'], $fields['field_label'], $fields['validation_rules']);
+      }
 
-		if (isset($_SESSION['custom_field']['118']))
-		{
-			$custom_field_values = $_SESSION['custom_field']['118'];
-			foreach($custom_field_values as $custom)
-			{
-				if($custom['cf_type'] == "Dropdown")
-				{
-					$custom_field = dropdownCreator($custom['cf_name']);
-					$data[$custom['cf_name']] = $custom_field;
+			if ($this->form_validation->run() == TRUE){
+				// post
+				$post = $this->input->post(null, true);
+				// now
+
+        // array to hold data
+        $record = array();
+
+        // cycle through field dictionary and associate appropriate fields
+        foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
+
+          if(isset($post[$fields['field_name']])){
+
+            $record[$fields['field_name']] = $post[$fields['field_name']];
+          }
+          else{
+            // set default if any
+            if(isset($fields['default_value'])){
+              $record[$fields['field_name']] = $fields['default_value'];
+            }
+
+          }
+
+        }          
+
+        // update
+        $this->db->where($this->module['name'].'_id',$record_id);
+        ;
+
+				if( $this->db->update($this->config->item('db_prefix').$this->module['name'], $data) ){
+					// set flash
+					notify_set( array('status'=>'success', 'message'=>'Successfully updated '.$this->module['singular'].'.') );
+
+					// redirect
+					redirect( $this->module['name'].'/view/' . $record_id );
 				}
+			}else{
+
+				// we have an error in validation
 			}
-			$data['is_custom_fields'] = 1;
 		}
-		else
-		{
-			$data['is_custom_fields'] = 0;
-		}
+
+    // set
+		$data[$this->module['singular']] = $org_record->row();
+
+    // load drop down values for any drop downs
+    foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
+      $data[$fields['field_name']] = dropdownCreator($fields['field_name']);
+    } 
 
 		// load view
-		$this->layout->view('/companies/add', $data);
-	} // end module add record
+		$this->layout->view('/companies/edit', $data);
+	} // end edit record
 
 	/**
 	 * Search

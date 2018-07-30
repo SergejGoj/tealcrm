@@ -206,7 +206,7 @@ foreach($_SESSION['user_accounts'] as $user){
 					  	</td>
 					  	<td width="25%">
 					  	<span><strong>Industry</strong><br>
-					  	<select id = "industry" name="industry[]" multiple="true" multiple class="form-control chosen-select">
+					  	<select id = "industry" name="industry" class="form-control chosen-select">
 					  	<option value=""></option>
 						<?php
 $company_types = lookupDropDownValues("industry");
@@ -218,7 +218,7 @@ foreach($company_types as $option){
 					  	</td>
 					  	<td width="25%">
 					  	<span><strong>Lead Source</strong><br>
-					  	<select id = "lead_source_id" name="lead_source_id[]" multiple="true" multiple class="form-control chosen-select">
+					  	<select id = "lead_source_id" name="lead_source_id" class="form-control chosen-select">
 					  	<option value=""></option>
 						<?php
 $company_types = lookupDropDownValues("lead_source");
@@ -230,7 +230,7 @@ foreach($company_types as $option){
 					  	</td>
 					  	<td width="25%">
 					  	<span><strong>Lead Status</strong></br>
-					  	<select id = "lead_status_id" name="lead_status_id[]" multiple="true" multiple class="form-control chosen-select">
+					  	<select id = "lead_status_id" name="lead_status_id" class="form-control chosen-select">
 					  	<option value=""></option>
 						<?php
 $company_types = lookupDropDownValues("lead_status");
