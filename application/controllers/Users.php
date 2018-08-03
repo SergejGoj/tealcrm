@@ -220,9 +220,11 @@ class Users extends App_Controller {
 		$leadcompanies = "";
 		foreach ($query->result() as $row)
 		{
-			$leadcompanies = $leadcompanies.'{ label:"' . $_SESSION['drop_down_options'][$row->lead_source_id]['name'] . '", data: '.$row->num.', color: "#'. $this->random_color() .'"},';
+			if($row->lead_source_id != 0){
+				$leadcompanies = $leadcompanies.'{ label:"' . $_SESSION['drop_down_options'][$row->lead_source_id]['name'] . '", data: '.$row->num.', color: "#'. $this->random_color() .'"},';
+	
+			}
 		}
-
 		$data['pie_chart'] = $leadcompanies;
 
 
