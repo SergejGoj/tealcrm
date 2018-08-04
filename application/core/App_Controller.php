@@ -400,7 +400,7 @@
 		
     }
 		// set
-		$data[$this->module['singular']] = $org_record->row();
+		$data['record'] = $org_record->row();
 
 		//fetch activity feed list
 		$this->load->model("feed_list");
@@ -422,8 +422,12 @@
 
 		// set last viewed
 		//update_last_viewed($company_id, 1, $acct->company_name);
-		// load view
-		$this->layout->view('/'.$this->module['name'].'/view', $data);
+    // load view
+    
+    $data['module_name'] = $this->module['name'];
+    $data['module_singular'] = $this->module['singular'];
+
+		$this->layout->view('/modules/view', $data);
 
 	} // end view record
 

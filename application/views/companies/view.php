@@ -1,16 +1,19 @@
+<?php
+$this->load->helper('view_helper');
+?>
       <div class="layout layout-main-right layout-stack-sm">
 
         <div class="col-md-2 layout-sidebar">
-<li class="fa fa-building" style="color:#c0c0c0;font-family:'FontAwesome'"> Company</li>
- <h2><?php echo $company->company_name;?></h2>
+<li class="fa fa-building" style="color:#c0c0c0;font-family:'FontAwesome'"> <?php echo ucfirst($module_singular);?></li>
+ <h2><?php echo $record->name;?></h2>
 
 		<div class="btn-group">
-			<a href="<?php echo site_url('companies/edit') . "/" . $company->company_id; ?>" class="btn btn-tertiary">Edit Company</a> <button class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" type="button"><span class="caret"></span></button>
+			<a href="<?php echo site_url('companies/edit') . "/" . $record->company_id; ?>" class="btn btn-tertiary">Edit Company</a> <button class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" type="button"><span class="caret"></span></button>
 <hr/>
 			<ul class="dropdown-menu">
 
 				<li>
-					<a href="javascript:delete_one( '<?php echo $company->company_id?>' );">Delete Company</a>
+					<a href="javascript:delete_one( '<?php echo $record->company_id?>' );">Delete Company</a>
 				</li>
 			</ul>
 		</div><!-- /.btn-gruop -->
@@ -73,19 +76,19 @@
 
                 <ul class="dropdown-menu" role="menu">
                     <li>
-                      <a href="<?php echo site_url('people/add') . "/" . $company->company_id; ?>">Person</a>
+                      <a href="<?php echo site_url('people/add') . "/" . $record->company_id; ?>">Person</a>
                     </li>
                     <li>
-                      <a href="<?php echo site_url('deals/add') . "/" . $company->company_id; ?>">Deal</a>
+                      <a href="<?php echo site_url('deals/add') . "/" . $record->company_id; ?>">Deal</a>
                     </li>
                     <li>
-                      <a href="<?php echo site_url('notes/add') . "/" . $company->company_id; ?>">Note</a>
+                      <a href="<?php echo site_url('notes/add') . "/" . $record->company_id; ?>">Note</a>
                     </li>
                     <li>
-                    <a href="<?php echo site_url('tasks/add') . "/" . $company->company_id; ?>">Task</a>
+                    <a href="<?php echo site_url('tasks/add') . "/" . $record->company_id; ?>">Task</a>
                     </li>
                     <li>
-                    <a href="<?php echo site_url('meetings/add') . "/" . $company->company_id; ?>">Appointment</a>
+                    <a href="<?php echo site_url('meetings/add') . "/" . $record->company_id; ?>">Appointment</a>
                     </li>
                 </ul>
               </div> <!-- /.btn-gruop -->
@@ -97,216 +100,63 @@
           <div id="settings-content" class="tab-content stacked-content">
 
 
+<?php 
+
+$framework = 
+	array(
+	  	array ( "Overview" =>	  
+		  		array ("company_name", "assigned_user_id"),
+				array ("phone_work", "company_type"),
+				array ("email1", "email2"),  			  
+		),
+		array ("Address Info" =>
+				array ("address1", "address2"),
+				array ("city", "province"),
+				array ("postal_code", "country"),  
+		),
+		array ("Other Info" =>
+				array ("lead_status_id", "lead_source_id"),
+				array ("webpage", "industry"),
+				array ("phone_fax", "description"),  
+				array ("do_not_call", "email_opt_out")
+		)
+	);
+//pr($framework);
+	?>
             <div class="tab-pane fade in active" id="profile-tab">
 
+				<?php 
+				// display each section
+				foreach ($framework as $section){
+				?>		
 					<div class="panel panel-default">
 						<div class="panel-heading">
-							<h3 class="panel-title">Overview</h3>
+							<h3 class="panel-title"><?php echo key($section);?></h3>
 						</div>
 						<div class="panel-body">
-							
+
+						<?php
+						// display each row
+						foreach ($section as $row){
+						?>
 							<div class="row">
 								<div class="col-md-6">
-									<strong>Company Name</strong><br/>
-									<?php echo $company->company_name;?><br/><br/>
+									<strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[0]]['field_label'];?></strong><br/>
+									<?php echo format_field($module_name,$row[0], $record->$row[0]);?><br/><br/>
 								</div>
 								<div class="col-md-6">
-									<strong>Assigned User</strong><br/>
-									<?php
-                                        $first_name = $_SESSION['user_accounts'][$company->assigned_user_id]['upro_first_name'];
-                                        $last_name = $_SESSION['user_accounts'][$company->assigned_user_id]['upro_last_name'];
-                                        if(($first_name != NULL) && ($last_name != NULL)) {
-                                            echo $first_name." ".$last_name;
-                                        } else if($first_name != NULL) {
-                                            echo $first_name;
-                                        } else if($last_name != NULL) {
-                                            echo $last_name;
-                                        } else {
-                                            echo $_SESSION['user_accounts'][$company->assigned_user_id]['uacc_username'];
-                                        }
-                                    ?><br/><br/>
+									<strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[1]]['field_label'];?></strong><br/>
+									<?php echo format_field($module_name,$row[1], $record->$row[1]);?><br/><br/>
 								</div>									
 							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<strong>Work Phone</strong><br/>
-									<?php echo $company->phone_work;  ?><br/><br/>
-								</div>
-								<div class="col-md-6">
-									<strong>Company Type</strong><br/>
-									<?php
-								echo $_SESSION['drop_down_options'][$company->company_type]['name'];
-									?><br/><br/>
-								</div>									
-							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<strong>Email 1</strong><br/>
-									<?php echo $company->email1; ?><br/>
-								</div>
-								<div class="col-md-6">
-									<strong>Email 2</strong><br/>
-									<?php echo $company->email2 ?><br/>
-								</div>									
-							</div>	
+						<?php
+						} // end display reach row
+						?>	
 						</div>
 					</div>
-
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">Address Info</h3>
-						</div>
-						<div class="panel-body">
-							
-							<div class="row">
-								<div class="col-md-6">
-									<strong>Address 1</strong><br/>
-									<?php echo $company->address1?><br/><br/>
-								</div>
-								<div class="col-md-6">
-									<strong>Address 2</strong><br/>
-									<?php echo $company->address2?><br/><br/>
-								</div>									
-							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<strong>City</strong><br/>
-									<?php echo $company->city?><br/><br/>
-								</div>
-								<div class="col-md-6">
-									<strong>Province/State</strong><br/>
-									<?php echo $company->province?><br/><br/>
-								</div>									
-							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<strong>Postal/Zip Code</strong><br/>
-									<?php echo $company->postal_code?>
-								</div>
-								<div class="col-md-6">
-									<strong>Country</strong><br/>
-									<?php echo $company->country?>
-								</div>									
-							</div>	
-						</div>
-					</div>
-
-					<div class="panel panel-default">
-						<div class="panel-heading">
-							<h3 class="panel-title">Other Info</h3>
-						</div>
-						<div class="panel-body">
-							
-							<div class="row">
-								<div class="col-md-6">
-									<strong>Lead Status</strong><br/>
-									<?php
-									if($company->lead_status_id == 0){
-										echo "Not Set";
-									}
-									else{
-										echo $_SESSION['drop_down_options'][$company->lead_status_id]['name'];
-									}
-									?><br/><br/>
-								</div>
-								<div class="col-md-6">
-									<strong>Lead Source</strong><br/>
-									<?php echo $_SESSION['drop_down_options'][$company->lead_source_id]['name'];?><br/><br/>
-								</div>									
-							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<strong>Website</strong><br/>
-													<?php
-
-				if ($company->webpage) {
-					
-					if (strpos($company->webpage,'http://') !== false) {
-						echo '<a href="'.$company->webpage.'" target="new">'.$company->webpage.'</a>';
-					}
-					else{
-						echo '<a href="http://'.$company->webpage.'" target="new">'.$company->webpage.'</a>';
-					}
-					
-					
+				<?php
 				}
-					else { echo '<i>No Website Entered</i>';}
-				?><br/><br/>
-								</div>
-								<div class="col-md-6">
-									<strong>Industry</strong><br/>
-									<?php echo $_SESSION['drop_down_options'][$company->industry]['name'];?><br/><br/>
-								</div>									
-							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<strong>Fax Number</strong><br/>
-									<?php echo $company->phone_fax?><br/><br/>
-								</div>
-								<div class="col-md-6">
-									<strong>Description</strong><br/>
-									<?php echo $company->description?><br/><br/>
-								</div>									
-							</div>	
-							<div class="row">
-								<div class="col-md-6">
-									<strong>Do Not Call</strong><br/>
-									<?php if($company->do_not_call == "Y"){ echo "Yes";} else { echo "No";};?><br/><br/>
-								</div>
-								<div class="col-md-6">
-									<strong>Email Opt Out</strong><br/>
-									<?php if($company->email_opt_out == "Y"){ echo "Yes";} else { echo "No";};?><br/><br/>
-								</div>									
-							</div>	
-
-
-					<?php
-					// CUSTOM FIELDS DIVS
-					
-					$cf_row = 1;
-
-					if ($is_custom_fields == 1)
-					{
-						foreach($custom_field_values as $custom) {
-
-									// new row?
-									if($cf_row == 1){
-										echo '<div class="row">';
-									}
-									?>
-
-									<div class="col-md-6"><strong><?php echo $custom['cf_label'];?></strong><br/>
-
-									<?php if($custom['cf_type'] == "Textbox")
-									{
-										echo eval('return $'.$custom['cf_name'].';');
-									}
-									else
-									{
-										$dropval = eval('return $'.$custom['cf_name'].';');
-										echo $_SESSION['drop_down_options'][$dropval]['name'];
-									}
-									?><br/><br/></div> <!-- end cf field -->
-					
-					
-									<?php	
-									$cf_row++;
-															
-									if($cf_row == 3){
-										echo '</div>';
-										$cf_row = 1;
-									}
-						}
-					}
-					
-					if(count($custom_field_values) % 2 != 0){
-						echo "</div>";
-					}
-					?>
-	
-
-			  </div>
-            </div>
+				?>
 
 			  		<div class="panel panel-default">
 						<div class="panel-heading">

@@ -183,6 +183,18 @@ class Feed_list extends CI_Model {
 				$feed_user_image_name = $this->general->getProfilePictureName($row->by_uacc_id);
 				$feed_user_icon = $this->general->DisplayOtherUserIcon($feed_user_image_name->upro_filename_original);
 
+				if(!isset($user_name->upro_first_name) && !isset($user_name->upro_last_name)){
+					$name = 'User';
+				}
+				elseif (isset($user_name->upro_first_name) && !isset($user_name->upro_last_name)){
+					$name = $user_name->upro_first_name;
+				}
+				elseif (!isset($user_name->upro_first_name) && isset($user_name->upro_last_name)){
+					$name = $user_name->upro_last_name;
+				}
+				else{
+					$name = $user_name->upro_firstname . ' ' . $user_name->upro_last_name;
+				}
 
 				$body .= '
 				
@@ -191,7 +203,7 @@ class Feed_list extends CI_Model {
 						    <strong>'. $record_name .'</strong>
 					    </div>
 					    <div class="col-md-6" style="color:#19A3A5;font-weight:bold;font-size:10px">
-						    <span class="feed-subject">' . $user_name->upro_first_name . '</span>
+						    <span class="feed-subject">' . $name . '</span>
 					    </div>
 					    <div class="col-md-6" style="color:#19A3A5;font-weight:bold;font-size:10px">
 						    <i class="fa fa-clock-o"></i> <span class="feed-time">' . $date_entered . '</span>
