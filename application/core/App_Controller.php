@@ -371,19 +371,16 @@
     } 
 
 		// load view
-		$this->layout->view('/companies/edit', $data);
+		$this->layout->view('/' . $this->module['name'] . '/edit', $data);
 	} // end edit record
 
 	/**
 	 * View existing
 	 *
-	 * @param varchar $company_id
+	 * @param varchar $id
 	 * @return void
 	 */
-	public function view( $company_id ){
-
-		$CI =& get_instance();
-		$CI->teal_global_vars->set_all_global_vars();
+	public function view( $id ){
 
 		// data
 		$data = array();
@@ -391,162 +388,42 @@
     // find the record
     $org_record = $this->db->select('*')->from($this->config->item('db_prefix').$this->module['name'])
     ->where('deleted','0')
-    ->where($this->module['singular'].'_id',$record_id)->get();
+    ->where($this->module['singular'].'_id',$id)->get();
 
 		// check
-		if( isset($acct->company_id) && $acct->deleted!=0){
+		if( $this->db->affected_rows() <= 0 ){
 			// set flash
 			notify_set( array('status'=>'error', 'message'=>sprintf('Record does not exist anymore.') ) );
 
 			// redirect, don't continue the code
-			redirect( 'companies' );
-		}
-		else if( ! isset($acct->company_id) ){
-				// set flash
-				notify_set( array('status'=>'error', 'message'=>sprintf('Record does not exist.') ) );
-
-				// redirect, don't continue the code
-				redirect( 'companies' );
-			}
-
+			redirect( $this->module['name'] );
+		
+    }
 		// set
-		$data['company'] = $acct;
+		$data[$this->module['singular']] = $org_record->row();
 
 		//fetch activity feed list
 		$this->load->model("feed_list");
 
-		//getFeedList($company_id, $category)
-		$data['feed_list'] = $this->feed_list->getFeedList($company_id,1);
+    //getFeedList($company_id, $category)
+    
+    switch($this->module['singular']){
+      case "company": $feed_id = 1; break;
+      case "person": $feed_id = 2; break;
+      case "deal": $feed_id = 3; break;
+      case "note": $feed_id = 4; break;
+      case "task": $feed_id = 5; break;
+      case "meetings": $feed_id = 6; break;
+    }
 
-		// 8-25-14 - Arthur
-
-		//*** CONTACTS ***/
-		// Get 5 Related Contacts to this Company
-		$related_people = new Person();
-		$related_people->limit(10);
-		$related_people->where('deleted',0);
-		$related_people->where('company_id', $company_id)->get();
-		$data['related_people'] = $related_people;
-
-		// Get Total Related Contacts
-		$query = $this->db->query("SELECT * FROM sc_people WHERE company_id='".$company_id."' and deleted=0");
-		$data['rc_rows'] = $query->num_rows();
-
-		//*** Tasks ***/
-		// Get 5 Related Tasks to this Company
-		$related_tasks = new Task();
-		$related_tasks->limit(10);
-		$related_tasks->where('deleted',0);
-		$related_tasks->where('company_id', $company_id)->get();
-		$data['related_tasks'] = $related_tasks;
-
-		// Get Total Related Tasks
-		$query = $this->db->query("SELECT * FROM sc_tasks WHERE company_id='".$company_id."' and deleted=0");
-		$data['rt_rows'] = $query->num_rows();
-
-
-		//*** Deals ***/
-		// Get 5 Related Deals to this Company
-		$related_deals = new Deal();
-		$related_deals->limit(10);
-		$related_deals->where('deleted',0);
-		$related_deals->where('company_id', $company_id)->get();
-		$data['related_deals'] = $related_deals;
-
-	
-		// Get Total Related Tasks
-		$query = $this->db->query("SELECT * FROM sc_deals WHERE company_id='".$company_id."' and deleted=0");
-		$data['rd_rows'] = $query->num_rows();
-
-
-
-
-
-
-		//*** Notes ***/
-
-		// Get 5 Related Notes to this Company
-		$related_notes = new Note();
-		$related_notes->limit(10);
-		$related_notes->where('deleted',0);
-		$related_notes->where('company_id', $company_id)->get();
-		$data['related_notes'] = $related_notes;
-
-		// Get Total Related Notes
-		$query = $this->db->query("SELECT * FROM sc_notes WHERE company_id='".$company_id."' and deleted=0");
-		$data['rn_rows'] = $query->num_rows();
-
-		//*** Meetings ***/
-
-		// Get 5 Related Meetings to this Company
-		$related_meetings = new Meeting();
-		$related_meetings->limit(10);
-		$related_meetings->where('deleted',0);
-		$related_meetings->where('company_id', $company_id)->get();
-		$data['related_meetings'] = $related_meetings;
-
-		// Get Total Related Meetings
-		$query = $this->db->query("SELECT * FROM sc_meetings WHERE company_id='".$company_id."' and deleted=0");
-		$data['rm_rows'] = $query->num_rows();
-
-		// GET 5 RELATED MAILS TO THIS COMPANY
-
-		$this->db->select('message_id,subject,message,from_name,from_email,timestamp,category,status,relationship_id');
-		$this->db->from('sc_messages');
-		$this->db->where('relationship_id',$company_id);
-		$this->db->limit(10);
-		$query = $this->db->get();
-
-		$related_mail = $query->result();
-		$data['related_mail'] = $related_mail;
-
-		// End 8-25-14 Arthur
-
-		//custom field
-		$check_value = 0;
-		$check_field = 0;
-		if (isset($_SESSION['custom_field']['118']))
-		{
-			$data['more_info'] = 1;
-			$custom_field_values = $_SESSION['custom_field']['118'];
-			$data['custom_field_values'] = $custom_field_values;
-			foreach($custom_field_values as $custom)
-			{
-				$check_field++;
-				$custom_query = $this->db->query("SELECT * FROM sc_custom_fields_data WHERE companies_id ='".$company_id."' and custom_fields_id = '".$custom['cf_id']."'")->result();
-
-
-
-				if(array_key_exists(0,$custom_query))
-				{
-					$data[$custom['cf_name']] = $custom_query[0]->data_value;
-				}
-				else
-				{
-					$data[$custom['cf_name']] = " ";
-					$check_value++;
-				}
-
-			}
-			$data['is_custom_fields'] = 1;
-		}
-		else
-		{
-			$data['is_custom_fields'] = 0;
-		}
-
-		if($check_value == $check_field)
-		{
-			$data['more_info'] = 0;
-		}
+    $data['feed_list'] = $this->feed_list->getFeedList($id,$feed_id);
 
 		//custom field
 
 		// set last viewed
 		//update_last_viewed($company_id, 1, $acct->company_name);
-
 		// load view
-		$this->layout->view('/companies/view', $data);
+		$this->layout->view('/'.$this->module['name'].'/view', $data);
 
 	} // end view record
 

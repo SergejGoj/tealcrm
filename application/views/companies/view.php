@@ -200,7 +200,14 @@
 							<div class="row">
 								<div class="col-md-6">
 									<strong>Lead Status</strong><br/>
-									<?php echo $_SESSION['drop_down_options'][$company->lead_status_id]['name'];?><br/><br/>
+									<?php
+									if($company->lead_status_id == 0){
+										echo "Not Set";
+									}
+									else{
+										echo $_SESSION['drop_down_options'][$company->lead_status_id]['name'];
+									}
+									?><br/><br/>
 								</div>
 								<div class="col-md-6">
 									<strong>Lead Source</strong><br/>

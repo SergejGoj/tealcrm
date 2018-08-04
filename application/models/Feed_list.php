@@ -28,6 +28,20 @@ class Feed_list extends CI_Model {
 				$date_entered = $this->general->timeAgo(date('Y-m-d H:i:s', strtotime($row->date_entered.' UTC')));
 				$feed_user_image_name = $this->general->getProfilePictureName($row->by_uacc_id);
 				$feed_user_icon = $this->general->DisplayOtherUserIcon($feed_user_image_name->upro_filename_original);
+
+				if(!isset($user_name->upro_first_name) && !isset($user_name->upro_last_name)){
+					$name = 'User';
+				}
+				elseif (isset($user_name->upro_first_name) && !isset($user_name->upro_last_name)){
+					$name = $user_name->upro_first_name;
+				}
+				elseif (!isset($user_name->upro_first_name) && isset($user_name->upro_last_name)){
+					$name = $user_name->upro_last_name;
+				}
+				else{
+					$name = $user_name->upro_firstname . ' ' . $user_name->upro_last_name;
+				}
+
 				$body .= '
 							<div class="feed-item feed-item-bookmark">
 
@@ -36,7 +50,7 @@ class Feed_list extends CI_Model {
 								</div>
 								<!-- /.feed-icon -->
 							<div class="feed-headline">
-								<span class="feed-subject">' . $user_name->upro_first_name . " " . $user_name->upro_last_name . '</span><br/>
+								<span class="feed-subject">' . $name . '</span><br/>
 
 								<i class="fa fa-clock-o"></i> <span class="feed-time">' . $date_entered . '</span>
 
