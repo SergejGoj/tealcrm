@@ -8,9 +8,7 @@
  * @author SecretCRM Team
  * @since 1.0
  * @version 1.0
-
-
- Purpose: all system generated drop down's are handled here.  Common ones are countries, user settings..etc.
+ * Purpose: To assist the displaying of data on the View pages
 
  */
 
@@ -71,14 +69,122 @@ function format_field($module_name,$field,$data){
 
     }
 
-return "hello";
+} // end format_field
+
+/**
+ * format_editable_field
+ *
+ * This will assist in displaying the correct HTML depending on the field being requested
+ *
+ * @access    public
+ * @param    string    the module we are working with
+ * @param    string    the value to display
+ * @return    string
+ */
+function format_editable_field(){
+
 
 
 }
 
-// for edit/add views
-function format_editable_field(){
+/**
+ * format_related_list
+ *
+ * The view will pass back the field information and data then present back the HTML specific to that field
+ *
+ * @access    public
+ * @param    string    the module we are working with
+ * @param    string    the data that we are working with to return back
+ * @return    string (HTML)
+ * 
+ * FUTURE: This will likely get updated in the future to hold custom views of what related lists look like
+ * 
+ */
+function format_related_list($module, $data, $related_key){
 
+    $html = '';
+    switch ($module){
 
+        case "people":
+
+            foreach($data as $row){
+                $html .= '<a class="list-group-item" href="';
+                $html .= site_url($module . '/view/' . $row->$related_key);
+                $html .= '"><h5 class="list-group-item-heading">';
+                $html .= $row->first_name." ".$row->last_name;
+                $html .= '</h5>	<p class="list-group-item-text">';
+                $html .= $row->job_title.'</p></a>';
+
+            }
+
+            return $html;
+
+        break; // end people
+
+        case "tasks":
+
+            foreach($data as $row){
+
+                $html .=  '<a class="list-group-item" href="';
+                $html .=  site_url($module . '/view/' . $row->$related_key);
+                $html .=  '"><h5 class="list-group-item-heading">';
+                $html .=  $row->subject;
+                $html .=  '</h5>	<p class="list-group-item-text">';
+                $html .=  'Due on: '.$row->due_date.'</p></a>';
+
+            }
+
+            return $html;
+
+        break; // end tasks
+
+        case "deals":
+        
+            foreach($data as $row){
+                $html .=   '<a class="list-group-item" href="';
+                $html .=   site_url($module . '/view/' . $row->$related_key);
+                $html .=   '"><h5 class="list-group-item-heading">';
+                $html .=   $row->name;
+                $html .=   '</h5>	<p class="list-group-item-text">';
+                $html .=   'Value: $'.$row->value.'</p></a>';
+            }
+
+            return $html;
+        break; // end deals
+
+        case "notes":
+        
+            foreach($data as $row){
+
+                $html .=  '<a class="list-group-item" href="';
+                $html .=  site_url($module . '/view/' . $row->$related_key);
+                $html .=  '"><h5 class="list-group-item-heading">';
+                $html .=   $row->subject . ' - '.date('Y-m-d H:i:s',strtotime($row->date_entered.' UTC'));
+                $html .=  '</h5>	<p class="list-group-item-text">';
+                $html .=  $row->description.'</p></a>';
+
+            }
+
+            return $html;
+        break; // end notes
+
+        case "meetings":
+        
+            foreach($data as $row){
+
+                $html .= '<a class="list-group-item" href="';
+                $html .= site_url('meetings/view/' . $row->$related_key);
+                $html .= '"><h5 class="list-group-item-heading">';
+                $html .= $row->subject;
+                $html .= '</h5>	<p class="list-group-item-text">';
+                $html .= 'Location: '.$row->location.'<br><br>('.date('Y-m-d h:ia',strtotime($row->date_start.' UTC')).' - '.date('Y-m-d h:ia',strtotime($row->date_end.' UTC')).')</p></a>';
+
+            }
+
+            return $html;
+
+        break; // end meetings
+
+    }
 
 }

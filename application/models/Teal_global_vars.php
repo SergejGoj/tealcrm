@@ -120,7 +120,7 @@ class teal_global_vars extends CI_Model {
 
 		//***************************
 		// LOAD FIELD DICTIONARY
-		// load all saved searches for use in views		
+		// 	
 
 		$query = $this->db->query("SELECT * from sc_field_dictionary WHERE deleted is null");
 
@@ -133,6 +133,19 @@ class teal_global_vars extends CI_Model {
 			$_SESSION['field_dictionary'][$row['module']][$row['field_name']]['calculation'] = $row['calculation'];
 		}
 
+		//***************************
+		// LOAD MODULE RELATIONSHIPS
+		// used for displaying related data		
+
+		$query = $this->db->query("SELECT * from sc_module_relationships WHERE deleted is null");
+
+		foreach ($query->result_array() as $row)
+		{
+			$_SESSION['module_relationships'][$row['module']][$row['related_module']]['related_module'] = $row['related_module_id'];
+			$_SESSION['module_relationships'][$row['module']][$row['related_module']]['related_module_id'] = $row['related_module_id'];
+			$_SESSION['module_relationships'][$row['module']][$row['related_module']]['module'] = $row['module'];
+			$_SESSION['module_relationships'][$row['module']][$row['related_module']]['module_id'] = $row['module_id'];
+		}
 
 	}
 

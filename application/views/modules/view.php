@@ -5,15 +5,15 @@ $this->load->helper('view_helper');
 
         <div class="col-md-2 layout-sidebar">
 <li class="fa fa-building" style="color:#c0c0c0;font-family:'FontAwesome'"> <?php echo ucfirst($module_singular);?></li>
- <h2><?php echo $record->name;?></h2>
+ <h2><?php //echo $record->name;?></h2>
 
 		<div class="btn-group">
-			<a href="<?php echo site_url('companies/edit') . "/" . $record->company_id; ?>" class="btn btn-tertiary">Edit Company</a> <button class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" type="button"><span class="caret"></span></button>
+			<a href="<?php echo site_url($module_name . '/edit') . "/" . $record->company_id; ?>" class="btn btn-tertiary">Edit <?php echo ucfirst($module_singular);?></a> <button class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" type="button"><span class="caret"></span></button>
 <hr/>
 			<ul class="dropdown-menu">
 
 				<li>
-					<a href="javascript:delete_one( '<?php echo $record->company_id?>' );">Delete Company</a>
+					<a href="javascript:delete_one( '<?php echo $record->company_id?>' );">Delete <?php echo ucfirst($module_singular);?></a>
 				</li>
 			</ul>
 		</div><!-- /.btn-gruop -->
@@ -25,37 +25,22 @@ $this->load->helper('view_helper');
               &nbsp;&nbsp;Overview
               </a>
             </li>
-			<li class="inactive">
-              <a href="#people" data-toggle="tab">
-              <i class="fa fa-list"></i>
-              &nbsp;&nbsp;People <?php if ($rc_rows) { echo '<span class="badge">'.$rc_rows.'</span>'; } ?>
-              </a>
-            </li>
 
- 			<li class="inactive">
-              <a href="#tasks" data-toggle="tab">
-              <i class="fa fa-check"></i>
-              &nbsp;&nbsp;Tasks <?php if ($rt_rows) {	echo '<span class="badge">'.$rt_rows.'</span>';	} ?>
-              </a>
-            </li>
- 			<li class="inactive">
-              <a href="#deals" data-toggle="tab">
-              <i class="fa fa-dollar"></i>
-              &nbsp;&nbsp;Deals <?php if ($rd_rows) {	echo '<span class="badge">'.$rd_rows.'</span>';	} ?>
-              </a>
-            </li>
-            <li class="inactive">
-              <a href="#notes" data-toggle="tab">
-              <i class="fa fa-paperclip"></i>
-              &nbsp;&nbsp;Notes <?php if ($rn_rows) {	echo '<span class="badge">'.$rn_rows.'</span>';	} ?>
-              </a>
-            </li>
-            			<li class="inactive">
-              <a href="#meetings" data-toggle="tab">
-              <i class="fa fa-calendar-o"></i>
-              &nbsp;&nbsp;Meetings <?php if ($rm_rows) {	echo '<span class="badge">'.$rm_rows.'</span>';	} ?>
-              </a>
-            </li>
+			<?php
+			// output the related modules
+
+			foreach ($related_modules as $rel){
+				?>
+				<li class="inactive">
+              	<a href="#<?php echo $rel['module'];?>" data-toggle="tab">
+              	<i class="fa fa-list"></i>
+              	&nbsp;&nbsp;<?php echo ucfirst($rel['module']);?> <?php if ($rel['total_rows']) { echo "<span class='badge'>".$rel['total_rows']."</span>"; } ?>
+             	 </a>
+            	</li>
+
+				<?php
+			} // end displaying links to related fields
+			?>
            
           </ul>
         </div> <!-- /.col -->
@@ -74,22 +59,16 @@ $this->load->helper('view_helper');
                 Add Related Record
                 </button>
 
-                <ul class="dropdown-menu" role="menu">
+				<ul class="dropdown-menu" role="menu">
+				<?php
+				foreach ($related_modules as $rel){
+					?>
                     <li>
-                      <a href="<?php echo site_url('people/add') . "/" . $record->company_id; ?>">Person</a>
+                      <a href="<?php echo site_url($rel['module'].'/add') . "/" . $id ?>"><?php echo ucfirst($rel['module']);?></a>
                     </li>
-                    <li>
-                      <a href="<?php echo site_url('deals/add') . "/" . $record->company_id; ?>">Deal</a>
-                    </li>
-                    <li>
-                      <a href="<?php echo site_url('notes/add') . "/" . $record->company_id; ?>">Note</a>
-                    </li>
-                    <li>
-                    <a href="<?php echo site_url('tasks/add') . "/" . $record->company_id; ?>">Task</a>
-                    </li>
-                    <li>
-                    <a href="<?php echo site_url('meetings/add') . "/" . $record->company_id; ?>">Appointment</a>
-                    </li>
+					<?php
+				}
+				?>
                 </ul>
               </div> <!-- /.btn-gruop -->
               
@@ -166,175 +145,58 @@ $framework =
 							<div class="row">
 								<div class="col-md-6">
 									<strong>Created By</strong><br/>
-<?php if (!empty($company->created_by)){ echo date( 'm/d/Y h:ia', strtotime($company->date_entered.' UTC'))?> by<br/>
-				<?php echo $_SESSION['user_accounts'][$company->created_by]['upro_first_name']." ".$_SESSION['user_accounts'][$company->created_by]['upro_last_name']; } ?>								</div>
+<?php if (!empty($record->created_by)){ echo date( 'm/d/Y h:ia', strtotime($record->date_entered.' UTC'))?> by<br/>
+				<?php echo $_SESSION['user_accounts'][$record->created_by]['upro_first_name']." ".$_SESSION['user_accounts'][$record->created_by]['upro_last_name']; } ?>								</div>
 								<div class="col-md-6">
 									<strong>Modified By</strong><br/>
-									<?php if (!empty($company->modified_user_id)){ ?>
-													<?php echo date( 'm/d/Y h:ia', strtotime($company->date_modified.' UTC'))?> by<br/>
-													<?php echo $_SESSION['user_accounts'][$company->modified_user_id]['upro_first_name']." ".$_SESSION['user_accounts'][$company->modified_user_id]['upro_last_name'];} ?>								</div>									
+									<?php if (!empty($record->modified_user_id)){ ?>
+													<?php echo date( 'm/d/Y h:ia', strtotime($record->date_modified.' UTC'))?> by<br/>
+													<?php echo $_SESSION['user_accounts'][$record->modified_user_id]['upro_first_name']." ".$_SESSION['user_accounts'][$record->modified_user_id]['upro_last_name'];} ?>								</div>									
 							</div>							</div>
 			  		</div>
 
             </div> <!-- /.tab-pane -->
-            
-            <div class="tab-pane fade in" id="people">
+
+<?php
+//output related records panels
+
+foreach ($related_modules as $rel){
+?>
+            <div class="tab-pane fade in" id="<?php echo $rel['module']?>">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title">People</h3>
+						<h3 class="panel-title"><?php echo ucfirst($rel['module']);?></h3>
 					</div>
 					<div class="panel-body">
 							<?php
+							if($rel['total_rows'] > 0){
 
-							if($rc_rows > 0){
+								foreach ($rel['data'] as $rc) {
 
-								foreach ($related_people as $rc) {
-									echo '<a class="list-group-item" href="';
-									echo site_url('people/view/' . $rc->people_id);
-									echo '"><h5 class="list-group-item-heading">';
-									echo $rc->first_name." ".$rc->last_name;
-									echo '</h5>	<p class="list-group-item-text">';
-									echo $rc->job_title.'</p></a>';
+									// calls helper to format and display the data depending on the module
+									echo format_related_list($rel['module'], $rel['data'], $rel['module_id']);
+																		
 								}
 
 							}
 							else{
 
-								echo "<i>No People</i>";
+								echo "<i>No ". $rel['module'] . "</i>";
 
 							}
 
 							?>
 							<br/>
 							
-							<a href="<?php echo site_url('people/add') . "/" . $company->company_id; ?>" class="label label-success">Add New Person</a> <a href="<?php echo site_url('people/related_companies') . "/" . $company->company_id; ?>" class="label label-info">View More People</a>						
+							<a href="<?php echo site_url($rel['module'] . '/add') . "/" . $id ?>" class="label label-success">Add New <?php echo ucfirst($rel['module']);?></a> <a href="<?php echo site_url($rel['module'] . '/related_' . $module_name . "/" . $id) ?>" class="label label-info">View More <?php echo ucfirst($rel['module'])?></a>						
 					</div>
 				</div>
             </div> <!-- / end panel -->
-							
-            <div class="tab-pane fade in" id="tasks">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Tasks</h3>
-					</div>
-					<div class="panel-body">
-						<?php
-							if($rt_rows > 0){
+<?php
+} // end output of related records
+?>
 
-								foreach ($related_tasks as $rt) {
-									echo '<a class="list-group-item" href="';
-									echo site_url('tasks/view/' . $rt->task_id);
-									echo '"><h5 class="list-group-item-heading">';
-									echo $rt->subject;
-									echo '</h5>	<p class="list-group-item-text">';
-									echo 'Due on: '.$rt->due_date.'</p></a>';
-								}
-							}
-							else{
-
-								echo "<i>No Tasks</i>";
-
-							}
-						?>
-							<br/>
-							
-<a href="<?php echo site_url('tasks/add') . "/" . $company->company_id; ?>" class="label label-success">Add New Task</a> <a href="<?php echo site_url('tasks/related_companies') . "/" . $company->company_id; ?>" class="label label-info">View More Tasks</a>
-					</div>
-				</div>
-            </div> <!-- / end panel -->							
-
-            <div class="tab-pane fade in" id="deals">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Deals</h3>
-					</div>
-					<div class="panel-body">
-						<?php
-							if($rd_rows > 0){
-								foreach ($related_deals as $rd) {
-									echo '<a class="list-group-item" href="';
-									echo site_url('deals/view/' . $rd->deal_id);
-									echo '"><h5 class="list-group-item-heading">';
-									echo $rd->name;
-									echo '</h5>	<p class="list-group-item-text">';
-									echo 'Value: $'.$rd->value.'</p></a>';
-								}
-							}
-							else{
-
-								echo "<i>No Deals</i>";
-
-							}
-						?>
-							<br/>
-							
-<a href="<?php echo site_url('deals/add') . "/" . $company->company_id; ?>" class="label label-success">Add New Deal</a> <a href="<?php echo site_url('deals/related_companies') . "/" . $company->company_id; ?>" class="label label-info">View More Deals</a>
-					</div>
-				</div>
-            </div> <!-- / end panel -->	
- 
-
- 
-             <div class="tab-pane fade in" id="notes">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Notes</h3>
-					</div>
-					<div class="panel-body">
-						<?php
-							if($rn_rows > 0){
-								foreach ($related_notes as $rn) {
-									echo '<a class="list-group-item" href="';
-									echo site_url('notes/view/' . $rn->note_id);
-									echo '"><h5 class="list-group-item-heading">';
-									echo $rn->subject . ' - '.date('Y-m-d H:i:s',strtotime($rn->date_entered.' UTC'));
-									echo '</h5>	<p class="list-group-item-text">';
-									echo $rn->description.'</p></a>';
-								}
-							}
-							else{
-
-								echo "<i>No Notes</i>";
-
-							}
-						?>
-							<br/>
-							
-<a href="<?php echo site_url('notes/add') . "/" . $company->company_id; ?>" class="label label-success">Add New Note</a> <a href="<?php echo site_url('notes/related_companies') . "/" . $company->company_id; ?>" class="label label-info">View More Notes</a>
-					</div>
-				</div>
-            </div> <!-- / end panel -->	
-
-             <div class="tab-pane fade in" id="meetings">
-				<div class="panel panel-default">
-					<div class="panel-heading">
-						<h3 class="panel-title">Meetings</h3>
-					</div>
-					<div class="panel-body">
-						<?php
-							if($rm_rows > 0){
-								foreach ($related_meetings as $rm) {
-									echo '<a class="list-group-item" href="';
-									echo site_url('meetings/view/' . $rm->meeting_id);
-									echo '"><h5 class="list-group-item-heading">';
-									echo $rm->subject;
-									echo '</h5>	<p class="list-group-item-text">';
-									echo 'Location: '.$rm->location.'<br><br>('.date('Y-m-d h:ia',strtotime($rm->date_start.' UTC')).' - '.date('Y-m-d h:ia',strtotime($rm->date_end.' UTC')).')</p></a>';
-								}
-							}
-							else{
-
-								echo "<i>No Meetings</i>";
-
-							}
-						?>
-							<br/>
-							
-<a href="<?php echo site_url('meetings/add') . "/" . $company->company_id; ?>" class="label label-success">Add New Meeting</a> <a href="<?php echo site_url('meetings/related_companies') . "/" . $company->company_id; ?>" class="label label-info">View More Meetings</a>
-
-					</div>
-				</div>
-            </div> <!-- / end panel -->	                                  							
+                             							
 
           </div> <!-- /.tab-content -->
 
@@ -392,13 +254,8 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 				$(resultObject.value).insertBefore($("#activity_feed_body .feed-more"));
 			}
 		});
-		
+
 	}
-
-
-
-
-
 
 })	
 

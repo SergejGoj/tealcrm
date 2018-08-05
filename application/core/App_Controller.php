@@ -418,14 +418,34 @@
 
     $data['feed_list'] = $this->feed_list->getFeedList($id,$feed_id);
 
-		//custom field
-
-		// set last viewed
-		//update_last_viewed($company_id, 1, $acct->company_name);
-    // load view
+    // grab related information
+    $relationships = $this->db->select('*')->from($this->config->item('db_prefix').'module_relationships')
+    ->where('deleted is null')
+    ->where('module',$this->module['name'])->get();   
     
+    $data['related_modules'] = array();
+
+    foreach ($relationships->result() as $rel){
+
+      // get top 10 related records
+      $related_data = $this->db->select('*')->from($this->config->item('db_prefix').$rel->related_module)
+      ->where('deleted','0')
+      ->where($rel->module_id,$id)
+      ->limit(10)->get();
+
+      // store information regarding related value
+      $data['related_modules'][]= 
+                array (
+                  'module' => $rel->related_module,
+                  'module_id' => $rel->related_module_id,
+                  'data' => $related_data->result(),
+                  'total_rows' => $this->db->affected_rows()
+                );
+    }
+    // set information about module
     $data['module_name'] = $this->module['name'];
     $data['module_singular'] = $this->module['singular'];
+    $data['id'] = $id;
 
 		$this->layout->view('/modules/view', $data);
 
