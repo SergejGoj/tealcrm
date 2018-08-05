@@ -385,10 +385,12 @@
 		// data
 		$data = array();
 
+    $db_key = $_SESSION['modules'][$this->module['name']]['db_key'];
+
     // find the record
     $org_record = $this->db->select('*')->from($this->config->item('db_prefix').$this->module['name'])
     ->where('deleted','0')
-    ->where($this->module['singular'].'_id',$id)->get();
+    ->where($db_key,$id)->get();
 
 		// check
 		if( $this->db->affected_rows() <= 0 ){
@@ -446,8 +448,9 @@
     $data['module_name'] = $this->module['name'];
     $data['module_singular'] = $this->module['singular'];
     $data['id'] = $id;
+    $data['framework'] = json_decode($_SESSION['modules'][$this->module['name']]['view_layout']);
 
-		$this->layout->view('/modules/view', $data);
+    $this->layout->view('/modules/view', $data);
 
 	} // end view record
 

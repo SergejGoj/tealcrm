@@ -9,3 +9,4 @@ update sc_drop_down_options SET related_field_name = 'company_type' where relate
 
 3. Must add the sc_module_relationships table
 
+4. Drop the sc_modules table and re-create and insert.  Added view_layouts and icon.

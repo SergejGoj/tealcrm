@@ -27,12 +27,14 @@ function format_field($module_name,$field,$data){
 
     //$_SESSION['field_dictionary'][$module_name][$row[0]]['field_label'];
 
+    $CI =& get_instance();
+
     switch ($_SESSION['field_dictionary'][$module_name][$field]['field_type']){
 
-        case "Text"; 
+        case "Text":
             return $data;
         break; // end text
-        case "User"; 
+        case "User": 
             $first_name = $_SESSION['user_accounts'][$data]['upro_first_name'];
             $last_name = $_SESSION['user_accounts'][$data]['upro_last_name'];
             if(($first_name != NULL) && ($last_name != NULL)) {
@@ -45,7 +47,7 @@ function format_field($module_name,$field,$data){
                 return ($_SESSION['user_accounts'][$data]['uacc_username']);
             }           
         break; // end User
-        case "Dropdown"; 
+        case "Dropdown": 
             if($data == 0){
                 return "Not Set";
             }
@@ -53,7 +55,7 @@ function format_field($module_name,$field,$data){
                 return ($_SESSION['drop_down_options'][$data]['name']);
             }
         break;
-        case "Radio"; 
+        case "Radio":
             if($data == "Y")
             { 
                 return "Yes";
@@ -63,9 +65,32 @@ function format_field($module_name,$field,$data){
                 return "No";
             }
         break;
-        case "Textarea"; 
+        case "Textarea":
             return $data;
         break;
+        case "Date":
+            if(isset($data)){
+                return date("F j, Y", strtotime($data));
+            }
+            else{
+                return "Not Set";
+            }
+        break; // end date        
+        case "Related_Company":
+            // fetch name of the company
+            $query = $CI->db->get_where('sc_companies', array('company_id' => $data), 1);
+            
+            $row = $query->row();
+
+            if(isset($row)){
+                return "<a href='" . site_url('companies/view') . "/" . $data ."'>" . $row->company_name . "</a>";
+            }
+            else{
+                return "<a href='" . site_url('companies/view') . "/" . $data ."'>Related Company</a>";
+            }
+
+        break; // end Related Company
+
 
     }
 

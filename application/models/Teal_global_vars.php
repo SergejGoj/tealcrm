@@ -147,6 +147,22 @@ class teal_global_vars extends CI_Model {
 			$_SESSION['module_relationships'][$row['module']][$row['related_module']]['module_id'] = $row['module_id'];
 		}
 
+		//***************************
+		// LOAD MODULE DETAILS
+		// used for displaying data related to specific modules	
+
+		$query = $this->db->query("SELECT * from sc_modules");
+
+		foreach ($query->result_array() as $row)
+		{
+			$_SESSION['modules'][strtolower($row['module_name'])]['module_name'] = $row['module_name'];
+			$_SESSION['modules'][strtolower($row['module_name'])]['directory'] = $row['directory'];
+			$_SESSION['modules'][strtolower($row['module_name'])]['db_table'] = $row['db_table'];
+			$_SESSION['modules'][strtolower($row['module_name'])]['db_key'] = $row['db_key'];
+			$_SESSION['modules'][strtolower($row['module_name'])]['view_layout'] = $row['view_layout'];
+			$_SESSION['modules'][strtolower($row['module_name'])]['icon'] = $row['icon'];
+		}
+
 	}
 
 	// PHP sessions are deleted on logout so that settings can be redone.

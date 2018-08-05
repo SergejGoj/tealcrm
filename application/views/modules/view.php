@@ -1,5 +1,7 @@
 <?php
+
 $this->load->helper('view_helper');
+
 ?>
       <div class="layout layout-main-right layout-stack-sm">
 
@@ -21,7 +23,7 @@ $this->load->helper('view_helper');
 
               <li class="active">
               <a href="#profile-tab" data-toggle="tab">
-              <i class="fa fa-user"></i>
+              <i class="pe-7s-wallet"></i>
               &nbsp;&nbsp;Overview
               </a>
             </li>
@@ -33,7 +35,7 @@ $this->load->helper('view_helper');
 				?>
 				<li class="inactive">
               	<a href="#<?php echo $rel['module'];?>" data-toggle="tab">
-              	<i class="fa fa-list"></i>
+              	<i class="fa <?php echo $_SESSION['modules'][$rel['module']]['icon'];?>"></i>
               	&nbsp;&nbsp;<?php echo ucfirst($rel['module']);?> <?php if ($rel['total_rows']) { echo "<span class='badge'>".$rel['total_rows']."</span>"; } ?>
              	 </a>
             	</li>
@@ -78,30 +80,6 @@ $this->load->helper('view_helper');
 
           <div id="settings-content" class="tab-content stacked-content">
 
-
-<?php 
-
-$framework = 
-	array(
-	  	array ( "Overview" =>	  
-		  		array ("company_name", "assigned_user_id"),
-				array ("phone_work", "company_type"),
-				array ("email1", "email2"),  			  
-		),
-		array ("Address Info" =>
-				array ("address1", "address2"),
-				array ("city", "province"),
-				array ("postal_code", "country"),  
-		),
-		array ("Other Info" =>
-				array ("lead_status_id", "lead_source_id"),
-				array ("webpage", "industry"),
-				array ("phone_fax", "description"),  
-				array ("do_not_call", "email_opt_out")
-		)
-	);
-//pr($framework);
-	?>
             <div class="tab-pane fade in active" id="profile-tab">
 
 				<?php 
@@ -120,20 +98,28 @@ $framework =
 						?>
 							<div class="row">
 								<div class="col-md-6">
-									<strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[0]]['field_label'];?></strong><br/>
-									<?php echo format_field($module_name,$row[0], $record->$row[0]);?><br/><br/>
+									<?php // check to see if column is empty or not
+									if(!empty( $_SESSION['field_dictionary'][$module_name][$row[0]])){
+									?><strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[0]]['field_label'];?></strong><br/><?php echo format_field($module_name,$row[0], $record->$row[0]);?><br/><br/>
+									<?php } ?>
 								</div>
 								<div class="col-md-6">
-									<strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[1]]['field_label'];?></strong><br/>
-									<?php echo format_field($module_name,$row[1], $record->$row[1]);?><br/><br/>
-								</div>									
+									<?php
+									// check to see if column is empty or not
+									if(!empty( $_SESSION['field_dictionary'][$module_name][$row[1]])){
+									?>								
+										<strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[1]]['field_label'];?></strong><br/>
+										<?php echo format_field($module_name,$row[1], $record->$row[1]);?><br/><br/>
+									<?php } ?>
+								</div>	
+																
 							</div>
 						<?php
 						} // end display reach row
 						?>	
 						</div>
 					</div>
-				<?php
+				<?php 
 				}
 				?>
 
@@ -172,7 +158,6 @@ foreach ($related_modules as $rel){
 							if($rel['total_rows'] > 0){
 
 								foreach ($rel['data'] as $rc) {
-
 									// calls helper to format and display the data depending on the module
 									echo format_related_list($rel['module'], $rel['data'], $rel['module_id']);
 																		
