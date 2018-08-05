@@ -257,10 +257,6 @@
 			}
 		}
 
-    // load assigned users for view
-		$assignedusers1 = getAssignedUsers1();
-		$data['assignedusers1'] = $assignedusers1;
-
     // load drop down values for any drop downs
     foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
       $data[$fields['field_name']] = dropdownCreator($fields['field_name']);
@@ -363,15 +359,21 @@
 		}
 
     // set
-		$data[$this->module['singular']] = $org_record->row();
+		$data['record'] = $org_record->row();
 
     // load drop down values for any drop downs
     foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
       $data[$fields['field_name']] = dropdownCreator($fields['field_name']);
     } 
 
+    // set information about module
+    $data['module_name'] = $this->module['name'];
+    $data['module_singular'] = $this->module['singular'];
+    $data['id'] = $record_id;
+    $data['framework'] = json_decode($_SESSION['modules'][$this->module['name']]['view_layout']);    
+
 		// load view
-		$this->layout->view('/' . $this->module['name'] . '/edit', $data);
+		$this->layout->view('/modules/edit', $data);
 	} // end edit record
 
 	/**

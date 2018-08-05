@@ -114,7 +114,6 @@ function format_field($module_name,$field,$data){
 
         break; // end Related Company
 
-
     }
 
 } // end format_field
@@ -129,11 +128,56 @@ function format_field($module_name,$field,$data){
  * @param    string    the value to display
  * @return    string
  */
-function format_editable_field(){
+function format_editable_field($module_name,$field,$data){
 
+    switch ($_SESSION['field_dictionary'][$module_name][$field]['field_type']){
 
+        case "Text":
 
-}
+            return '<input name="' . $field . '" type="text" class="form-control" id="' . $field . '"
+                value=" ' . $data . '">';
+
+        break; // end text
+        case "User": 
+
+            // load assigned users for view
+		    $assignedusers1 = getAssignedUsers1();
+            return form_dropdown($field, $assignedusers1, $data, "class='form-control' id='". $field ."'"); 
+
+        break; // end User
+        case "Dropdown": 
+            return form_dropdown($field, dropdownCreator($field), $data, "class='form-control' id='" . $field . "'");
+        break;
+        case "Radio":
+
+            return '
+                <label class="radio">
+                <input id="email_opt_out_1" name="' . $field . '" type="radio"
+                    value="Y" ' . set_radio($field, 'Y', $data == 'Y') . '>Yes
+                </label>
+
+                <div style="clear:both"></div>
+
+                <label class="radio">
+                    <input id="email_opt_out_2" name="' . $field . '" type="radio"
+                        value="N" ' . set_radio($field, 'N', $data == 'N') . '>No
+                </label>
+            ';
+
+        break; // end Radio
+        case "Textarea":
+            return '<textarea name="description" id="description" class="form-control" rows="5">' . 
+            set_value($field, $data) . '</textarea>';
+        break;
+        case "Date":
+            // TBD
+        break; // end date        
+        case "Related_Company":
+            // TBD
+        break; // end Related Company
+    } // end switch
+
+} // end format_editable_field
 
 /**
  * format_related_list
