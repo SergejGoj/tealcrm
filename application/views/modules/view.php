@@ -7,7 +7,7 @@ $this->load->helper('view_helper');
 
         <div class="col-md-2 layout-sidebar">
 <li class="fa fa-building" style="color:#c0c0c0;font-family:'FontAwesome'"> <?php echo ucfirst($module_singular);?></li>
- <h2><?php //echo $record->name;?></h2>
+ <h2><?php echo display_name ( $module_name, $record); ?></h2>
 
 		<div class="btn-group">
 			<a href="<?php echo site_url($module_name . '/edit') . "/" . $record->company_id; ?>" class="btn btn-tertiary">Edit <?php echo ucfirst($module_singular);?></a> <button class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" type="button"><span class="caret"></span></button>

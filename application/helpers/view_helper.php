@@ -12,6 +12,29 @@
 
  */
 
+
+ /**
+ * display_name
+ *
+ * This function will decide which is the name_value for the specific module.  Only 1 name value exists for a module.
+ *
+ * @access    public
+ * @param    string    the module we are working with
+ * @param    string    the record we are dealing with
+ * @return    string
+ */
+function display_name($module,$data){
+
+    foreach($_SESSION['field_dictionary'][$module] as $row){
+        if ( $row['name_value'] == 1 ){
+
+            return $data->$row['field_name'];
+
+            break;
+        }
+    }
+} // end display_name
+
 /**
  * format_field
  *
