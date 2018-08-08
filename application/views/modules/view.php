@@ -100,7 +100,7 @@ $this->load->helper('view_helper');
 								<div class="col-md-6">
 									<?php // check to see if column is empty or not
 									if(!empty( $_SESSION['field_dictionary'][$module_name][$row[0]])){
-									?><strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[0]]['field_label'];?></strong><br/><?php echo format_field($module_name,$row[0], $record->$row[0]);?><br/><br/>
+									?><strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[0]]['field_label'];?></strong><br/><?php echo format_field($module_name,$row[0], $record->{$row[0]});?><br/><br/>
 									<?php } ?>
 								</div>
 								<div class="col-md-6">
@@ -109,7 +109,7 @@ $this->load->helper('view_helper');
 									if(!empty( $_SESSION['field_dictionary'][$module_name][$row[1]])){
 									?>								
 										<strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[1]]['field_label'];?></strong><br/>
-										<?php echo format_field($module_name,$row[1], $record->$row[1]);?><br/><br/>
+										<?php echo format_field($module_name,$row[1], $record->{$row[1]});?><br/><br/>
 									<?php } ?>
 								</div>	
 																

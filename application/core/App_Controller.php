@@ -173,8 +173,13 @@
 		$data['field_label'] = $label;
 		$data['company_updated_fields'] = $company_updated_fields;
 		$data['custom_values'] = $custom_values;
-		// load view
-		$this->layout->view('/'.$this->module['name'].'/index', $data);
+    // load view
+    
+    // set information about module
+    $data['module_name'] = $this->module['name'];
+    $data['module_singular'] = $this->module['singular'];
+
+		$this->layout->view('/modules/index', $data);
 		 
    } // end display of index page for module
 
@@ -304,7 +309,7 @@
 
     }
 
-		// save
+    // save
 		if( 'save' == $this->input->post('act', true) ){
 
 			// field validation
@@ -324,6 +329,10 @@
         // array to hold data
         $record = array();
 
+        // set some update parameters to go along with it
+        $record['date_modified'] = gmdate('Y-m-d H:i:s');
+        $record['modified_user_id'] = $user['uacc_uid'];
+
         // cycle through field dictionary and associate appropriate fields
         foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
 
@@ -342,10 +351,10 @@
         }          
 
         // update
-        $this->db->where($this->module['name'].'_id',$record_id);
+        $this->db->where($this->module['singular'].'_id',$record_id);
         ;
 
-				if( $this->db->update($this->config->item('db_prefix').$this->module['name'], $data) ){
+				if( $this->db->update($this->config->item('db_prefix').$this->module['name'], $record) ){
 					// set flash
 					notify_set( array('status'=>'success', 'message'=>'Successfully updated '.$this->module['singular'].'.') );
 

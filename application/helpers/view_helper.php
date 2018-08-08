@@ -28,7 +28,7 @@ function display_name($module,$data){
     foreach($_SESSION['field_dictionary'][$module] as $row){
         if ( $row['name_value'] == 1 ){
 
-            return $data->$row['field_name'];
+            return $data->{$row['field_name']};
 
             break;
         }

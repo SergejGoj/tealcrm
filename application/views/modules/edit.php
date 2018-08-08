@@ -50,7 +50,7 @@ echo form_open($module_name . '/edit/' . $id, $attributes);
                     <div class="form-group col-sm-6">
                         <?php // check to see if column is empty or not
 						if(!empty( $_SESSION['field_dictionary'][$module_name][$row[0]])){
-						?><strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[0]]['field_label'];?></strong><br/><?php echo format_editable_field($module_name,$row[0], $record->$row[0]);?><br/><br/>
+						?><strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[0]]['field_label'];?></strong><br/><?php echo format_editable_field($module_name,$row[0], $record->{$row[0]});?><br/><br/>
 						<?php } ?>
                     </div>
 
@@ -60,7 +60,7 @@ echo form_open($module_name . '/edit/' . $id, $attributes);
 						if(!empty( $_SESSION['field_dictionary'][$module_name][$row[1]])){
 						?>								
 						<strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[1]]['field_label'];?></strong><br/>
-						<?php echo format_editable_field($module_name,$row[1], $record->$row[1]);?><br/><br/>
+						<?php echo format_editable_field($module_name,$row[1], $record->{$row[1]});?><br/><br/>
 						<?php } ?>
                     </div>
                 </div>
