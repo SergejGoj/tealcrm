@@ -175,12 +175,20 @@
 		$data['custom_values'] = $custom_values;
     // load view
     
+
+   
+    // grab advanced search options
+    $data['search_options'] = explode(",",$_SESSION['modules'][strtolower($this->module['name'])]['listview_layout']);
+
+  
     // set information about module
     $data['module_name'] = $this->module['name'];
     $data['module_singular'] = $this->module['singular'];
 
 		$this->layout->view('/modules/index', $data);
-		 
+  
+    
+
    } // end display of index page for module
 
 	/**
@@ -455,6 +463,7 @@
                   'total_rows' => $this->db->affected_rows()
                 );
     }
+
     // set information about module
     $data['module_name'] = $this->module['name'];
     $data['module_singular'] = $this->module['singular'];

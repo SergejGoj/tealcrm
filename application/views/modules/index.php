@@ -15,13 +15,6 @@
 <script src="/assets/js/plugins/chosen/js/chosen.jquery.js" type="text/javascript"></script>
 <link rel="stylesheet" href="/assets/js/plugins/chosen/css/chosen.css">
 
-
-<?php
-
-pr($_SESSION['modules'][strtolower($module_name)]['listview_layout']);
-exit();
-?>
-
 <h3 class="content-title"><?php if(!empty($_SESSION['search'][$module_name])){ echo "Showing Search Results: ";}?><?php ucfirst($module_name);?></h3>
 
   <div class="row">
@@ -42,15 +35,15 @@ exit();
 
 <?php
 
-if(isset($_SESSION['saved_searches_index']['companies'])){
-	if(count($_SESSION['saved_searches_index']['companies']) > 0){
+if(isset($_SESSION['saved_searches_index'][$module_name])){
+	if(count($_SESSION['saved_searches_index'][$module_name]) > 0){
 		echo '<li class="dropdown">
 	            <a href="javascript:;" id="myTabDrop1" class="dropdown-toggle" data-toggle="dropdown">
 	              Saved Searches <b class="caret"></b>
 	            </a>
 	         <ul class="dropdown-menu" role="menu" aria-labelledby="myTabDrop1">';
-		foreach($_SESSION['saved_searches_index']['companies'] as $key => $value){
-			echo '<li class=""><a href="'.site_url('companies/search/'.$key).'">'.$value.'</a></li>';
+		foreach($_SESSION['saved_searches_index'][$module_name] as $key => $value){
+			echo '<li class=""><a href="'.site_url($module_name.'/search/'.$key).'">'.$value.'</a></li>';
 		}
 		echo '</ul>';
 		echo '</li>';
@@ -64,10 +57,10 @@ if(isset($_SESSION['saved_searches_index']['companies'])){
 <div id="myTab1Content" class="tab-content">
 
           <div class="tab-pane fade <?php if($search_tab == "basic"){ echo 'active in';}?>" id="search">
-           <form name="frmedit" id="frmedit" action="<?php echo site_url('companies/search');?>" method="post" class="form parsley-form">
+           <form name="frmedit" id="frmedit" action="<?php echo site_url($module_name.'/search');?>" method="post" class="form parsley-form">
 			<div class="input-group">
 				<label for="search_box" class="sr-only">Search</label>
-				<input type="search" class="form-control" id="search_box" placeholder="Search by company name" name="company_name" value="<?php if(isset($_SESSION['search']['companies']['company_name'])){echo $_SESSION['search']['companies']['company_name'];}?>">
+				<input type="search" class="form-control" id="search_box" placeholder="NEED TO SORT THIS SECTION OUT" name="company_name" value="<?php if(isset($_SESSION['search']['companies']['company_name'])){echo $_SESSION['search']['companies']['company_name'];}?>">
 				<div class="input-group-btn">
 					  	<input type="submit" name="search_go" class="btn btn-success" value="Search">
 					  	<input type="submit" name="clear" class="btn btn-success" value="Clear">
@@ -83,7 +76,39 @@ if(isset($_SESSION['saved_searches_index']['companies'])){
  <form name="frmedit" id="frmedit" action="<?php echo site_url('companies/search');?>" method="post" class="form parsley-form">
                <table class="table table-striped table-bordered" style="font-size:11px;">
                   <tbody>
-					  <tr valign="middle">
+                    <?php 
+
+                    /* output all of the available search options for this module */
+                    for($col = 1; $col <= count($search_options);$col++){
+                        echo $_SESSION['field_dictionary'][$module_name][$search_options[$col]]['field_label'];
+                        if($col == 1){
+                            echo '<tr valign="middle">';
+                        }
+                        ?>
+                        <td width="25%">
+                            <?php if (isset($option[$col])){
+                            ?>
+                            <span><strong><?php echo $_SESSION['field_dictionary'][$module_name][$search_options[$col]];?></strong>
+						    <input type="text" class="form-control" id = "<?= $search_options[$col];?>" name="<?= $search_options[$col];?>" value="<?php if(isset($_SESSION['search'][$module_name][$search_options[$col]])){echo $_SESSION['search'][$module_name][$search_options[$col]];}?>">
+                            <?php
+                            } // end if isset
+                            ?>
+                        </td>
+                        <?php
+                        
+                        $col++;
+
+                        if($col %4 != 0) {
+                            echo '</tr>';
+                        }
+                    }
+
+
+
+                    ?>
+
+
+					  <?php /*
 					  	<td width="25%"><span><strong>Company Name</strong>
 						  <input type="text" class="form-control" id = "company_name" name="company_name" value="<?php if(isset($_SESSION['search']['companies']['company_name'])){echo $_SESSION['search']['companies']['company_name'];}?>">
 					  	</td>
@@ -276,7 +301,8 @@ else{
 					  	<input type="submit" name="clear" class="btn btn-success" value="Clear">
 
 					  	</td>
-					  </tr>
+                      </tr>
+                      */ ?>
                   </tbody>
                </table>
 

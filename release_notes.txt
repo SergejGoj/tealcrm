@@ -11,3 +11,4 @@ update sc_drop_down_options SET related_field_name = 'company_type' where relate
 
 4. Drop the sc_modules table and re-create and insert.  Added view_layouts, icon and listview_layout.
 Export structure/data and re-import for install
+
