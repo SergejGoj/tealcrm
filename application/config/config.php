@@ -383,7 +383,7 @@ $config['sess_table_name']      = 'sc_sessions';
 $config['sess_expiration'] = 7200;
 $config['sess_match_ip'] = FALSE;
 $config['sess_time_to_update'] = 300;
-$config['sess_cookie_name'] = "tealcrm_cookie";
+$config['sess_cookie_name'] = "";
 
 /*
 |--------------------------------------------------------------------------
