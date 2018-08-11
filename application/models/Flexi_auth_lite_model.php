@@ -191,10 +191,30 @@ class Flexi_auth_lite_model extends CI_Model
 			$this->auth->tbl_col_user_account['group_id'].' = '.$this->auth->tbl_join_user_group, 'left'
 		);
 
+		// 2018-08-11
+		// Added for MySQL 5.7 support of forced group_by (default on install)
+		// Derek Major for TealCRM
+		foreach($this->auth->tbl_col_user_account as $column){
+			$this->db->select($column);
+			$this->db->group_by($column);
+		}
+		foreach($this->auth->tbl_col_user_group as $column){
+			$this->db->select($column);
+			$this->db->group_by($column);
+		}
+
 		// Left Join user custom data table(s) to user company table.
 		foreach ($this->auth->tbl_custom_data as $table)
 		{
 			$this->db->join($table['table'], $this->auth->tbl_join_user_account.' = '.$table['join'], 'left');
+
+			// 2018-08-11
+			// Added for MySQL 5.7 support of forced group_by (default on install)
+			// Derek Major for TealCRM
+			foreach($table['custom_columns'] as $column){
+				$this->db->select($column);
+				$this->db->group_by($column);
+			}
 		}
 
 		// Group by users id to prevent multiple custom data rows to be listed per user.
@@ -210,6 +230,7 @@ class Flexi_auth_lite_model extends CI_Model
 
 		// Set any custom defined SQL statements.
 		$this->set_custom_sql_to_db($sql_select, $sql_where);
+
 
 		return $this->db->get($this->auth->tbl_user_account);
 	}
