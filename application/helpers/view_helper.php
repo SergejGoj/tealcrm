@@ -157,8 +157,7 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
 
             case "Text":
 
-                return '<input name="' . $field . '" type="text" class="form-control" id="' . $field . '"
-                    value=" ' . $data . '">';
+                return '<input name="' . $field . '" type="text" class="form-control" id="' . $field . '" value="' . $data . '">';
 
             break; // end text
             case "User": 

@@ -161,7 +161,8 @@ class teal_global_vars extends CI_Model {
 			$_SESSION['modules'][strtolower($row['module_name'])]['db_table'] = $row['db_table'];
 			$_SESSION['modules'][strtolower($row['module_name'])]['db_key'] = $row['db_key'];
 			$_SESSION['modules'][strtolower($row['module_name'])]['view_layout'] = $row['view_layout'];
-			$_SESSION['modules'][strtolower($row['module_name'])]['listview_layout'] = $row['listview_layout'];
+			$_SESSION['modules'][strtolower($row['module_name'])]['search_options'] = $row['search_options'];
+			$_SESSION['modules'][strtolower($row['module_name'])]['list_layout'] = $row['list_layout'];
 			$_SESSION['modules'][strtolower($row['module_name'])]['icon'] = $row['icon'];
 		}
 

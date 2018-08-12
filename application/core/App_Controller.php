@@ -164,23 +164,15 @@
 		$data['pager_links'] = $this->_create_pager_links($row_per_page, $uri_segment, $total_count, 'companies');
 
 		// set
-		$data[$this->module['name']] = $results;
+		$data['records'] = $results;
 
-		//COMPANY FIELD LIST TO DISPLAY
-		$this->load->helper('list_views');
-		list ($label, $company_updated_fields, $custom_values) = company_list_view();
+		// grab the list view layout
+		$data['list_layout'] = explode(",",$_SESSION['modules'][strtolower($this->module['name'])]['list_layout']);
 
-		$data['field_label'] = $label;
-		$data['company_updated_fields'] = $company_updated_fields;
-		$data['custom_values'] = $custom_values;
-    // load view
-    
-
-   
     // grab advanced search options
-    $data['search_options'] = explode(",",$_SESSION['modules'][strtolower($this->module['name'])]['listview_layout']);
+    $data['search_options'] = explode(",",$_SESSION['modules'][strtolower($this->module['name'])]['search_options']);
 
-  
+
     // set information about module
     $data['module_name'] = $this->module['name'];
     $data['module_singular'] = $this->module['singular'];

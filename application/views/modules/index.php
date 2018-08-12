@@ -120,6 +120,25 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
                         $option_col++;
                     }
                     ?>
+                    <tr>
+                    	<td colspan="4" align="right">
+                        <input type="submit" name="adv_search_go" class="btn btn-success" value="<?php echo $_SESSION['language']['global']['search'];?>">
+                        <?php
+                        if($search_tab == "saved"){
+                        ?>
+                        <input type="button" name="clear" onclick="window.location.href='<?php echo site_url($module_name . '/search/' . $_SESSION['search_id'] . '/delete/1')?>'" class="btn btn-danger" name='DeleteSearch' value="Delete Saved Search111">
+                        <?php
+                        }
+                        else{
+                        ?>
+                        <input type="submit" data-toggle="modal" data-target="#save-modal" name="adv_search_save" id = "adv_search_save" class="btn btn-warning" value="Search & Save" onclick="javascript: $('#searchLabel').text('Save Advanced Search111'); $('#module').val('companies'); return false;">
+                        <?php
+                        }
+                        ?>
+                        <input type="submit" name="clear" class="btn btn-success" value="<?php echo $_SESSION['language']['global']['clear'];?>">
+
+                        </td>
+                        </tr>
                   </tbody>
                </table>
 
@@ -150,73 +169,57 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
 </form>
 		</div>
 
-          <form class="form-horizontal" name="frmlist" id="frmlist" action="<?php echo site_url('companies')?>" method="post">
+          <form class="form-horizontal" name="frmlist" id="frmlist" action="<?php echo site_url($module_name)?>" method="post">
               <table class="table table-striped table-bordered thumbnail-table">
                   <thead>
                       <tr>
                           <th><input type="checkbox" name="select_all" value="ids[]"></th>
-                          <?php if(isset($company_updated_fields))
-	foreach($company_updated_fields as $field_list){ ?>
-						  <th><?php echo $field_label[$field_list->field_name]["label_name"]; ?></th>
+                          <?php if(isset($list_layout))
+	                        foreach($list_layout as $field_list){ ?>
+						  <th><?php echo $_SESSION['language'][$module_name][$field_list];?></th>
 						  <?php }?>
 						  <th class="text-center" width="10%"><?php echo $_SESSION['language']['global']['actions'];?></th>
                       </tr>
                   </thead>
                   <tbody>
-                      <?php if( ! $companies->num_rows() > 0 ) :?>
+                      <?php if( $records->num_rows() <= 0 ) {?>
                       <tr>
                           <td colspan="6" align="center"><?php echo $_SESSION['language']['global']['no_records'];?></td>
                       </tr>
-                      <?php else: foreach($companies->result() as $company) :?>
-                      <tr>
-                          <td><input type="checkbox" name="ids[]" value="<?php echo $company->company_id?>"></td>
-                          <?php if(isset($company_updated_fields)) {
-				foreach($company_updated_fields as $field_list) {
-					$field_name = $field_list->field_name;
-					if($field_list->field_name == "company_name") {
-?>
-								<td><a href="<?php echo site_url('companies/view/' . $company->company_id); ?>"><?php echo $company->$field_name; ?></a> </td>
-							<?php } else {
-						if($field_label[$field_name]["field_type"] == "company_text_field"){
+                      <?php 
+                      } 
+                      else{
 
-?>
-								<td><?php echo $company->$field_name; ?></td>
-							<?php } else if($field_label[$field_name]["field_type"] == "company_drop_field") { ?>
-								<td><?php echo $_SESSION['drop_down_options'][$company->$field_name]['name']; ?></td>
-							<?php } else if($field_label[$field_name]["field_type"] == "company_date_field") { ?>
-								<td><?php if(!is_null($company->$field_name)) { echo date('m/d/y h:ia',strtotime($company->$field_name.' UTC')); }?></td>
-							<?php }
-								else if($field_label[$field_name]["field_type"] == "company_special_field") {
+                        foreach($records->result() as $record){
 
-?>
-							<td>
-                                <?php
-                                    $first_name = $_SESSION['user_accounts'][$company->assigned_user_id]['upro_first_name'];
-                                    $last_name = $_SESSION['user_accounts'][$company->assigned_user_id]['upro_last_name'];
-                                    if(($first_name != NULL) && ($last_name != NULL)) {
-                                        echo $first_name." ".$last_name;
-                                    } else if($first_name != NULL) {
-                                        echo $first_name;
-                                    } else if($last_name != NULL) {
-                                        echo $last_name;
-                                    } else {
-                                        echo $_SESSION['user_accounts'][$company->assigned_user_id]['uacc_username'];
-                                    }
+                            $rec_id_name = $module_singular.'_id';
+
+                            ?>
+                                <tr>
+                                    <td><input type="checkbox" name="ids[]" value="<?php echo $record->{$rec_id_name}?>"></td>
+                                <?php // output the fields list
+                                    foreach($list_layout as $item){
+
+                                        // check if this is our KEY or not for a link
+                                        if ( $_SESSION['field_dictionary'][$module_name][$item]['name_value'] == 1 ){
+                                            ?><td><a href="<?php echo site_url($module_name . '/view/' . $record->{$rec_id_name}); ?>"><?php echo format_field($module_name,$_SESSION['field_dictionary'][$module_name][$item]['field_name'],$record->$item); ?></a></td><?php
+                                        }
+                                        else{
+                                            ?><td><?php echo format_field($module_name,$_SESSION['field_dictionary'][$module_name][$item]['field_name'],$record->$item); ?></td><?php
+                                        }
+
+                                    } // end list of layout items
                                 ?>
-                            </td>
-							<?php }  else if($field_label[$field_name]["field_type"] == "custom_text_field") { ?>
-								<td><?php echo $custom_values[$field_name][$company->company_id]; ?></td>
-							<?php } else if($field_label[$field_name]["field_type"] == "custom_drop_field") { $value = $custom_values[$field_name][$company->company_id]; ?>
-								<td><?php echo $_SESSION['drop_down_options'][$value]['name']; ?></td>
-							<?php } } } } ?>
-
-                          <td class="valign-middle">
-                              <a href="<?php echo site_url($module_name . '/edit/' . $company->company_id); ?>"><i class="btn btn-xs btn-secondary fa fa-pencil"></i></a>
-                              &nbsp;
-                              <a href="javascript:delete_one( '<?php echo $company->company_id; ?>' )"><i class="btn btn-xs btn-secondary fa fa-times"></i></a>
-                          </td>
-                      </tr>
-                      <?php endforeach; endif;?>
+                                    <td class="valign-middle">
+                                    <a href="<?php echo site_url($module_name . '/edit/' . $record->{$rec_id_name}); ?>"><i class="btn btn-xs btn-secondary fa fa-pencil"></i></a>
+                                    &nbsp;
+                                    <a href="javascript:delete_one( '<?php echo $record->{$rec_id_name}; ?>' )"><i class="btn btn-xs btn-secondary fa fa-times"></i></a>
+                                    </td>
+                                </tr>
+                            <?php
+                        } // end foreach
+                      } // end if num rows is smaller than 0
+                      ?>
                   </tbody>
               </table>
               <div>
@@ -245,14 +248,14 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
 <br /><br>
 <script type="text/javascript">
   // delete single record
-  delete_one=function( company_id ){
+  delete_one=function( record_id ){
     // confirm
-    Messi.ask('Do you really want to delete the record?', function(val) {
+    Messi.ask('Do you really want to delete the record?111', function(val) {
       // confirmed
       if( val == 'Y' ){
-        window.location.href="<?php echo site_url('companies/delete')?>/" + company_id;
+        window.location.href="<?php echo site_url($module_name . '/delete')?>/" + record_id;
       }
-    }, {modal: true, title: 'Confirm Delete'});
+    }, {modal: true, title: 'Confirm Delete111'});
   }
 
   export_selected=function( ){
@@ -261,13 +264,13 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
   if( size == 0 )
   {
 
-      window.location.href='<?php echo site_url('companies/export')?>';
+      window.location.href='<?php echo site_url($module_name . '/export')?>';
     }
 
    else
    {
 
-        jQuery('#frmlist').prop('action', '<?php echo site_url('companies/export_all')?>');
+        jQuery('#frmlist').prop('action', '<?php echo site_url($module_name . '/export_all')?>');
         jQuery(":input[name='act']").val('export');
         jQuery('#frmlist').submit();
    }
@@ -281,19 +284,19 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
     if( size == 0 ){
       Messi.alert('Please select a record to delete',function(){
 
-      }, {modal: true, title: 'Confirm Delete'});
+      }, {modal: true, title: 'Confirm Delete111'});
 
       return;
     }
     // confirm
-    Messi.ask('Do you really want to delete selected records?', function(val) {
+    Messi.ask('Do you really want to delete selected records?111', function(val) {
       // confirmed
       if( val == 'Y' ){
-        jQuery('#frmlist').prop('action', '<?php echo site_url('companies/delete_all')?>');
+        jQuery('#frmlist').prop('action', '<?php echo site_url($module_name . '/delete_all')?>');
         jQuery(":input[name='act']").val('delete');
         jQuery('#frmlist').submit();
       }
-    }, {modal: true, title: 'Confirm Delete'});
+    }, {modal: true, title: 'Confirm Delete111'});
   }
 
 	// document ready
@@ -301,7 +304,6 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
 		jQuery(":input[name='select_all']").bind('click', function(){
 			jQuery(":input[name='" + jQuery(this).val() + "']").prop('checked', jQuery(this).prop('checked'));
 		});
-
 
 		// picker
 		jQuery('.datetime').datetimepicker({
@@ -311,203 +313,6 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
 		});
 });
 
-$(document).ready(function(){
-    $('#adv_search_save').attr('disabled',true);
-
-    $('#company_name').keyup(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-		checkempty();
-        }
-	})
-
-	  $('#company_type').chosen().change(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-            checkempty();
-        }
-	})
-	 $('#email_opt_out_1').click(function(){
-
-        if($(this).val() != 0 ){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-           checkempty();
-        }
-	})
-
-	$('#email_opt_out_2').click(function(){
-
-        if($(this).val() != 0 ){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-            checkempty();
-        }
-	})
-	$('#email_opt_out_new_1').click(function(){
-
-        if($(this).val() != 0 ){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-            checkempty();
-        }
-	})
-	$('#email_opt_out_new_2').click(function(){
-
-        if($(this).val() != 0 ){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-           checkempty();
-        }
-	})
-	$('#city').keyup(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-            checkempty();
-        }
-	})
-	$('#province').keyup(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-           checkempty();
-        }
-	})
-	$('#country').keyup(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-           checkempty();
-        }
-	})
-	$('#postal_code').keyup(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-            checkempty();
-        }
-	})
-	$('#assigned_user_id').chosen().change(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-           checkempty();
-        }
-	})
-	$('#industry').chosen().change(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-            checkempty();
-        }
-	})
-	$('#lead_source_id').chosen().change(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-           checkempty();
-        }
-	})
-	$('#lead_status_id').chosen().change(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-          checkempty();
-        }
-	})
-	$('#date_entered_start').click(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-         checkempty();
-        }
-	})
-	$('#date_entered_end').click(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-           checkempty();
-        }
-	})
-	$('#date_modified_start').click(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-          checkempty();
-        }
-	})
-
-	$('#date_entered_end_1').click(function(){
-        if($(this).val().length !=0){
-            $('#adv_search_save').attr('disabled', false);
-        }
-        else
-        {
-			checkempty();
-        }
-	})
-	 checkempty = function() {
-
-     if($('#company_name').val().length !=0){
-	 }else if($('#company_type').val().length !=0){
-	 }else if($('#email_opt_out_1').is(':checked')){
-	 }else if($('#email_opt_out_2').is(':checked')){
-	 }else if($('#email_opt_out_new_1').is(':checked')){
-	 }else if($('#email_opt_out_new_2').is(':checked')){
-	 }else if($('#city').val().length !=0){
-	 }else if($('#province').val().length !=0){
-	 }else if($('#country').val().length !=0){
-	 }else if($('#postal_code').val().length !=0){
-	 }else if($('#assigned_user_id').val().length !=0){
-	 }else if($('#industry').val().length !=0){
-	 }else if($('#lead_source_id').val().length !=0){
-	 }else if($('#lead_status_id').val().length !=0){
-	 }else if($('#date_entered_start').val() !="__/__/____"){
-	 }else if($('#date_entered_end').val() !='__/__/____'){
-	 }else if($('#date_modified_start').val() !='__/__/____'){
-	 }else if($('#date_entered_end_1').val() !='__/__/____'){
-	 }else{
-	 $('#adv_search_save').attr('disabled', true);
-	 }
-	 }
-});
 
 jQuery(document).ready(function(){
 
