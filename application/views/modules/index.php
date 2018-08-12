@@ -1,3 +1,8 @@
+<?php
+
+$this->load->helper('view_helper');
+
+?>
 <link href='css/mobileadvancedsearch.css' rel='stylesheet' />
 
 <style>
@@ -15,7 +20,7 @@
 <script src="/assets/js/plugins/chosen/js/chosen.jquery.js" type="text/javascript"></script>
 <link rel="stylesheet" href="/assets/js/plugins/chosen/css/chosen.css">
 
-<h3 class="content-title"><?php if(!empty($_SESSION['search'][$module_name])){ echo "Showing Search Results: ";}?><?php ucfirst($module_name);?></h3>
+<h3 class="content-title"><?php if(!empty($_SESSION['search'][$module_name])){ echo  $_SESSION['language']['global']['showing_search_results'] . ": ";}?><?php ucfirst($module_name);?></h3>
 
   <div class="row">
 
@@ -26,11 +31,11 @@
 
         <ul id="myTab1" class="nav nav-tabs">
           <li class="<?php if($search_tab == "basic"){ echo 'active';}?>">
-            <a href="#search" data-toggle="tab">Search</a>
+            <a href="#search" data-toggle="tab"><?php echo $_SESSION['language']['global']['search'];?></a>
           </li>
 
           <li class="<?php if($search_tab == "advanced" || $search_tab == "saved"){ echo 'active';}?>">
-            <a href="#advanced" data-toggle="tab">Advanced Search</a>
+            <a href="#advanced" data-toggle="tab"><?php echo $_SESSION['language']['global']['advanced_search'];?></a>
           </li>
 
 <?php
@@ -59,11 +64,11 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
           <div class="tab-pane fade <?php if($search_tab == "basic"){ echo 'active in';}?>" id="search">
            <form name="frmedit" id="frmedit" action="<?php echo site_url($module_name.'/search');?>" method="post" class="form parsley-form">
 			<div class="input-group">
-				<label for="search_box" class="sr-only">Search</label>
+				<label for="search_box" class="sr-only"><?php echo $_SESSION['language']['global']['search'];?></label>
 				<input type="search" class="form-control" id="search_box" placeholder="NEED TO SORT THIS SECTION OUT" name="company_name" value="<?php if(isset($_SESSION['search']['companies']['company_name'])){echo $_SESSION['search']['companies']['company_name'];}?>">
 				<div class="input-group-btn">
-					  	<input type="submit" name="search_go" class="btn btn-success" value="Search">
-					  	<input type="submit" name="clear" class="btn btn-success" value="Clear">
+					  	<input type="submit" name="search_go" class="btn btn-success" value="<?php echo $_SESSION['language']['global']['search'];?>">
+					  	<input type="submit" name="clear" class="btn btn-success" value="<?php echo $_SESSION['language']['global']['clear'];?>">
 				</div><!-- /input-group-btn -->
 			</div>
 			
@@ -77,232 +82,44 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
                <table class="table table-striped table-bordered" style="font-size:11px;">
                   <tbody>
                     <?php 
-
                     /* output all of the available search options for this module */
-                    for($col = 1; $col <= count($search_options);$col++){
-                        echo $_SESSION['field_dictionary'][$module_name][$search_options[$col]]['field_label'];
-                        if($col == 1){
+                    
+                    $max_options = count($search_options);
+                    $option_col = 1;
+                    for($col = 0; $col < 4; $col++){
+                        if($col == 0){
                             echo '<tr valign="middle">';
                         }
                         ?>
                         <td width="25%">
-                            <?php if (isset($option[$col])){
+                            <?php if (isset($search_options[$option_col]) && $option_col <= $max_options){
                             ?>
-                            <span><strong><?php echo $_SESSION['field_dictionary'][$module_name][$search_options[$col]];?></strong>
-						    <input type="text" class="form-control" id = "<?= $search_options[$col];?>" name="<?= $search_options[$col];?>" value="<?php if(isset($_SESSION['search'][$module_name][$search_options[$col]])){echo $_SESSION['search'][$module_name][$search_options[$col]];}?>">
-                            <?php
-                            } // end if isset
-                            ?>
+                                <span><strong><?php echo $_SESSION['language'][$module_name][$search_options[$option_col]];?></strong><br/>
+                                <?php 
+                                // check if we have data to display
+                                $data = null;
+                                if(isset($_SESSION['search'][$module_name][$search_options[$option_col]]))
+                                {   
+                                    $data = $_SESSION['search'][$module_name][$search_options[$option_col]];
+                                }
+                                echo format_editable_field($module_name, $search_options[$option_col], $data, true);
+                                } // end if isset
+                                ?>
                         </td>
                         <?php
                         
-                        $col++;
 
-                        if($col %4 != 0) {
+                        if($max_options <= $option_col && $col == 3){
                             echo '</tr>';
                         }
-                    }
-
-
-
-                    ?>
-
-
-					  <?php /*
-					  	<td width="25%"><span><strong>Company Name</strong>
-						  <input type="text" class="form-control" id = "company_name" name="company_name" value="<?php if(isset($_SESSION['search']['companies']['company_name'])){echo $_SESSION['search']['companies']['company_name'];}?>">
-					  	</td>
-					  	<td width="25%"><span><strong>Company Type</strong><br>
-					  	<select id = "company_type" name="company_type[]" multiple="true" multiple class="form-control chosen-select" >
-					  	<option value=""></option>
-						<?php
-$company_types = lookupDropDownValues("account_type");
-foreach($company_types as $option){
-?>
-						<option value="<?php echo $option;?>" <?php if(isset($_SESSION['search']['companies']['company_type'])) { foreach($_SESSION['search']['companies']['company_type'] as $opn) { if($opn==$option){echo 'selected';};} }?>><?php echo $_SESSION['drop_down_options'][$option]['name'];?></option>
-						<?php } ?>
-						</select>
-					  	</td>
-					  	<td width="25%"><span><strong>Do Not Call</strong>
-						  <input type="hidden" class="form-control" name="do_not_call" value="<?php if(isset($_SESSION['search']['companies']['do_not_call'])){echo $_SESSION['search']['companies']['do_not_call'];}?>">
-						  <div class="controls">
-                              <div class="controls">
-                        <?php 
-                        if(isset($_SESSION['search']['companies']['do_not_call'])){
-                            if(($_SESSION['search']['companies']['do_not_call'])=='Y')
-                                {
-	                                ?>  <label class="radio" style="padding:0px">
-                                        <input type="radio" id = "do_not_call" name="do_not_call" value="Y" checked="checked">Yes</label>
-									    <div style="clear:both"></div>
-									    <label class="radio">
-                                        <input type="radio" id = "do_not_call" name="do_not_call" value="N" >No</label>
-						            <?php
-                                }
-                                else if(($_SESSION['search']['companies']['do_not_call'])=='N')
-	                            {
-                                    ?>
-									    <label class="radio">
-                                        <input type="radio" id = "do_not_call" name="do_not_call" value="Y">Yes</label>
-									    <div style="clear:both"></div>
-									    <label class="radio">
-                                        <input type="radio" id = "do_not_call" name="do_not_call" value="N" checked="checked">No</label>
-                                    <?php 
-                                }
-                            } // end if do not equals Y
-                        else
-                        {
-                                ?>
-                                    <label class="radio">
-                                    <input type="radio" name="do_not_call" id="email_opt_out_1" value="Y" >Yes</label>
-                                    <div style="clear:both"></div>
-                                    <label class="radio">
-                                    <input type="radio" name="do_not_call" id="email_opt_out_2" value="N" >No</label>
-						        <?php
-                        } // end if do not call exists
-                                ?>
-                            </div>
-                            </div>
-
-					  	</td>
-					  	<td width="25%"><span><strong>Email Opt Out</strong>
-						  <input type="hidden" class="form-control" name="email_opt_out" value="<?php if(isset($_SESSION['search']['companies']['email_opt_out'])){echo $_SESSION['search']['companies']['email_opt_out'];}?>">
-						  <div class="controls">
-                          <?php 
-                        if(isset($_SESSION['search']['companies']['email_opt_out']))
-                        {
-                            if(($_SESSION['search']['companies']['email_opt_out'])=='Y')
-                            {
-	                            ?>  <label class="radio">
-                                    <input type="radio" id = "email_opt_out_new_1" name="email_opt_out" value="Y" checked="checked">Yes</label>
-									 <div style="clear:both"></div>
-									 <label class="radio">
-                                    <input type="radio" name="email_opt_out" id="email_opt_out_new_2" value="N" >No</label>
-						        <?php
-                            }
-                            else if(($_SESSION['search']['companies']['email_opt_out'])=='N')
-	                        {
-                                ?>
-									<label class="radio">
-                                    <input type="radio" name="email_opt_out" id = "email_opt_out_new_1" value="Y">Yes</label>
-									 <div style="clear:both"></div>
-									 <label class="radio">
-                                    <input type="radio" name="email_opt_out" id="email_opt_out_new_2" value="N" checked="checked">No</label>
-                                <?php 
-                            } // end if email opt out equals Y
+                        elseif($col == 3){
+                            $col = -1;
+                            echo '</tr>';
                         }
-                        else
-	                    {
-                            ?>
-                                <label class="radio">
-                                <input type="radio" name="email_opt_out" id="email_opt_out_new_1" value="Y" >Yes</label>
-                                <div style="clear:both"></div>
-                                <label class="radio">
-                                <input type="radio" name="email_opt_out" id="email_opt_out_new_2" value="N" >No</label>
-						<?php
-                        } // end if email opt out set
-                        ?>
-                            </div>
 
-					  	</td>
-					  </tr>
-					  <tr>
-					  	<td><span><strong>City</strong>
-						  <input type="text" class="form-control" id = "city" name="city" value="<?php if(isset($_SESSION['search']['companies']['city'])){echo $_SESSION['search']['companies']['city'];}?>">
-
-					  	</td>
-					  	<td><span><strong>State/Province</strong>
-						  <input type="text" class="form-control" id = "province" name="province" value="<?php if(isset($_SESSION['search']['companies']['province'])){echo $_SESSION['search']['companies']['province'];}?>">
-
-					  	</td>
-					  	<td><span><strong>Country</strong>
-						  <input type="text" class="form-control" id = "country" name="country" value="<?php if(isset($_SESSION['search']['companies']['country'])){echo $_SESSION['search']['companies']['country'];}?>">
-
-					  	</td>
-					  	<td><span><strong>Postal Code</strong>
-						  <input type="text" class="form-control" id = "postal_code" name="postal_code" value="<?php if(isset($_SESSION['search']['companies']['postal_code'])){echo $_SESSION['search']['companies']['postal_code'];}?>">
-
-					  	</td>
-					  </tr>
-					  <tr valign="middle">
-					  	<td width="25%">
-					  	<span><strong>Assigned User</strong></span><br/>
-					  	<select name="assigned_user_id[]" id = "assigned_user_id" multiple="true" multiple class="form-control chosen-select">
-					  	<option value=""></option>
-						<?php
-foreach($_SESSION['user_accounts'] as $user){
-?>
-						<option value="<?php echo $user['uacc_uid'];?>"
-						<?php if(isset($_SESSION['search']['companies']['assigned_user_id'])){ foreach($_SESSION['search']['companies']['assigned_user_id'] as $opn) { if($opn==$user['uacc_uid']){echo 'selected';};} }?>><?php echo $user['upro_first_name'].' '.$user['upro_last_name'];?></option>
-						<?php } ?>
-						</select>
-					  	</td>
-					  	<td width="25%">
-					  	<span><strong>Industry</strong><br>
-					  	<select id = "industry" name="industry" class="form-control chosen-select">
-					  	<option value=""></option>
-						<?php
-$company_types = lookupDropDownValues("industry");
-foreach($company_types as $option){
-?>
-						<option value="<?php echo $option;?>" <?php if(isset($_SESSION['search']['companies']['industry'])){ foreach($_SESSION['search']['companies']['industry'] as $opn) { if($opn==$option){echo 'selected';};} }?>><?php echo $_SESSION['drop_down_options'][$option]['name'];?></option>
-						<?php } ?>
-						</select>
-					  	</td>
-					  	<td width="25%">
-					  	<span><strong>Lead Source</strong><br>
-					  	<select id = "lead_source_id" name="lead_source_id" class="form-control chosen-select">
-					  	<option value=""></option>
-						<?php
-$company_types = lookupDropDownValues("lead_source");
-foreach($company_types as $option){
-?>
-						<option value="<?php echo $option;?>" <?php if(isset($_SESSION['search']['companies']['lead_source_id'])){ foreach($_SESSION['search']['companies']['lead_source_id'] as $opn) { if($opn==$option){echo 'selected';};} }?>><?php echo $_SESSION['drop_down_options'][$option]['name'];?></option>
-						<?php } ?>
-						</select>
-					  	</td>
-					  	<td width="25%">
-					  	<span><strong>Lead Status</strong></br>
-					  	<select id = "lead_status_id" name="lead_status_id" class="form-control chosen-select">
-					  	<option value=""></option>
-						<?php
-$company_types = lookupDropDownValues("lead_status");
-foreach($company_types as $option){
-?>
-						<option value="<?php echo $option;?>" <?php if(isset($_SESSION['search']['companies']['lead_status_id'])){ foreach($_SESSION['search']['companies']['lead_status_id'] as $opn) { if($opn==$option){echo 'selected';};} }?>><?php echo $_SESSION['drop_down_options'][$option]['name'];?></option>
-						<?php } ?>
-						</select>
-					  	</td>
-					  </tr>
-					  <tr>
-					  	<td><span><strong>Date Entered Between</strong></span>
-					  	<input class="form-control datetime" id="date_entered_start" name="date_entered_start" type="text" value="<?php if(isset($_SESSION['search']['companies']['date_entered_start'])){echo $_SESSION['search']['companies']['date_entered_start'];}?>">
-					  	<input class="form-control datetime" id="date_entered_end" name="date_entered_end" type="text">
-					  	</td>
-					  	<td><span><strong>Date Modified Between</strong></span>
-					  	<input class="form-control datetime" id="date_modified_start" name="date_modified_start" type="text">
-					  	<input class="form-control datetime" id="date_entered_end_1" name="date_entered_end" type="text">
-
-					  	</td>
-					  	<td colspan="2" align="right">
-
-					  	<input type="submit" name="adv_search_go" class="btn btn-success" value="Search">
-				<?php
-if($search_tab == "saved"){
-?>
-<input type="button" name="clear" onclick="window.location.href='<?php echo site_url('companies/search/' . $_SESSION['search_id'] . '/delete/1')?>'" class="btn btn-danger" name='DeleteSearch' value="Delete Saved Search">
-<?php
-}
-else{
-?>
-					  	<input type="submit" data-toggle="modal" data-target="#save-modal" name="adv_search_save" id = "adv_search_save" class="btn btn-warning" value="Search & Save" onclick="javascript: $('#searchLabel').text('Save Advanced Search'); $('#module').val('companies'); return false;">
-<?php
-}
-?>
-					  	<input type="submit" name="clear" class="btn btn-success" value="Clear">
-
-					  	</td>
-                      </tr>
-                      */ ?>
+                        $option_col++;
+                    }
+                    ?>
                   </tbody>
                </table>
 
@@ -315,15 +132,15 @@ else{
   <div class="modal-dialog">
     <div class="modal-content">
       <div class="modal-header">
-        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+        <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only"><?php echo $_SESSION['language']['global']['close'];?></span></button>
         <h4 class="modal-title" id="searchLabel"></h4>
       </div>
       <div class="modal-body">
-Please provide an easy to remember name for this saved search<br/>
+      <?php echo $_SESSION['language']['global']['saved_search_message'];?><br/>
 
 <input type="search" name="saved_search_name" class="form-control"/><br/>
 
-<input type="submit" tabindex="1" class="btn btn-warning" name="saved_search_result"  value="Save Search">
+<input type="submit" tabindex="1" class="btn btn-warning" name="saved_search_result"  value="<?php echo $_SESSION['language']['global']['save_search'];?>">
 
       </div>
     </div>
@@ -342,13 +159,13 @@ Please provide an easy to remember name for this saved search<br/>
 	foreach($company_updated_fields as $field_list){ ?>
 						  <th><?php echo $field_label[$field_list->field_name]["label_name"]; ?></th>
 						  <?php }?>
-						  <th class="text-center" width="10%">Actions</th>
+						  <th class="text-center" width="10%"><?php echo $_SESSION['language']['global']['actions'];?></th>
                       </tr>
                   </thead>
                   <tbody>
                       <?php if( ! $companies->num_rows() > 0 ) :?>
                       <tr>
-                          <td colspan="6" align="center">No companies</td>
+                          <td colspan="6" align="center"><?php echo $_SESSION['language']['global']['no_records'];?></td>
                       </tr>
                       <?php else: foreach($companies->result() as $company) :?>
                       <tr>
@@ -394,7 +211,7 @@ Please provide an easy to remember name for this saved search<br/>
 							<?php } } } } ?>
 
                           <td class="valign-middle">
-                              <a href="<?php echo site_url('companies/edit/' . $company->company_id); ?>"><i class="btn btn-xs btn-secondary fa fa-pencil"></i></a>
+                              <a href="<?php echo site_url($module_name . '/edit/' . $company->company_id); ?>"><i class="btn btn-xs btn-secondary fa fa-pencil"></i></a>
                               &nbsp;
                               <a href="javascript:delete_one( '<?php echo $company->company_id; ?>' )"><i class="btn btn-xs btn-secondary fa fa-times"></i></a>
                           </td>
@@ -404,13 +221,13 @@ Please provide an easy to remember name for this saved search<br/>
               </table>
               <div>
                   <div class="list-footer-left">
-                      <button type="button" class="btn btn-danger" onclick="delete_all()">Delete</button>
+                      <button type="button" class="btn btn-danger" onclick="delete_all()"><?php echo $_SESSION['language']['global']['delete'];?></button>
 
-                      <button type="button" class="btn btn-success" onclick="window.location.href='<?php echo site_url('companies/add')?>'">Add New</button>
+                      <button type="button" class="btn btn-success" onclick="window.location.href='<?php echo site_url($module_name . '/add')?>'"><?php echo $_SESSION['language']['global']['add_new'];?></button>
 
 					  <!--<a href='data/toExcel'>Export Data</a>-->
 
-					  <button type="button" class="btn btn-success" style="background-color: #0B82F6 !important; border-color: #0B82F6 !important" onclick="return export_selected();">Export CSV</button>
+					  <button type="button" class="btn btn-success" style="background-color: #0B82F6 !important; border-color: #0B82F6 !important" onclick="return export_selected();"><?php echo $_SESSION['language']['global']['export_csv'];?></button>
                   </div>
                   <div class="list-footer-right">
                       <?php echo $pager_links?>

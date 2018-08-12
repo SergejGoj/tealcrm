@@ -12,6 +12,9 @@ update sc_drop_down_options SET related_field_name = 'company_type' where relate
 4. Drop the sc_modules table and re-create and insert.  Added view_layouts, icon and listview_layout.
 Export structure/data and re-import for install
 
+5. Language for a user
+ALTER TABLE `sc_user_profiles`
+	ADD COLUMN `language` VARCHAR(50) NOT NULL DEFAULT '0' AFTER `upro_last_name`;
 
 New System Requirements
 * PHP 7.1 or higher

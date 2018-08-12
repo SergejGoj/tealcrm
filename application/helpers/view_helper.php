@@ -126,56 +126,90 @@ function format_field($module_name,$field,$data){
  * @access    public
  * @param    string    the module we are working with
  * @param    string    the value to display
+ * @param   bool    whether or not we are displaying multi select options
  * @return    string
  */
-function format_editable_field($module_name,$field,$data){
+function format_editable_field($module_name,$field,$data,$adv_search = false){
 
-    switch ($_SESSION['field_dictionary'][$module_name][$field]['field_type']){
+    if($field == 'created_by' || $field == 'modified_user_id'){
 
-        case "Text":
+        $assignedusers1 = getAssignedUsers1();
 
-            return '<input name="' . $field . '" type="text" class="form-control" id="' . $field . '"
-                value=" ' . $data . '">';
+        if($adv_search){
+            return form_dropdown($field.'[]', $assignedusers1, $data, "multiple='true' class='form-control chosen-select' id='". $field ."'");
+        }
+        else{
+            return form_dropdown($field, $assignedusers1, $data, "class='form-control' id='". $field ."'");
+        }
+        
+    }
+    elseif($field == 'date_modified' || $field == 'date_entered'){
 
-        break; // end text
-        case "User": 
+        if($adv_search){
+            return '<input class="form-control datetime" id="' . $field . '_start" name="' . $field . '_start" type="text">
+            <input class="form-control datetime" id="' . $field . '_end" name="' . $field . '_end" type="text">';
+        }
 
-            // load assigned users for view
-		    $assignedusers1 = getAssignedUsers1();
-            return form_dropdown($field, $assignedusers1, $data, "class='form-control' id='". $field ."'"); 
+    }
+    else{
 
-        break; // end User
-        case "Dropdown": 
-            return form_dropdown($field, dropdownCreator($field), $data, "class='form-control' id='" . $field . "'");
-        break;
-        case "Radio":
+        switch ($_SESSION['field_dictionary'][$module_name][$field]['field_type']){
 
-            return '
-                <label class="radio">
-                <input id="email_opt_out_1" name="' . $field . '" type="radio"
-                    value="Y" ' . set_radio($field, 'Y', $data == 'Y') . '>Yes
-                </label>
+            case "Text":
 
-                <div style="clear:both"></div>
+                return '<input name="' . $field . '" type="text" class="form-control" id="' . $field . '"
+                    value=" ' . $data . '">';
 
-                <label class="radio">
-                    <input id="email_opt_out_2" name="' . $field . '" type="radio"
-                        value="N" ' . set_radio($field, 'N', $data == 'N') . '>No
-                </label>
-            ';
+            break; // end text
+            case "User": 
 
-        break; // end Radio
-        case "Textarea":
-            return '<textarea name="description" id="description" class="form-control" rows="5">' . 
-            set_value($field, $data) . '</textarea>';
-        break;
-        case "Date":
-            // TBD
-        break; // end date        
-        case "Related_Company":
-            // TBD
-        break; // end Related Company
-    } // end switch
+                $assignedusers1 = getAssignedUsers1();
+
+                if($adv_search){
+                    return form_dropdown($field.'[]', $assignedusers1, $data, "multiple='true' class='form-control chosen-select' id='". $field ."'");
+                }
+                else{
+                    return form_dropdown($field, $assignedusers1, $data, "class='form-control' id='". $field ."'");
+                }
+
+            break; // end User
+            case "Dropdown": 
+                if($adv_search){
+                    return form_dropdown($field.'[]', dropdownCreator($field), $data, "multiple='true' class='form-control chosen-select' id='". $field ."'");
+                }
+                else{
+                    return form_dropdown($field, dropdownCreator($field), $data, "class='form-control' id='". $field ."'");
+                }
+            break;
+            case "Radio":
+
+                return '
+                    <label class="radio">
+                    <input id="email_opt_out_1" name="' . $field . '" type="radio"
+                        value="Y" ' . set_radio($field, 'Y', $data == 'Y') . '>Yes
+                    </label>
+
+                    <div style="clear:both"></div>
+
+                    <label class="radio">
+                        <input id="email_opt_out_2" name="' . $field . '" type="radio"
+                            value="N" ' . set_radio($field, 'N', $data == 'N') . '>No
+                    </label>
+                ';
+
+            break; // end Radio
+            case "Textarea":
+                return '<textarea name="description" id="description" class="form-control" rows="5">' . 
+                set_value($field, $data) . '</textarea>';
+            break;
+            case "Date":
+                return '<input class="form-control datetime" id="' . $field . '" name="' . $field . '" type="text">';
+            break; // end date        
+            case "Related_Company":
+                // TBD
+            break; // end Related Company
+        } // end switch
+    } // end if date_modified, created_by, date_entered, modidified_user_id
 
 } // end format_editable_field
 

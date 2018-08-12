@@ -183,7 +183,7 @@
 	$config['database']['custom']['user_profile']['foreign_key'] = 'upro_uacc_fk';
 	$config['database']['custom']['user_profile']['join'] = 'user_profiles.upro_uacc_fk';
 	$config['database']['custom']['user_profile']['custom_columns'] = array(
-		'upro_first_name','upro_last_name','upro_phone','upro_newsletter','upro_filename_mimetype','upro_filename_original'
+		'upro_first_name','upro_last_name','upro_phone','upro_newsletter','upro_filename_mimetype','upro_filename_original','language'
 	);
 
 	###+++++++++++++++++++++++++++###

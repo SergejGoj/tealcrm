@@ -47,7 +47,7 @@ class teal_global_vars extends CI_Model {
 
 		// get user companies
 
-		$query = $this->db->query("SELECT scua.uacc_uid, scua.uacc_email, scua.uacc_username, scup.upro_first_name, scup.upro_last_name, scup.upro_phone, scup.upro_filename_mimetype, scup.upro_filename_original, scup.email_sending_option, scup.username, scup.password, scup.imap_address, scup.ssl_value, scup.mail_server_port, scup.imap_active FROM sc_user_accounts scua INNER JOIN sc_user_profiles scup ON scup.upro_uacc_fk = scua.uacc_id where scua.uacc_active = 1");
+		$query = $this->db->query("SELECT scua.uacc_uid, scua.uacc_email, scua.uacc_username, scup.upro_first_name, scup.upro_last_name, scup.upro_phone, scup.upro_filename_mimetype, scup.upro_filename_original, scup.email_sending_option, scup.username, scup.password, scup.imap_address, scup.ssl_value, scup.mail_server_port, scup.imap_active, scup.language FROM sc_user_accounts scua INNER JOIN sc_user_profiles scup ON scup.upro_uacc_fk = scua.uacc_id where scua.uacc_active = 1");
 
 		foreach ($query->result_array() as $row)
 		{
@@ -132,7 +132,6 @@ class teal_global_vars extends CI_Model {
 			$_SESSION['field_dictionary'][$row['module']][$row['field_name']]['validation_rules'] = $row['validation_rules'];
 			$_SESSION['field_dictionary'][$row['module']][$row['field_name']]['calculation'] = $row['calculation'];
 			$_SESSION['field_dictionary'][$row['module']][$row['field_name']]['name_value'] = $row['name_value'];
-
 		}
 
 		//***************************
@@ -164,6 +163,17 @@ class teal_global_vars extends CI_Model {
 			$_SESSION['modules'][strtolower($row['module_name'])]['view_layout'] = $row['view_layout'];
 			$_SESSION['modules'][strtolower($row['module_name'])]['listview_layout'] = $row['listview_layout'];
 			$_SESSION['modules'][strtolower($row['module_name'])]['icon'] = $row['icon'];
+		}
+
+		//**************************
+		// LOAD LANGUAGE PACK
+		// based on the users preferences
+		$language = $_SESSION['user']['language'];
+		$query = $this->db->query("SELECT * from sc_language WHERE language = '" . $language . "'");
+
+		foreach ($query->result_array() as $row)
+		{
+			$_SESSION['language'][strtolower($row['module_name'])][$row['field_name']] = $row['value'];
 		}
 
 	}
