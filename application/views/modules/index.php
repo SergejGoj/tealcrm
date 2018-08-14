@@ -65,7 +65,8 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
            <form name="frmedit" id="frmedit" action="<?php echo site_url($module_name.'/search');?>" method="post" class="form parsley-form">
 			<div class="input-group">
 				<label for="search_box" class="sr-only"><?php echo $_SESSION['language']['global']['search'];?></label>
-				<input type="search" class="form-control" id="search_box" placeholder="NEED TO SORT THIS SECTION OUT" name="company_name" value="<?php if(isset($_SESSION['search']['companies']['company_name'])){echo $_SESSION['search']['companies']['company_name'];}?>">
+                <?php $name_value = display_name($this->module['name'],'',true);?>
+				<input type="search" class="form-control" id="search_box" placeholder="<?php echo $_SESSION['language']['global']['enter_search_here'];?>" name="<?php echo $name_value; ?>" value="<?php if(isset($_SESSION['search'][$module_name][$name_value])){echo $_SESSION['search'][$module_name][$name_value];}?>">
 				<div class="input-group-btn">
 					  	<input type="submit" name="search_go" class="btn btn-success" value="<?php echo $_SESSION['language']['global']['search'];?>">
 					  	<input type="submit" name="clear" class="btn btn-success" value="<?php echo $_SESSION['language']['global']['clear'];?>">
@@ -78,7 +79,7 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
 
           <div class="tab-pane fade <?php if($search_tab == "advanced" || $search_tab == "saved"){ echo 'active in';}?>" id="advanced">
 
- <form name="frmedit" id="frmedit" action="<?php echo site_url('companies/search');?>" method="post" class="form parsley-form">
+          <form name="frmedit" id="frmedit" action="<?php echo site_url($module_name . '/search');?>" method="post" class="form parsley-form">
                <table class="table table-striped table-bordered" style="font-size:11px;">
                   <tbody>
                     <?php 
@@ -126,12 +127,12 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
                         <?php
                         if($search_tab == "saved"){
                         ?>
-                        <input type="button" name="clear" onclick="window.location.href='<?php echo site_url($module_name . '/search/' . $_SESSION['search_id'] . '/delete/1')?>'" class="btn btn-danger" name='DeleteSearch' value="Delete Saved Search111">
+                        <input type="button" name="clear" onclick="window.location.href='<?php echo site_url($module_name . '/search/' . $_SESSION['search_id'] . '/delete/1')?>'" class="btn btn-danger" name='DeleteSearch' value="<?php echo $_SESSION['language']['global']['delete_saved_search'];?>">
                         <?php
                         }
                         else{
                         ?>
-                        <input type="submit" data-toggle="modal" data-target="#save-modal" name="adv_search_save" id = "adv_search_save" class="btn btn-warning" value="Search & Save" onclick="javascript: $('#searchLabel').text('Save Advanced Search111'); $('#module').val('companies'); return false;">
+                        <input type="submit" data-toggle="modal" data-target="#save-modal" name="adv_search_save" id = "adv_search_save" class="btn btn-warning" value="<?php echo $_SESSION['language']['global']['search_and_save'];?>" onclick="javascript: $('#searchLabel').text('<?php echo $_SESSION['language']['global']['close'];?>'); $('#module').val('companies'); return false;">
                         <?php
                         }
                         ?>
@@ -250,12 +251,12 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
   // delete single record
   delete_one=function( record_id ){
     // confirm
-    Messi.ask('Do you really want to delete the record?111', function(val) {
+    Messi.ask('<?php echo $_SESSION['language']['global']['are_you_sure_delete'];?>', function(val) {
       // confirmed
       if( val == 'Y' ){
         window.location.href="<?php echo site_url($module_name . '/delete')?>/" + record_id;
       }
-    }, {modal: true, title: 'Confirm Delete111'});
+    }, {modal: true, title: '<?php echo $_SESSION['language']['global']['confirm_delete'];?>'});
   }
 
   export_selected=function( ){
@@ -282,14 +283,14 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
     size = jQuery(":input[name='ids[]']:checked").length;
     // none selected
     if( size == 0 ){
-      Messi.alert('Please select a record to delete',function(){
+      Messi.alert('<?php echo $_SESSION['language']['global']['please_select_record_delete'];?>',function(){
 
-      }, {modal: true, title: 'Confirm Delete111'});
+      }, {modal: true, title: '<?php echo $_SESSION['language']['global']['confirm_delete'];?>'});
 
       return;
     }
     // confirm
-    Messi.ask('Do you really want to delete selected records?111', function(val) {
+    Messi.ask('<?php echo $_SESSION['language']['global']['are_you_sure_delete_multiple'];?>', function(val) {
       // confirmed
       if( val == 'Y' ){
         jQuery('#frmlist').prop('action', '<?php echo site_url($module_name . '/delete_all')?>');

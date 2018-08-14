@@ -232,7 +232,7 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 			url: '/ajax/people_list',  //server script to process data
 			type: 'POST',
 			async: true,
-			data: {id:'<?php echo $company->company_id;?>'},
+			data: {id:'<?php $id_single = $module_singular.'_id'; echo $record->{$id_single};?>'},
 			success: function(result) {
 				var resultObject = $.parseJSON(result);
 				lastFetchedFeed = resultObject.last;
@@ -254,37 +254,25 @@ function populate_list_view(module){
     $('<div class="row" style="font-weight:bold"><div class="col-md-3">Name</div><div class="col-md-3">Title</div><div class="col-md-3">Work Phone</div><div class="col-md-3">Email</div></div>').appendTo(tbody);
     $('<div class="row"><div class="col-md-3">hello</div><div class="col-md-3">hello</div><div class="col-md-3">hello</div><div class="col-md-3">hello</div></div>').appendTo(tbody);
 
-
-
-	
 }
-	
-	
-</script>
 
-<script type="text/javascript">
-  cancel=function(elm){
-    window.location.href = '<?php echo site_url('companies')?>';
-    return false;
-  }
 
-  edit=function(elm, id){
-    window.location.href = '<?php echo site_url('companies/edit')?>/' + id;
-    return false;
-  }
-
-  delete_one=function( company_id ){
-    // confirm
-    Messi.ask('Do you really want to delete the record?', function(val) {
-      // confirmed
-      if( val == 'Y' ){
-        window.location.href="<?php echo site_url('companies/delete')?>/" + company_id;
-      }
-    }, {modal: true, title: 'Confirm Delete'});
-  }
+delete_one=function( id ){
+// confirm
+Messi.ask('Do you really want to delete the record11?', function(val) {
+	// confirmed
+	if( val == 'Y' ){
+	window.location.href="<?php echo site_url($module_name . '/delete')?>/" + id;
+	}
+}, {modal: true, title: 'Confirm Delete111'});
+}
 
 
 $(document).ready(function(){
+
+	
+
+
 	$("#add_note_accounts").on("click", function(){
 		var desc = $.trim($("#activity_feed_body textarea").val());
 		if(desc.length < 1) return false;
@@ -294,7 +282,7 @@ $(document).ready(function(){
 			url: '/feeds/add',  //server script to process data
 			type: 'POST',
 			async: true,
-			data: {id:'<?php echo $company->company_id;?>', description:desc, cat:1},
+			data: {id:'<?php $id_single = $module_singular.'_id'; echo $record->{$id_single};?>', description:desc, cat:1},
 			success: function(result) {
 				//$("#activity_feed_body").append(result);
 				$("#activity_feed_body>.share-widget").after(result);
@@ -310,7 +298,7 @@ $(document).ready(function(){
 			url: '/ajax/more',  //server script to process data
 			type: 'POST',
 			async: true,
-			data: {id:'<?php echo $company->company_id;?>', last:lastFetchedFeed, cat:1},
+			data: {id:'<?php $id_single = $module_singular.'_id'; echo $record->{$id_single};?>', last:lastFetchedFeed, cat:1},
 			success: function(result) {
 				$(".panel .feed-more").text("Load More ").removeClass("active").find('i').remove();
 				var resultObject = $.parseJSON(result);

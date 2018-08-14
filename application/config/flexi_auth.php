@@ -73,6 +73,7 @@
 	$config['database']['user_acc']['columns']['failed_login_ban_date'] = 'uacc_date_fail_login_ban';
 	$config['database']['user_acc']['columns']['last_login_date'] = 'uacc_date_last_login';
 	$config['database']['user_acc']['columns']['date_added'] = 'uacc_date_added';
+	$config['database']['user_acc']['columns']['uacc_uid'] = 'uacc_uid';
 
 	// Custom columns can be added to the main user company table to enable library functions to handle additional custom data stored within the table.
 	$config['database']['user_acc']['custom_columns'] = array(

@@ -519,8 +519,100 @@
 		// done all of our search work, redirect to contacts view for the magic
 		header("Location: ".site_url($this->module['name']));
 
-	} // end search function   
+  } // end search function   
+  
+
+  	/**
+	 * Delete
+	 *
+	 * @param void
+	 * @return void
+	 */
+	public function delete( $id ){
+
+		// check
+		if( isset($id) ){
+
+      $user_id = $this->flexi_auth->get_user_id();
+
+      //uacc_email
+      $user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
+
+      // soft_delete(array(fields=>values):where clause)
+      $this->db->where($this->module['singular'].'_id',$id);
+      $data = array (
+        'deleted' => 1,
+        'date_modified' => gmdate('Y-m-d H:i:s'),
+        'modified_user_id' => $user['uacc_uid'],
+      );
+			if( $this->db->update($this->config->item('db_prefix').$this->module['name'], $data ) ){
+				// set flash
+				notify_set( array('status'=>'success', 'message'=>'Successfully deleted record111.') );
+			}else{
+				// set flash
+				notify_set( array('status'=>'error', 'message'=>'Record delete failed111.') );
+			}
+		}
+
+		// redirect
+		redirect( $this->module['name'] );
+	} // end delete
+ 
+	/**
+	 * Delete all
+	 *
+	 * @param void
+	 * @return void
+	 */
+	public function delete_all( ){
+		// post
+    $post = $this->input->post(null, true);
     
+		// check
+		if( isset($post['ids']) && ! empty($post['ids']) ){
+
+
+      $user_id = $this->flexi_auth->get_user_id();
+
+      //uacc_email
+      $user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
+    
+			// ids
+			$ids = $post['ids'];
+
+      // init
+			$deleted = 0;
+			// loop
+      // delete
+
+      $data = array (
+        'deleted' => 1,
+        'date_modified' => gmdate('Y-m-d H:i:s'),
+        'modified_user_id' => $user['uacc_uid'],
+      );
+
+      foreach($post['ids'] as $record){
+        $this->db->reset_query();
+        $this->db->where($this->module['singular'].'_id',$record);
+        if ( $this->db->update($this->config->item('db_prefix').$this->module['name'], $data ) ) {
+          $deleted++;
+        }
+      }
+
+			// message
+			if( $deleted ){
+				// set flash
+				notify_set( array('status'=>'success', 'message'=>sprintf('Successfully deleted %d record(s)111.', $deleted) ) );
+			}else{
+				// set flash
+				notify_set( array('status'=>'error', 'message'=>'Record delete failed111.') );
+			}
+		}
+
+		// redirect
+		redirect( $this->module['name'] );
+	} // end delete all  
+
     // set module
     function _set_module_data($module){
       // set
@@ -725,7 +817,7 @@
       }
       // send now
       print json_encode($response);    
-   }  
+   }  // end json list
    
    // quick search fields
    function _quick_search_fields($fields){
@@ -737,7 +829,7 @@
       }     
       // load search
       $this->search_result('quick', $post);
-   }
+   } // end quick search fields
    
    // reset method
    function _reset_method($method){       
@@ -751,7 +843,7 @@
       
       // return
       return $method;
-   }
+   } // end reset method
 }  
 
 /* End of file App_Controller.php */

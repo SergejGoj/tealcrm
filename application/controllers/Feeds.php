@@ -121,6 +121,7 @@ class Feeds extends App_Controller {
 		if( $this->input->post('id', true) ){
 			// post
 			$post = $this->input->post(null, true);
+
 			// now
 			$now = date('Y-m-d H:i:s');
 			// new
@@ -144,10 +145,20 @@ class Feeds extends App_Controller {
 			// Save new user
 			if( $nts->save() ){
 				// set flash
-				//notify_set( array('status'=>'success', 'message'=>'Successfully created new feed.') );
 
-				// redirect
-				//redirect( 'notes' );
+				if(!isset($user_name->upro_first_name) && !isset($user_name->upro_last_name)){
+					$name = 'User';
+				}
+				elseif (isset($user_name->upro_first_name) && !isset($user_name->upro_last_name)){
+					$name = $user_name->upro_first_name;
+				}
+				elseif (!isset($user_name->upro_first_name) && isset($user_name->upro_last_name)){
+					$name = $user_name->upro_last_name;
+				}
+				else{
+					$name = $user_name->upro_firstname . ' ' . $user_name->upro_last_name;
+				}
+				
 				echo '
 							<div class="feed-item feed-item-bookmark">
 								<div class="feed-icon">
@@ -155,7 +166,7 @@ class Feeds extends App_Controller {
 								</div>
 								<!-- /.feed-icon -->
 							<div class="feed-headline">
-								<span class="feed-subject">' . $user_name->upro_first_name . " " . $user_name->upro_last_name . '</span><br/>
+								<span class="feed-subject">' . $name . '</span><br/>
 
 								<i class="fa fa-clock-o"></i> <span class="feed-time">' . $date_entered . '</span>
 
@@ -271,44 +282,44 @@ class Feeds extends App_Controller {
 		$this->layout->view('/notes/view', $data);
 	}
 
-   /**
-	* Search
-	*
-	* @param void
-	* @return void
-	*/
-	public function search(){
-		// view data init
-		$data = array();
+//    /**
+// 	* Search
+// 	*
+// 	* @param void
+// 	* @return void
+// 	*/
+// 	public function search(){
+// 		// view data init
+// 		$data = array();
 
-		// load view
-		$this->layout->view('/notes/search', $data);
-	}
+// 		// load view
+// 		$this->layout->view('/notes/search', $data);
+// 	}
 
-	 /**
-	* Delete
-	*
-	* @param void
-	* @return void
-	*/
-	public function delete( $id ){
-		// init
-		$nts = new Note();
-		// find
-		$nts->where('id', $id)->get();
+// 	 /**
+// 	* Delete
+// 	*
+// 	* @param void
+// 	* @return void
+// 	*/
+// 	public function delete( $id ){
+// 		// init
+// 		$nts = new Note();
+// 		// find
+// 		$nts->where('id', $id)->get();
 
-		// Delete
-		if( $nts->delete() ){
-			// set flash
-			notify_set( array('status'=>'success', 'message'=>'Successfully deleted note.') );
-		}else{
-			// set flash
-			notify_set( array('status'=>'error', 'message'=>'Note delete failed.') );
-		}
+// 		// Delete
+// 		if( $nts->delete() ){
+// 			// set flash
+// 			notify_set( array('status'=>'success', 'message'=>'Successfully deleted note.') );
+// 		}else{
+// 			// set flash
+// 			notify_set( array('status'=>'error', 'message'=>'Note delete failed.') );
+// 		}
 
-		// redirect
-		redirect( 'notes' );
-	}
+// 		// redirect
+// 		redirect( 'notes' );
+// 	}
 
 	/**
 	* Delete all
