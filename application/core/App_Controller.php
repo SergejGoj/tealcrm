@@ -267,8 +267,14 @@
       $data[$fields['field_name']] = dropdownCreator($fields['field_name']);
     }   
 
+    // set information about module
+    $data['module_name'] = $this->module['name'];
+    $data['module_singular'] = $this->module['singular'];
+    $data['framework'] = json_decode($_SESSION['modules'][$this->module['name']]['view_layout']);    
+
+
 		// load view
-    $this->layout->view('/'.$this->module['name'].'/add', $data);
+    $this->layout->view('modules/add', $data);
     
 	} // end module add record
 
