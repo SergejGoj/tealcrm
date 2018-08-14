@@ -127,7 +127,6 @@ class teal_global_vars extends CI_Model {
 		foreach ($query->result_array() as $row)
 		{
 			$_SESSION['field_dictionary'][$row['module']][$row['field_name']]['field_name'] = $row['field_name'];
-			$_SESSION['field_dictionary'][$row['module']][$row['field_name']]['field_label'] = $row['field_label'];
 			$_SESSION['field_dictionary'][$row['module']][$row['field_name']]['field_type'] = $row['field_type'];
 			$_SESSION['field_dictionary'][$row['module']][$row['field_name']]['validation_rules'] = $row['validation_rules'];
 			$_SESSION['field_dictionary'][$row['module']][$row['field_name']]['calculation'] = $row['calculation'];

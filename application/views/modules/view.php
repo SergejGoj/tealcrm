@@ -125,7 +125,7 @@ $this->load->helper('view_helper');
 
 			  		<div class="panel panel-default">
 						<div class="panel-heading">
-							<h3 class="panel-title">Record Info</h3>
+							<h3 class="panel-title"><?php echo $_SESSION['language']['global']['record_info'];?></h3>
 						</div>
 						<div class="panel-body">
 							<div class="row">
@@ -151,7 +151,7 @@ foreach ($related_modules as $rel){
             <div class="tab-pane fade in" id="<?php echo $rel['module']?>">
 				<div class="panel panel-default">
 					<div class="panel-heading">
-						<h3 class="panel-title"><?php echo ucfirst($rel['module']);?></h3>
+						<h3 class="panel-title"><?php echo $_SESSION['language'][$rel['module']]['module_name'];?></h3>
 					</div>
 					<div class="panel-body">
 							<?php
@@ -166,14 +166,14 @@ foreach ($related_modules as $rel){
 							}
 							else{
 
-								echo "<i>No ". $rel['module'] . "</i>";
+								echo "<i> " . $_SESSION['language']['global']['no'] . ' ' . $rel['module'] . "</i>";
 
 							}
 
 							?>
 							<br/>
 							
-							<a href="<?php echo site_url($rel['module'] . '/add') . "/" . $id ?>" class="label label-success">Add New <?php echo ucfirst($rel['module']);?></a> <a href="<?php echo site_url($rel['module'] . '/related_' . $module_name . "/" . $id) ?>" class="label label-info">View More <?php echo ucfirst($rel['module'])?></a>						
+							<a href="<?php echo site_url($rel['module'] . '/add') . "/" . $id ?>" class="label label-success"><?php echo $_SESSION['language']['global']['add_new'];?> <?php echo $_SESSION['language'][$rel['module']]['module_name'];?></a> <a href="<?php echo site_url($rel['module'] . '/related_' . $module_name . "/" . $id) ?>" class="label label-info"><?php echo $_SESSION['language']['global']['view_more'];?> <?php echo $_SESSION['language'][$rel['module']]['module_name'];?></a>						
 					</div>
 				</div>
             </div> <!-- / end panel -->
@@ -191,16 +191,16 @@ foreach ($related_modules as $rel){
 
 			<div class="panel panel-default">
 				<div class="panel-heading">
-					<h3 class="panel-title">Messages</h3>
+					<h3 class="panel-title"><?php echo $_SESSION['language']['global']['messages'];?></h3>
 				</div>
 	
 				<div class="panel-body" id="activity_feed_body">
 					<div class="share-widget clearfix">
-						<textarea class="form-control share-widget-textarea" placeholder="Add Comment..." rows="3" tabindex="1"></textarea>
+						<textarea class="form-control share-widget-textarea" placeholder="<?php echo $_SESSION['language']['global']['add_comment'];?>" rows="3" tabindex="1"></textarea>
 	
 						<div class="share-widget-actions">
 							<div class="pull-right">
-								<button class="btn btn-primary btn-sm" id="add_note_accounts" tabindex="2">Add Comment</button>
+								<button class="btn btn-primary btn-sm" id="add_note_accounts" tabindex="2"><?php echo $_SESSION['language']['global']['add_comment'];?></button>
 							</div>
 						</div><!-- /.share-widget-actions -->
 					</div><!-- /.share-widget -->
@@ -264,7 +264,7 @@ Messi.ask('Do you really want to delete the record11?', function(val) {
 	if( val == 'Y' ){
 	window.location.href="<?php echo site_url($module_name . '/delete')?>/" + id;
 	}
-}, {modal: true, title: 'Confirm Delete111'});
+}, {modal: true, title: '<?php echo $_SESSION['language']['global']['confirm_delete'];?>'});
 }
 
 
@@ -293,14 +293,14 @@ $(document).ready(function(){
 
 	var lastFetchedFeed = 5;
 	$(".panel .feed-more").on("click", function(){
-		$(this).text("Loading ").addClass("active").append(' <i class="fa fa-gear fa-spin"></i>');
+		$(this).text("<?php echo $_SESSION['language']['global']['loading'];?>").addClass("active").append(' <i class="fa fa-gear fa-spin"></i>');
 		$.ajax({
 			url: '/ajax/more',  //server script to process data
 			type: 'POST',
 			async: true,
 			data: {id:'<?php $id_single = $module_singular.'_id'; echo $record->{$id_single};?>', last:lastFetchedFeed, cat:1},
 			success: function(result) {
-				$(".panel .feed-more").text("Load More ").removeClass("active").find('i').remove();
+				$(".panel .feed-more").text("<?php echo $_SESSION['language']['global']['load_more'];?>").removeClass("active").find('i').remove();
 				var resultObject = $.parseJSON(result);
 				lastFetchedFeed = resultObject.last;
 				$(resultObject.value).insertBefore($("#activity_feed_body .feed-more"));
