@@ -483,22 +483,22 @@ class Ajax extends App_Controller {
 	* @param $term = $post['term'], the term we are searching for
 	* @return styled html search result pulled from the module module_search
 	*/
-	public function search(){
-		$post = $this->input->post(null, true);
-		 $mod = $post['mod'];
-		 $term = $post['term'];
-		 if(isset($post['type'])){
-			 $field_type = $post['type'];
-			 $filter_by = $post['filt'];
-			 $filter_val1 = $post['filtval_a'];
-			 $filter_val2 = $post['filtval_b'];
-		}else{
-			$field_type = $filter_by = $filter_val1 = $filter_val2 = "";
-		}
-		$this->load->model("module_search");
-		list($results,$rows) = $this->module_search->seachModules($mod, $term, $filter_by, $filter_val1, $filter_val2, $field_type);
-		echo json_encode(array("value"=>$results, "rows"=>$rows));
-	}
+	// public function search(){
+	// 	$post = $this->input->post(null, true);
+	// 	 $mod = $post['mod'];
+	// 	 $term = $post['term'];
+	// 	 if(isset($post['type'])){
+	// 		 $field_type = $post['type'];
+	// 		 $filter_by = $post['filt'];
+	// 		 $filter_val1 = $post['filtval_a'];
+	// 		 $filter_val2 = $post['filtval_b'];
+	// 	}else{
+	// 		$field_type = $filter_by = $filter_val1 = $filter_val2 = "";
+	// 	}
+	// 	$this->load->model("module_search");
+	// 	list($results,$rows) = $this->module_search->seachModules($mod, $term, $filter_by, $filter_val1, $filter_val2, $field_type);
+	// 	echo json_encode(array("value"=>$results, "rows"=>$rows));
+	// }
 
    /**
 	* On user change/click on check mark to indicate a task being done or not, update database based on entry

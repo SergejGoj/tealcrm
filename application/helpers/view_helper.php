@@ -163,7 +163,7 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
 
             case "Text":
 
-                return '<input name="' . $field . '" type="text" class="form-control" id="' . $field . '" value="' . $data . '">';
+                return '<input name="' . $field . '" type="text" autocomplete="off" class="form-control" id="' . $field . '" value="' . $data . '">';
 
             break; // end text
             case "User": 
@@ -208,10 +208,22 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
                 set_value($field, $data) . '</textarea>';
             break;
             case "Date":
-                return '<input class="form-control datetime" id="' . $field . '" name="' . $field . '" type="text">';
+                return '<input class="form-control datetime" id="' . $field . '" name="' . $field . '" type="text" autocomplete="off">';
             break; // end date        
             case "Related_Company":
-                // TBD
+                    $CI =& get_instance();
+                    if(!is_null($data)){
+                        // get the name of the company to populate in the search box
+                        $query = $CI->db->from($CI->config->item('db_prefix').'companies')->where('company_id', $data)->get();
+                        $row = $query->row();
+                        $name = $row->company_name;
+                    }
+                    else
+                        $name = '';
+                    return '
+                        <input type="text" name="company_viewer" id="company_viewer" autocomplete="off" class="form-control" value="' . $name . '" />
+                        <input type="hidden" name="company_id" id="company_id" value="' . $data . '" /> 
+                    ';      
             break; // end Related Company
         } // end switch
     } // end if date_modified, created_by, date_entered, modidified_user_id

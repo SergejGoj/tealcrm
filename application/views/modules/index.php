@@ -193,7 +193,7 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
 
                         foreach($records->result() as $record){
 
-                            $rec_id_name = $module_singular.'_id';
+                            $rec_id_name = $_SESSION['modules'][$this->module['name']]['db_key'];
 
                             ?>
                                 <tr>
@@ -312,8 +312,37 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
 			mask: true,
 			timepicker: false
 		});
-});
 
+		//autocomplete for companies
+
+		$( "#company_viewer" ).autocomplete({
+			source: function( request, response ) {
+				$.ajax({
+					url: "/ajax/accountsAutocomplete",
+					dataType: "json",
+					data: {
+						q: request.term
+					},
+					success: function( data ) {
+                        console.log('hi');
+						response( data );
+					}
+				});
+			},
+			minLength: 3,
+			select: function( event, ui ) {
+				console.log( ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
+				$("#company_id").val(ui.item.id);
+			},
+			open: function() {
+				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+			},
+			close: function() {
+				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+			}
+		});
+
+});
 
 jQuery(document).ready(function(){
 
@@ -325,9 +354,9 @@ jQuery(document).ready(function(){
       '.chosen-select-width'     : {width:"95%"}
     }
     for (var selector in config) {
-
       $(selector).chosen(config[selector]);
     }
-  });
 
+
+});
 </script>

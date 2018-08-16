@@ -38,7 +38,7 @@ class AdvancedSearch {
     							'Clear',
     							'saved_search_result',
     							'Save Search'
-    							);
+								);
 
     }
 
@@ -110,7 +110,7 @@ class AdvancedSearch {
 		// parse through post and store in sessions
 		$param_count = 0; // if this stays 0, then we had none and need to cancel the criteria store
 		foreach($search_data as $key => $value){
-				if(in_array($value, $this->search_ignore) || empty($value) || $key == 'saved_search_name'){
+				if(in_array($key, $this->search_ignore) || in_array($value, $this->search_ignore) || empty($value) || $key == 'saved_search_name'){
 
 				}
 				else{

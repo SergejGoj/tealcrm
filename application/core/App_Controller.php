@@ -222,7 +222,7 @@
         $record = array();
 
         // set unique id for the record
-        $record[$this->module['singular'].'_id'] = $this->uuid->v4();
+        $record[$_SESSION['modules'][$this->module['name']]['db_key']] = $this->uuid->v4();
 
         // cycle through field dictionary and associate appropriate fields
         foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
@@ -251,7 +251,7 @@
 					notify_set( array('status'=>'success', 'message'=>'Successfully created new '.$this->module['singular'].'.') );
 
 					// redirect
-					redirect( $this->module['name'].'/view/' . $record[$this->module['singular'].'_id'] );
+					redirect( $this->module['name'].'/view/' . $record[$_SESSION['modules'][$this->module['name']]['db_key']] );
 				}
 			}
 			else{
@@ -271,7 +271,6 @@
     $data['module_name'] = $this->module['name'];
     $data['module_singular'] = $this->module['singular'];
     $data['framework'] = json_decode($_SESSION['modules'][$this->module['name']]['view_layout']);    
-
 
 		// load view
     $this->layout->view('modules/add', $data);
@@ -301,7 +300,7 @@
     // find the record
     $org_record = $this->db->select('*')->from($this->config->item('db_prefix').$this->module['name'])
     ->where('deleted','0')
-    ->where($this->module['singular'].'_id',$record_id)->get();
+    ->where($_SESSION['modules'][$this->module['name']]['db_key'],$record_id)->get();
 
     // let's make sure we can find the record being requested
     if( $this->db->affected_rows() <= 0 ){
@@ -357,7 +356,7 @@
         }          
 
         // update
-        $this->db->where($this->module['singular'].'_id',$record_id);
+        $this->db->where($_SESSION['modules'][$this->module['name']]['db_key'],$record_id);
         ;
 
 				if( $this->db->update($this->config->item('db_prefix').$this->module['name'], $record) ){

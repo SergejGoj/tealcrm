@@ -4,7 +4,7 @@ $this->load->helper('view_helper');
 
 ?>
 
-<h3 class="content-title">Add New Company</h3>
+<h3 class="content-title">Add New <?php echo ucfirst($_SESSION['language'][$module_name]['module_singular']);?></h3>
 
 <?php
 
@@ -50,7 +50,7 @@ echo form_open($module_name . '/add', $attributes);
                     <div class="form-group col-sm-6">
                         <?php // check to see if column is empty or not
 						if(!empty( $_SESSION['field_dictionary'][$module_name][$row[0]])){
-						?><strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[0]]['field_label'];?></strong><br/><?php echo format_editable_field($module_name,$row[0],set_value($row[0]));?><br/><br/>
+						?><strong><?php echo $_SESSION['language'][$module_name][$row[0]];?></strong><br/><?php echo format_editable_field($module_name,$row[0],set_value($row[0]));?><br/><br/>
 						<?php } ?>
                     </div>
 
@@ -59,7 +59,7 @@ echo form_open($module_name . '/add', $attributes);
 						// check to see if column is empty or not
 						if(!empty( $_SESSION['field_dictionary'][$module_name][$row[1]])){
 						?>								
-						<strong><?php echo $_SESSION['field_dictionary'][$module_name][$row[1]]['field_label'];?></strong><br/>
+						<strong><?php echo $_SESSION['language'][$module_name][$row[1]];?></strong><br/>
 						<?php echo format_editable_field($module_name,$row[1], set_value($row[1]));?><br/><br/>
 						<?php } ?>
                     </div>
@@ -128,5 +128,33 @@ echo form_open($module_name . '/add', $attributes);
             },
             errorElement: 'em'
         });
+
+		$( "#company_viewer" ).autocomplete({
+			source: function( request, response ) {
+				$.ajax({
+					url: "/ajax/accountsAutocomplete",
+					dataType: "json",
+					data: {
+						q: request.term
+					},
+					success: function( data ) {
+                        console.log('hi');
+						response( data );
+					}
+				});
+			},
+			minLength: 3,
+			select: function( event, ui ) {
+				console.log( ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
+				$("#company_id").val(ui.item.id);
+			},
+			open: function() {
+				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+			},
+			close: function() {
+				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+			}
+		});
+
     });
 </script>

@@ -18,6 +18,10 @@ ALTER TABLE `sc_user_profiles`
 
 6. More upgrade stuff.  Column list view tables are deleted and need to be converted into list_layout.
 
+7. Add more options to drop down options table
+INSERT INTO `tealcrm`.`sc_drop_down_options` (`name`, `related_module_id`, `related_field_name`) VALUES ('Prospect', '1', 'contact_type');
+INSERT INTO `tealcrm`.`sc_drop_down_options` (`name`, `related_module_id`, `related_field_name`) VALUES ('Customer', '1', 'contact_type');
+
 New System Requirements
 * PHP 7.1 or higher
 * MySql 5.7 or higher
