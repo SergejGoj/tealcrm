@@ -156,11 +156,10 @@ foreach ($related_modules as $rel){
 					<div class="panel-body">
 							<?php
 							if($rel['total_rows'] > 0){
-								foreach ($rel['data'] as $rc) {
+
 									// calls helper to format and display the data depending on the module
 									echo format_related_list($rel['module'], $rel['data'], $rel['module_id']);
-																		
-								}
+
 							}
 							else{
 
