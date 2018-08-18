@@ -95,8 +95,18 @@ echo form_open($module_name . '/edit/' . $id, $attributes);
         return false;
     }
 
+
+
     // document ready
     jQuery(document).ready(function () {
+
+        // picker
+        jQuery('.datetime').datetimepicker({
+            format: 'm/d/Y',
+            mask: true,
+            timepicker: false,
+        });
+
         var validator = jQuery("#frmedit").validate({
             ignore: "",
             rules: {

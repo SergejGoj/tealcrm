@@ -98,7 +98,7 @@ function format_field($module_name,$field,$data){
             return $data;
         break;
         case "Date":
-            if(isset($data)){
+            if(isset($data) && !is_null($data) && $data != '0000-00-00'){
                 return date("F j, Y", strtotime($data));
             }
             else{

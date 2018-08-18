@@ -156,13 +156,11 @@ foreach ($related_modules as $rel){
 					<div class="panel-body">
 							<?php
 							if($rel['total_rows'] > 0){
-
 								foreach ($rel['data'] as $rc) {
 									// calls helper to format and display the data depending on the module
 									echo format_related_list($rel['module'], $rel['data'], $rel['module_id']);
 																		
 								}
-
 							}
 							else{
 
@@ -180,8 +178,6 @@ foreach ($related_modules as $rel){
 <?php
 } // end output of related records
 ?>
-
-                             							
 
           </div> <!-- /.tab-content -->
 
@@ -270,8 +266,12 @@ Messi.ask('Do you really want to delete the record11?', function(val) {
 
 $(document).ready(function(){
 
-	
-
+	// picker
+	jQuery('.datetime').datetimepicker({
+		format: 'm/d/Y',
+		mask: true,
+		timepicker: false,
+	});
 
 	$("#add_note_accounts").on("click", function(){
 		var desc = $.trim($("#activity_feed_body textarea").val());
@@ -309,5 +309,8 @@ $(document).ready(function(){
 		});
 	});
 });
+
+
+
 
 </script>

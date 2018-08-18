@@ -229,7 +229,12 @@
 
           if(isset($post[$fields['field_name']])){
 
-            $record[$fields['field_name']] = $post[$fields['field_name']];
+            if($fields['field_type'] == 'Date'){
+              $record[$fields['field_name']] = date ('Y-m-d H:i:s', strtotime($post[$fields['field_name']]));
+            }
+            else{
+              $record[$fields['field_name']] = $post[$fields['field_name']];
+            }
           }
           else{
             // set default if any
@@ -343,7 +348,15 @@
 
           if(isset($post[$fields['field_name']])){
 
-            $record[$fields['field_name']] = $post[$fields['field_name']];
+            // need to clean up dates
+            // eventually we will have a class to scrub this stuff
+            if($fields['field_type'] == 'Date'){
+              $record[$fields['field_name']] = date ('Y-m-d H:i:s', strtotime($post[$fields['field_name']]));
+            }
+            else{
+              $record[$fields['field_name']] = $post[$fields['field_name']];
+            }
+
           }
           else{
             // set default if any
@@ -353,7 +366,7 @@
 
           }
 
-        }          
+        }    
 
         // update
         $this->db->where($_SESSION['modules'][$this->module['name']]['db_key'],$record_id);
