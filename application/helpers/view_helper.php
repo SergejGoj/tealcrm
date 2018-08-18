@@ -21,24 +21,21 @@
  * @access    public
  * @param    string    the module we are working with
  * @param    string    the record we are dealing with
- * @param   bool    returns the field_name instead of the data
+ * @param   bool    returns the display name
  * @return    string
  */
 function display_name($module,$data,$field_name_return = false){
 
+    $name = '';
+
     foreach($_SESSION['field_dictionary'][$module] as $row){
         if ( $row['name_value'] == 1 ){
-
-            if(!$field_name_return){
-                return $data->{$row['field_name']};
-            }
-            else{
-                return $row['field_name'];
-            }
-
-            break;
+            $name .= $data->{$row['field_name']} . ' ';
         }
     }
+
+    return $name;
+
 } // end display_name
 
 /**
