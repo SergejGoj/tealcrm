@@ -152,8 +152,14 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
     elseif($field == 'date_modified' || $field == 'date_entered'){
 
         if($adv_search){
-            return '<input class="form-control datetime" id="' . $field . '_start" name="' . $field . '_start" type="text">
-            <input class="form-control datetime" id="' . $field . '_end" name="' . $field . '_end" type="text">';
+            if(!is_null($data) && $date != '0000-00-00'){
+                $date = date('m/d/Y',strtotime($data));
+            }
+            else{
+                $date = '';
+            }            
+            return '<input class="form-control datetime" value = "' . $date . '" id="' . $field . '_start" name="' . $field . '_start" type="text">
+            <input class="form-control datetime"  value = "' . $date . '" id="' . $field . '_end" name="' . $field . '_end" type="text">';
         }
 
     }
@@ -208,7 +214,13 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
                 set_value($field, $data) . '</textarea>';
             break;
             case "Date":
-                return '<input class="form-control datetime" id="' . $field . '" name="' . $field . '" type="text" autocomplete="off">';
+                if(!is_null($data) && $date != '0000-00-00'){
+                    $date = date('m/d/Y',strtotime($data));
+                }
+                else{
+                    $date = '';
+                }
+                return '<input class="form-control datetime" value = "' . $date . '" id="' . $field . '" name="' . $field . '" type="text" autocomplete="off">';
             break; // end date        
             case "Related_Company":
                     $CI =& get_instance();

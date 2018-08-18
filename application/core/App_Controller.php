@@ -148,7 +148,6 @@
 
 		$data['search_tab'] = $search_tab;
 
-
 		// row per page
 		$row_per_page = config_item('row_per_page');
 

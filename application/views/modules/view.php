@@ -10,7 +10,7 @@ $this->load->helper('view_helper');
  <h2><?php echo display_name ( $module_name, $record); ?></h2>
 
 		<div class="btn-group">
-			<a href="<?php echo site_url($module_name . '/edit') . "/" . $record->company_id; ?>" class="btn btn-tertiary">Edit <?php echo ucfirst($module_singular);?></a> <button class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" type="button"><span class="caret"></span></button>
+			<a href="<?php echo site_url($module_name . '/edit') . "/" . $record->{$_SESSION['modules'][$module_name]['db_key']}; ?>" class="btn btn-tertiary">Edit <?php echo ucfirst($module_singular);?></a> <button class="btn btn-tertiary dropdown-toggle" data-toggle="dropdown" type="button"><span class="caret"></span></button>
 <hr/>
 			<ul class="dropdown-menu">
 

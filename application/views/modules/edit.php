@@ -94,11 +94,39 @@ echo form_open($module_name . '/edit/' . $id, $attributes);
         window.location.href = '<?php echo site_url($module_name)?>';
         return false;
     }
+</script>
 
 
+<script type="text/javascript">
 
-    // document ready
-    jQuery(document).ready(function () {
+jQuery(document).ready(function () {
+
+		$( "#company_viewer" ).autocomplete({
+			source: function( request, response ) {
+				$.ajax({
+					url: "/ajax/accountsAutocomplete",
+					dataType: "json",
+					data: {
+						q: request.term
+					},
+					success: function( data ) {
+                        console.log('hi');
+						response( data );
+					}
+				});
+			},
+			minLength: 3,
+			select: function( event, ui ) {
+				console.log( ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
+				$("#company_id").val(ui.item.id);
+			},
+			open: function() {
+				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+			},
+			close: function() {
+				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+			}
+		});
 
         // picker
         jQuery('.datetime').datetimepicker({
@@ -107,36 +135,62 @@ echo form_open($module_name . '/edit/' . $id, $attributes);
             timepicker: false,
         });
 
-        var validator = jQuery("#frmedit").validate({
-            ignore: "",
-            rules: {
-                company: "required",
-            },
-            messages: {
-                company: "Enter name",
-            },
-            errorPlacement: function (error, element) {
-                error.insertAfter(element.parent().find('label:first'));
-            },
-            invalidHandler: function (form, validator) {
-                //manually highlight the main accordion
-                $(".panel").removeClass("is-open");
 
-                //manually close all accordions except collapseOne
-                $(".panel-collapse").each(function (e) {
-                    if ($(this).attr("id") != "collapseOne")
-                        $(this).removeClass('in');
-                });
-
-                //manually highlight the header of collapseOne
-                if ($("#collapseOne").parent().hasClass("is-open") == false)
-                    $('#collapseOne').parent().addClass('is-open');
-
-                //check if collapseOne is open or not, if not then open it
-                if ($("#collapseOne").hasClass("in") == false)
-                    $('#collapseOne').collapse('show');
-            },
-            errorElement: 'em'
-        });
     });
+
+function checkaccount(form) {
+
+    var companyname = $('#company_viewer').val();
+    var acccountid = $('#company').val();
+    var accountnamebold = companyname.bold();
+    console.log('COmpany name:' + companyname);
+    if (companyname != "") {
+        if (acccountid == "") {
+            getcompanyid(form, companyname, accountnamebold);
+        } else {
+            form.submit();
+        }
+    } else {
+
+        form.submit();
+    }
+}
+
+function wipecompanyid() {
+    $('#company').val('');
+}
+
+function getcompanyid(form, companyname, accountnamebold) {
+console.log('company name: ' + companyname);
+$.ajax({
+    url: "/ajax/getCompanyIdByName",
+    data: {
+        q: companyname
+    },
+    success: function(data) {
+        createorsavecompany(data, form, accountnamebold);
+    }
+});
+}
+
+function createorsavecompany(companyid, form, accountnamebold){
+if(companyid == '') {
+    Messi.ask('Do you want to Create Company ' + accountnamebold + ' for this Person?', function (val) {
+        if (val == 'Y') {
+            $('#is_company').val('1');
+            form.submit();
+        }
+        if (val == 'N') {
+            $('#is_company').val('0');
+            form.submit();
+        }
+    }, {
+        modal: true,
+        title: 'Confirm Create'
+    });
+} else {
+    $("#company").val(companyid);
+    form.submit();
+}
+}
 </script>
