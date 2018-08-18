@@ -544,7 +544,7 @@
       $user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
 
       // soft_delete(array(fields=>values):where clause)
-      $this->db->where($this->module['singular'].'_id',$id);
+      $this->db->where($_SESSION['modules'][$this->module['name']]['db_key'],$id);
       $data = array (
         'deleted' => 1,
         'date_modified' => gmdate('Y-m-d H:i:s'),

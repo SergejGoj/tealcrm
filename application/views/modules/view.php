@@ -15,7 +15,7 @@ $this->load->helper('view_helper');
 			<ul class="dropdown-menu">
 
 				<li>
-					<a href="javascript:delete_one( '<?php echo $record->company_id?>' );">Delete <?php echo ucfirst($module_singular);?></a>
+					<a href="javascript:delete_one( '<?php echo $record->{$_SESSION['modules'][$module_name]['db_key']}?>' );">Delete <?php echo ucfirst($module_singular);?></a>
 				</li>
 			</ul>
 		</div><!-- /.btn-gruop -->
