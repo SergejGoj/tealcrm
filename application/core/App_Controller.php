@@ -106,28 +106,51 @@
 
 			$this->db->group_start();
 
-			foreach($_SESSION['search'][$this->module['name']] as $key => $value){
+      foreach($_SESSION['search'][$this->module['name']] as $key => $value){
 
-				if($key != "search_type" && $key != "date_entered_start" && $key != "date_entered_end" && $key != "date_modified_start" && $key != "date_modified_end" && $key != "company_type" && $key != "assigned_user_id" && $key != "industry" && $key != "lead_source_id" && $key != "lead_status_id"){
-					$this->db->like($key, $value);
-				}
+        if ( isset ( $_SESSION['field_dictionary'][$this->module['name']][$key] ) ){
 
-				if($key == "assigned_user_id" || $key == "industry" || $key == "lead_source_id" || $key == "lead_status_id" || $key == "company_type")
-				{
-          $this->db->where_in($key, $value);
-				}
+          // this is a dictionary field 
+          switch ($_SESSION['field_dictionary'][$this->module['name']][$key]['field_type'] && $_SESSION['field_dictionary'][$this->module['name']][$key]['name_value'] == 0){
+            case 'Dropdown': $this->db->where_in($key, $value); break;
+            case 'User': $this->db->where_in($key, $value); break;
+            default: $this->db->like($key, $value); break; 
+          }
 
+        }
+
+        // check for name value
+        //if ( $_SESSION['field_dictionary'][$this->module['name']][$key]['name_value'] == 1 ){
+        if ($key == $this->module['name']."_search"){
+          // let's find out the named value and do something with it
+          foreach($_SESSION['field_dictionary'][$this->module['name']] as $row){
+            if ( $row['name_value'] == 1 ){
+
+              if( strtolower($this->module['name']) == 'people'){
+                $data = explode (" ", $value);
+                foreach ($data as $item){
+                  // split out first and last name if needed
+                  $this->db->or_like($row['field_name'], $item);
+
+                }
+              }
+              else{
+                  $this->db->like($row['field_name'], $value);
+              }
+            }
+          } // end for each dictionary check for name value        
+        }
+        // capture any date fields
 				if($key == "date_entered_start" || $key == "date_entered_end" || $key == "date_modified_start" || $key == "date_modified_end"){
-
 					switch($key){
 						case'date_entered_start':$this->db->where('date_entered >=', gmdate('Y-m-d 00:00:00', strtotime($value)));break;
 						case'date_entered_end':$this->db->where('date_entered <=', gmdate('Y-m-d 23:59:59', strtotime($value)));break;
 						case'date_modified_start':$this->db->where('date_modified >=', gmdate('Y-m-d 00:00:00', strtotime($value)));break;
 						case'date_modified_end':$this->db->where('date_modified <=', gmdate('Y-m-d 23:59:59', strtotime($value)));break;
 					}
-				}
+				} // end if dates
 
-			}
+			} // end foreach key and value from search request
 
 			// set display settings
 			if(isset($_SESSION['search'][$this->module['model']]['search_type'])){

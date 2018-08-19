@@ -29,6 +29,7 @@ function display_name($module,$data,$field_name_return = false){
     $name = '';
 
     foreach($_SESSION['field_dictionary'][$module] as $row){
+
         if ( $row['name_value'] == 1 ){
             $name .= $data->{$row['field_name']} . ' ';
         }

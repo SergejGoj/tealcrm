@@ -65,8 +65,7 @@ if(isset($_SESSION['saved_searches_index'][$module_name])){
            <form name="frmedit" id="frmedit" action="<?php echo site_url($module_name.'/search');?>" method="post" class="form parsley-form">
 			<div class="input-group">
 				<label for="search_box" class="sr-only"><?php echo $_SESSION['language']['global']['search'];?></label>
-                <?php $name_value = display_name($this->module['name'],'',true);?>
-				<input type="search" class="form-control" id="search_box" placeholder="<?php echo $_SESSION['language']['global']['enter_search_here'];?>" name="<?php echo $name_value; ?>" value="<?php if(isset($_SESSION['search'][$module_name][$name_value])){echo $_SESSION['search'][$module_name][$name_value];}?>">
+				<input type="search" class="form-control" id="search_box" placeholder="<?php echo $_SESSION['language']['global']['enter_search_here'];?>" name="<?php echo $module_name . "_search"; ?>" value="<?php if(isset($_SESSION['search'][$module_name]['search_value'])){echo $_SESSION['search'][$module_name]['search_value'];}?>">
 				<div class="input-group-btn">
 					  	<input type="submit" name="search_go" class="btn btn-success" value="<?php echo $_SESSION['language']['global']['search'];?>">
 					  	<input type="submit" name="clear" class="btn btn-success" value="<?php echo $_SESSION['language']['global']['clear'];?>">
