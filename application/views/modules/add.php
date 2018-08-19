@@ -90,71 +90,105 @@ echo form_open($module_name . '/add', $attributes);
 </form>
 
 <script type="text/javascript">
-    cancel = function (elm) {
-        window.location.href = '<?php echo site_url($module_name)?>';
-        return false;
-    }
+cancel = function (elm) {
+    window.location.href = '<?php echo site_url($module_name)?>';
+    return false;
+}
 
-    // document ready
-    jQuery(document).ready(function () {
-        var validator = jQuery("#frmedit").validate({
-            ignore: "",
-            rules: {
-                company: "required",
-            },
-            messages: {
-                company: "Enter name",
-            },
-            errorPlacement: function (error, element) {
-                error.insertAfter(element.parent().find('label:first'));
-            },
-            invalidHandler: function (form, validator) {
-                //manually highlight the main accordion
-                $(".panel").removeClass("is-open");
-
-                //manually close all accordions except collapseOne
-                $(".panel-collapse").each(function (e) {
-                    if ($(this).attr("id") != "collapseOne")
-                        $(this).removeClass('in');
-                });
-
-                //manually highlight the header of collapseOne
-                if ($("#collapseOne").parent().hasClass("is-open") == false)
-                    $('#collapseOne').parent().addClass('is-open');
-
-                //check if collapseOne is open or not, if not then open it
-                if ($("#collapseOne").hasClass("in") == false)
-                    $('#collapseOne').collapse('show');
-            },
-            errorElement: 'em'
-        });
-
-		$( "#company_viewer" ).autocomplete({
-			source: function( request, response ) {
-				$.ajax({
-					url: "/ajax/accountsAutocomplete",
-					dataType: "json",
-					data: {
-						q: request.term
-					},
-					success: function( data ) {
-                        console.log('hi');
-						response( data );
-					}
-				});
-			},
-			minLength: 3,
-			select: function( event, ui ) {
-				console.log( ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
-				$("#company_id").val(ui.item.id);
-			},
-			open: function() {
-				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-			},
-			close: function() {
-				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-			}
-		});
-
+// document ready
+jQuery(document).ready(function () {
+    // picker
+    jQuery('.datetime').datetimepicker({
+    format: 'm/d/Y',
+    mask: true,
+    timepicker: false,
     });
+
+    var validator = jQuery("#frmedit").validate({
+        ignore: "",
+        rules: {
+            company: "required",
+        },
+        messages: {
+            company: "Enter name",
+        },
+        errorPlacement: function (error, element) {
+            error.insertAfter(element.parent().find('label:first'));
+        },
+        invalidHandler: function (form, validator) {
+            //manually highlight the main accordion
+            $(".panel").removeClass("is-open");
+
+            //manually close all accordions except collapseOne
+            $(".panel-collapse").each(function (e) {
+                if ($(this).attr("id") != "collapseOne")
+                    $(this).removeClass('in');
+            });
+
+            //manually highlight the header of collapseOne
+            if ($("#collapseOne").parent().hasClass("is-open") == false)
+                $('#collapseOne').parent().addClass('is-open');
+
+            //check if collapseOne is open or not, if not then open it
+            if ($("#collapseOne").hasClass("in") == false)
+                $('#collapseOne').collapse('show');
+        },
+        errorElement: 'em'
+    });
+
+    $( "#company_viewer" ).autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+                url: "/ajax/accountsAutocomplete",
+                dataType: "json",
+                data: {
+                    q: request.term
+                },
+                success: function( data ) {
+                    console.log('hi');
+                    response( data );
+                }
+            });
+        },
+        minLength: 3,
+        select: function( event, ui ) {
+            console.log( ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
+            $("#company_id").val(ui.item.id);
+        },
+        open: function() {
+            $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+        },
+        close: function() {
+            $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+        }
+    });
+
+    //autocomplete for peoples
+    $( "#person_viewer" ).autocomplete({
+        source: function( request, response ) {
+            $.ajax({
+                url: "/ajax/personsAutocomplete",
+                dataType: "json",
+                data: {
+                    q: request.term
+                },
+                success: function( data ) {
+                    response( data );
+                }
+            });
+        },
+        minLength: 3,
+        select: function( event, ui ) {
+            console.log( ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
+            $("#people_id").val(ui.item.id);
+        },
+        open: function() {
+            $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+        },
+        close: function() {
+            $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+        }
+    });    
+
+});
 </script>

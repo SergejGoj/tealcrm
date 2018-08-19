@@ -95,6 +95,9 @@ function format_field($module_name,$field,$data){
         case "Textarea":
             return $data;
         break;
+        case "Decimal":
+            return $data;
+        break;
         case "Date":
             if(isset($data) && !is_null($data) && $data != '0000-00-00'){
                 return date("F j, Y", strtotime($data));
@@ -105,7 +108,7 @@ function format_field($module_name,$field,$data){
         break; // end date        
         case "Related_Company":
             // fetch name of the company
-            $query = $CI->db->get_where('sc_companies', array('company_id' => $data), 1);
+            $query = $CI->db->get_where($this->config->item('db_prefix') . 'companies', array('company_id' => $data), 1);
             
             $row = $query->row();
 
@@ -113,11 +116,23 @@ function format_field($module_name,$field,$data){
                 return "<a href='" . site_url('companies/view') . "/" . $data ."'>" . $row->company_name . "</a>";
             }
             else{
-                return "<a href='" . site_url('companies/view') . "/" . $data ."'>Related Company</a>";
+                return "Not set.";
+            }
+        break; // end Related Company
+        case "Related_Person":
+            // fetch name of the person
+            $query = $CI->db->get_where($this->config->item('db_prefix') . 'people', array('people_id' => $data), 1);
+            
+            $row = $query->row();
+
+            if(isset($row)){
+                return "<a href='" . site_url('people/view') . "/" . $data ."'>" . $row->first_name . " " . $row->last_name . "</a>";
+            }
+            else{
+                return "Not set.";
             }
 
         break; // end Related Company
-
     }
 
 } // end format_field
@@ -166,10 +181,11 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
         switch ($_SESSION['field_dictionary'][$module_name][$field]['field_type']){
 
             case "Text":
-
                 return '<input name="' . $field . '" type="text" autocomplete="off" class="form-control" id="' . $field . '" value="' . $data . '">';
-
             break; // end text
+            case "Currency":
+                return '<input name="' . $field . '" type="text" autocomplete="off" class="form-control" id="' . $field . '" value="' . $data . '">';
+            break;
             case "User": 
 
                 $assignedusers1 = getAssignedUsers1();
@@ -233,6 +249,21 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
                     return '
                         <input type="text" name="company_viewer" id="company_viewer" autocomplete="off" class="form-control" value="' . $name . '" />
                         <input type="hidden" name="company_id" id="company_id" value="' . $data . '" /> 
+                    ';      
+            break; // end Related Company
+            case "Related_Person":
+                    $CI =& get_instance();
+                    if(!is_null($data)){
+                        // get the name of the company to populate in the search box
+                        $query = $CI->db->from($CI->config->item('db_prefix').'people')->where('people_id', $data)->get();
+                        $row = $query->row();
+                        $name = $row->first_name . ' ' . $row->last_name;
+                    }
+                    else
+                        $name = '';
+                    return '
+                        <input type="text" name="person_viewer" id="person_viewer" autocomplete="off" class="form-control" value="' . $name . '" />
+                        <input type="hidden" name="people_id" id="people_id" value="' . $data . '" /> 
                     ';      
             break; // end Related Company
         } // end switch

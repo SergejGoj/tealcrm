@@ -101,42 +101,42 @@ echo form_open($module_name . '/edit/' . $id, $attributes);
 
 jQuery(document).ready(function () {
 
-		$( "#company_viewer" ).autocomplete({
-			source: function( request, response ) {
-				$.ajax({
-					url: "/ajax/accountsAutocomplete",
-					dataType: "json",
-					data: {
-						q: request.term
-					},
-					success: function( data ) {
-                        console.log('hi');
-						response( data );
-					}
-				});
-			},
-			minLength: 3,
-			select: function( event, ui ) {
-				console.log( ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
-				$("#company_id").val(ui.item.id);
-			},
-			open: function() {
-				$( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
-			},
-			close: function() {
-				$( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
-			}
-		});
-
-        // picker
-        jQuery('.datetime').datetimepicker({
-            format: 'm/d/Y',
-            mask: true,
-            timepicker: false,
+$( "#company_viewer" ).autocomplete({
+    source: function( request, response ) {
+        $.ajax({
+            url: "/ajax/accountsAutocomplete",
+            dataType: "json",
+            data: {
+                q: request.term
+            },
+            success: function( data ) {
+                console.log('hi');
+                response( data );
+            }
         });
+    },
+    minLength: 3,
+    select: function( event, ui ) {
+        console.log( ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
+        $("#company_id").val(ui.item.id);
+    },
+    open: function() {
+        $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+    },
+    close: function() {
+        $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+    }
+});
+
+// picker
+jQuery('.datetime').datetimepicker({
+    format: 'm/d/Y',
+    mask: true,
+    timepicker: false,
+});
 
 
-    });
+});
 
 function checkaccount(form) {
 
@@ -193,4 +193,31 @@ if(companyid == '') {
     form.submit();
 }
 }
+
+//autocomplete for peoples
+$( "#person_viewer" ).autocomplete({
+    source: function( request, response ) {
+        $.ajax({
+            url: "/ajax/personsAutocomplete",
+            dataType: "json",
+            data: {
+                q: request.term
+            },
+            success: function( data ) {
+                response( data );
+            }
+        });
+    },
+    minLength: 3,
+    select: function( event, ui ) {
+        console.log( ui.item ? "Selected: " + ui.item.label : "Nothing selected, input was " + this.value);
+        $("#people_id").val(ui.item.id);
+    },
+    open: function() {
+        $( this ).removeClass( "ui-corner-all" ).addClass( "ui-corner-top" );
+    },
+    close: function() {
+        $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
+    }
+});
 </script>

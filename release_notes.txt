@@ -6,6 +6,7 @@ Database Changes for upgrading from 1.0 to 1.1
 update sc_drop_down_options SET related_field_name = 'lead_source_id' where related_field_name = 'lead_source'
 update sc_drop_down_options SET related_field_name = 'lead_status_id' where related_field_name = 'lead_status'
 update sc_drop_down_options SET related_field_name = 'company_type' where related_field_name = 'account_type'
+update sc_drop_down_options SET related_field_name = 'sales_stage_id' WHERE related_field_name = 'sales_stage'
 
 3. Must add the sc_module_relationships table
 
@@ -21,6 +22,13 @@ ALTER TABLE `sc_user_profiles`
 7. Add more options to drop down options table
 INSERT INTO `tealcrm`.`sc_drop_down_options` (`name`, `related_module_id`, `related_field_name`) VALUES ('Prospect', '1', 'contact_type');
 INSERT INTO `tealcrm`.`sc_drop_down_options` (`name`, `related_module_id`, `related_field_name`) VALUES ('Customer', '1', 'contact_type');
+
+8. Add probability to drop down options
+INSERT INTO `tealcrm`.`sc_drop_down_options` (`name`, `related_module_id`, `related_field_name`) VALUES ('0', '1', 'probability');
+INSERT INTO `tealcrm`.`sc_drop_down_options` (`name`, `related_module_id`, `related_field_name`) VALUES ('10', '1', 'probability');
+INSERT INTO `tealcrm`.`sc_drop_down_options` (`name`, `related_module_id`, `related_field_name`) VALUES ('40', '1', 'probability');
+INSERT INTO `tealcrm`.`sc_drop_down_options` (`name`, `related_module_id`, `related_field_name`) VALUES ('75', '1', 'probability');
+INSERT INTO `tealcrm`.`sc_drop_down_options` (`name`, `related_module_id`, `related_field_name`) VALUES ('100', '1', 'probability');
 
 New System Requirements
 * PHP 7.1 or higher
