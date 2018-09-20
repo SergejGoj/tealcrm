@@ -51,7 +51,9 @@ $this->load->helper('view_helper');
 
 <div class="col-md-6 layout-main">
 	
-	
+	<?php
+	if ( ! empty ( $related_modules ) ){
+	?>
 	<div class="row">
 		
 		<div class="col-md-12 text-right">
@@ -77,6 +79,9 @@ $this->load->helper('view_helper');
               
 		</div>
 	</div>
+	<?php
+	} // end if related modules exist
+	?>
 
           <div id="settings-content" class="tab-content stacked-content">
 

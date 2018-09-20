@@ -7,7 +7,7 @@
  * @subpackage Controller
  * @author SecretCRM Team
  * @since 1.0
- * @version 1.0
+ * @version 1.1
  * Purpose: To assist the displaying of data on the View pages
 
  */
@@ -76,7 +76,7 @@ function format_field($module_name,$field,$data){
         break; // end User
         case "Dropdown": 
             if($data == 0){
-                return "Not Set";
+                return $_SESSION['language']['global']['not_set'];
             }
             else{
                 return ($_SESSION['drop_down_options'][$data]['name']);
@@ -85,11 +85,11 @@ function format_field($module_name,$field,$data){
         case "Radio":
             if($data == "Y")
             { 
-                return "Yes";
+                return $_SESSION['language']['global']['yes'];
             } 
             else 
             { 
-                return "No";
+                return $_SESSION['language']['global']['no'];
             }
         break;
         case "Textarea":
@@ -98,38 +98,51 @@ function format_field($module_name,$field,$data){
         case "Decimal":
             return $data;
         break;
+        case "Currency":
+            return $data;
         case "Date":
             if(isset($data) && !is_null($data) && $data != '0000-00-00'){
                 return date("F j, Y", strtotime($data));
             }
             else{
-                return "Not Set";
+                return $_SESSION['language']['global']['not_set'];
             }
         break; // end date        
         case "Related_Company":
             // fetch name of the company
-            $query = $CI->db->get_where($this->config->item('db_prefix') . 'companies', array('company_id' => $data), 1);
-            
-            $row = $query->row();
+            if(!empty($data)){
 
-            if(isset($row)){
-                return "<a href='" . site_url('companies/view') . "/" . $data ."'>" . $row->company_name . "</a>";
+                $query = $CI->db->get_where($CI->config->item('db_prefix') . 'companies', array('company_id' => $data), 1);
+                
+                $row = $query->row();
+
+                if(isset($row)){
+                    return "<a href='" . site_url('companies/view') . "/" . $data ."'>" . $row->company_name . "</a>";
+                }
+                else{
+                    return $_SESSION['language']['global']['not_set'];
+                }
             }
             else{
-                return "Not set.";
+                return $_SESSION['language']['global']['not_set'];
             }
         break; // end Related Company
         case "Related_Person":
             // fetch name of the person
-            $query = $CI->db->get_where($this->config->item('db_prefix') . 'people', array('people_id' => $data), 1);
-            
-            $row = $query->row();
+            if(!empty($data)){
+                $query = $CI->db->get_where($CI->config->item('db_prefix') . 'people', array('people_id' => $data), 1);
+                
+                $row = $query->row();
 
-            if(isset($row)){
-                return "<a href='" . site_url('people/view') . "/" . $data ."'>" . $row->first_name . " " . $row->last_name . "</a>";
+                if(isset($row)){
+                    return "<a href='" . site_url('people/view') . "/" . $data ."'>" . $row->first_name . " " . $row->last_name . "</a>";
+                }
+                else{
+                    return $_SESSION['language']['global']['not_set'];
+                }
             }
             else{
-                return "Not set.";
+                return $_SESSION['language']['global']['not_set'];
             }
 
         break; // end Related Company
@@ -211,14 +224,14 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
                 return '
                     <label class="radio">
                     <input id="email_opt_out_1" name="' . $field . '" type="radio"
-                        value="Y" ' . set_radio($field, 'Y', $data == 'Y') . '>Yes
+                        value="Y" ' . set_radio($field, 'Y', $data == 'Y') . '>' . $_SESSION['language']['global']['yes'] . '
                     </label>
 
                     <div style="clear:both"></div>
 
                     <label class="radio">
                         <input id="email_opt_out_2" name="' . $field . '" type="radio"
-                            value="N" ' . set_radio($field, 'N', $data == 'N') . '>No
+                            value="N" ' . set_radio($field, 'N', $data == 'N') . '>' . $_SESSION['language']['global']['no'] . '
                     </label>
                 ';
 
@@ -229,7 +242,7 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
             break;
             case "Date":
                 if(!is_null($data) && $date != '0000-00-00'){
-                    $date = date('m/d/Y',strtotime($data));
+                    $date = date('m/d/Y',strtotime(date('Y-m-d')));
                 }
                 else{
                     $date = '';
