@@ -189,6 +189,18 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
         }
 
     }
+    elseif($field == 'attach_file'){
+
+        return '
+            <span class="btn btn-success fileinput-button">
+            <i class="glyphicon glyphicon-plus"></i>
+            <span>Attach file...</span>
+            <input id="attach_file" type="file" name="attach_file">
+            <input type="hidden" name="note_attach_valid" id="note_attach_valid" value="0" />
+            </span><span id="file_name_display"></span>        
+        ';
+
+    }
     else{
 
         switch ($_SESSION['field_dictionary'][$module_name][$field]['field_type']){

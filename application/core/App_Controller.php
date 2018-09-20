@@ -266,8 +266,32 @@
 
           }
 
-        }        
+        }
+        
+        // check if we are dealing with a NOTE and file upload
+				//if the file passed JS validation
+				if($post['note_attach_valid'] == "1"){
+          
+          $config['upload_path'] = './../attachments/'.$_SERVER['HTTP_HOST'].'/';
+          $config['allowed_types'] = 'jpg|png|doc|docx|xml|pdf|html|txt|csv';
+          $config['max_size']	= '25600';//25mb
+  
+          $this->load->library('upload', $config);
+  
+          $attachment_warning = "none";
+          $file_data = $this->upload->data();
 
+					if ( $this->upload->note_upload("attach_file",$id) ){
+						$file_data = $this->upload->data();
+						$record['filename_original'] = $file_data['orig_name'];
+						$record['filename_mimetype'] = $file_data['file_type'];
+					}else{
+						$attachment_warning = $this->upload->display_errors();
+          }
+          
+        } // end file upload
+        
+        
         // set additional system fields
 				$record['created_by'] = $user['uacc_uid'];
         $record['assigned_user_id'] = $post['assigned_user_id'];
