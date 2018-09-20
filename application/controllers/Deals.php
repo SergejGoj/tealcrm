@@ -55,7 +55,7 @@ class Deals extends App_Controller {
 
 		// get the sales stages
 
-		$ss_query = "SELECT * from sc_drop_down_options WHERE (related_field_name = 'sales_stage') ORDER BY order_by";
+		$ss_query = "SELECT * from sc_drop_down_options WHERE (related_field_name = 'sales_stage_id') ORDER BY order_by";
 		//print_r($ss_query);
 		$sales_stages_result = $this->db->query($ss_query);
 
