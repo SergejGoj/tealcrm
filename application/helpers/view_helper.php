@@ -48,9 +48,10 @@ function display_name($module,$data,$field_name_return = false){
  * @param    string    the module we are working with
  * @param    string    the field we are working with
  * @param    string    the value to display
+ * @param   string      record_id in case we need it otherwise it's null
  * @return    string
  */
-function format_field($module_name,$field,$data){
+function format_field($module_name,$field,$data,$record_id = NULL){
 
     //$_SESSION['field_dictionary'][$module_name][$row[0]]['field_label'];
 
@@ -145,7 +146,25 @@ function format_field($module_name,$field,$data){
                 return $_SESSION['language']['global']['not_set'];
             }
 
-        break; // end Related Company
+        break; // end Related Person
+        case "FileUpload":
+            // check if we have a file to display by checking the file_uploads table
+            // this module is only setup for 1 upload per record
+            $query = $CI->db->get_where($CI->config->item('db_prefix') . 'file_uploads', array('related_record_id' => $record_id, 'deleted' => NULL), 1);
+
+            $row = $query->row();
+
+            if(isset($row)){
+                return '<i class="fa fa-paperclip"></i>
+                <a href="' . site_url('notes/download_note/' . $row->id) . '" target="_blank">Download
+                    Attachment</a></div>';
+            }
+            else{
+                return $_SESSION['language']['global']['not_set'];
+            }
+
+        break; // end fileupload
+
     }
 
 } // end format_field
@@ -187,18 +206,6 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
             return '<input class="form-control datetime" value = "' . $date . '" id="' . $field . '_start" name="' . $field . '_start" type="text">
             <input class="form-control datetime"  value = "' . $date . '" id="' . $field . '_end" name="' . $field . '_end" type="text">';
         }
-
-    }
-    elseif($field == 'attach_file'){
-
-        return '
-            <span class="btn btn-success fileinput-button">
-            <i class="glyphicon glyphicon-plus"></i>
-            <span>Attach file...</span>
-            <input id="attach_file" type="file" name="attach_file">
-            <input type="hidden" name="note_attach_valid" id="note_attach_valid" value="0" />
-            </span><span id="file_name_display"></span>        
-        ';
 
     }
     else{
@@ -291,6 +298,16 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
                         <input type="hidden" name="people_id" id="people_id" value="' . $data . '" /> 
                     ';      
             break; // end Related Company
+            case "FileUpload":
+                return '
+                <span class="btn btn-success fileinput-button">
+                <i class="glyphicon glyphicon-plus"></i>
+                <span>Attach file...</span>
+                <input id="attach_file" type="file" name="attach_file">
+                <input type="hidden" name="note_attach_valid" id="note_attach_valid" value="0" />
+                </span><span id="file_name_display"></span>        
+                ';
+            break;
         } // end switch
     } // end if date_modified, created_by, date_entered, modidified_user_id
 

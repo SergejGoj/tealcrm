@@ -30,6 +30,12 @@ INSERT INTO `tealcrm`.`sc_drop_down_options` (`name`, `related_module_id`, `rela
 INSERT INTO `tealcrm`.`sc_drop_down_options` (`name`, `related_module_id`, `related_field_name`) VALUES ('75', '1', 'probability');
 INSERT INTO `tealcrm`.`sc_drop_down_options` (`name`, `related_module_id`, `related_field_name`) VALUES ('100', '1', 'probability');
 
+9. File uploads are now in their own table so that any module can have a file upload
+
+10. Removed google_mail and google_tasks tables
+
+11. Moved attachments folder to application folder
+
 New System Requirements
 * PHP 7.1 or higher
 * MySql 5.7 or higher

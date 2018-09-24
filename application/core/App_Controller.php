@@ -269,28 +269,23 @@
         }
         
         // check if we are dealing with a NOTE and file upload
-				//if the file passed JS validation
-				if($post['note_attach_valid'] == "1"){
-          
-          $config['upload_path'] = './../attachments/'.$_SERVER['HTTP_HOST'].'/';
-          $config['allowed_types'] = 'jpg|png|doc|docx|xml|pdf|html|txt|csv';
-          $config['max_size']	= '25600';//25mb
-  
-          $this->load->library('upload', $config);
-  
-          $attachment_warning = "none";
-          $file_data = $this->upload->data();
+        //if the file passed JS validation
+        if(isset($post['note_attach_valid'])){
+          if($post['note_attach_valid'] == "1"){
 
-					if ( $this->upload->note_upload("attach_file",$id) ){
-						$file_data = $this->upload->data();
-						$record['filename_original'] = $file_data['orig_name'];
-						$record['filename_mimetype'] = $file_data['file_type'];
-					}else{
-						$attachment_warning = $this->upload->display_errors();
-          }
-          
-        } // end file upload
-        
+            $this->load->helper('file_upload_helper');
+
+            if ( ! upload_file(
+                  5, // Notes module is ID of 5 in the system
+                  $record[$_SESSION['modules'][$this->module['name']]['db_key']], // id of the record
+                  $user['uacc_uid'],
+                  $this
+                ) ){
+                  redirect( $this->module['name'].'/index' );
+                }
+            
+          } // end file upload
+        } // end if there is a file upload
         
         // set additional system fields
 				$record['created_by'] = $user['uacc_uid'];
@@ -306,6 +301,7 @@
 				}
 			}
 			else{
+
         notify_set( array('status'=>'error', 'message'=>'Error creating new '.$this->module['singular'].'.') );
 
         // redirect
@@ -382,6 +378,30 @@
 				$post = $this->input->post(null, true);
 				// now
 
+        // check if we are dealing with a NOTE and file upload
+        //if the file passed JS validation
+        if(isset($post['note_attach_valid'])){
+          if($post['note_attach_valid'] == "1"){
+
+            // check if we have a file already, if we do, mark it deleted
+            // for version 1.1 we only allow 1 upload per note, could change in the future
+            $this->db->reset_query();
+            $this->db->update($this->config->item('db_prefix').'file_uploads', array('deleted' => 1), array('related_record_id' => $record_id));
+
+            $this->load->helper('file_upload_helper');
+
+            if ( ! upload_file(
+                  5, // Notes module is ID of 5 in the system
+                  $record_id, // id of the record
+                  $user['uacc_uid'],
+                  $this
+                ) ){
+                  redirect( $this->module['name'].'/index' );
+                }
+            
+          } // end file upload
+        } // end if there is a file upload
+
         // array to hold data
         $record = array();
 
@@ -416,8 +436,10 @@
 
         // update
         $this->db->where($_SESSION['modules'][$this->module['name']]['db_key'],$record_id);
-        ;
 
+
+
+        $this->db->reset_query();
 				if( $this->db->update($this->config->item('db_prefix').$this->module['name'], $record) ){
 					// set flash
 					notify_set( array('status'=>'success', 'message'=>'Successfully updated '.$this->module['singular'].'.') );

@@ -13,7 +13,7 @@ echo validation_errors('<div class="alert alert-danger">
 
 $attributes = array('id' => 'frmprofile', 'name' => 'frmprofile');
 
-echo form_open($module_name . '/add', $attributes);
+echo form_open_multipart($module_name . '/add', $attributes);
 
 ?>
 
@@ -188,7 +188,17 @@ jQuery(document).ready(function () {
         close: function() {
             $( this ).removeClass( "ui-corner-top" ).addClass( "ui-corner-all" );
         }
-    });    
+    });   
+
+    $("#attach_file").change(function (e) {
+        $("#note_attach_valid").val('1');
+        var filename = $(this).val();
+        var lastIndex = filename.lastIndexOf("\\");
+        if (lastIndex >= 0) {
+            filename = filename.substring(lastIndex + 1);
+        }
+        $('#file_name_display').text(filename);
+    }); 
 
 });
 </script>
