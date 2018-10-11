@@ -235,7 +235,7 @@ DISABLED ALERTS FOR PHASE 1
 
 				$user = $this->flexi_auth->get_user_by_id_query($this->flexi_auth->get_user_id())->row_array();
 				$profile_image = new SimpleImage();
-				$profile_image->load('../attachments/'.$user['upro_filename_original'],IMAGETYPE_JPEG);
+				$profile_image->load('../application/attachments/'.$user['upro_filename_original'],IMAGETYPE_JPEG);
 				$profile_image->resizeToHeight(30);
 				$profile_image->resizeToWidth(30);
 				echo '<img src="'.$profile_image->show().'" alt="" />';

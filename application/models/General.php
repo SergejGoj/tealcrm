@@ -112,8 +112,8 @@ Class General extends CI_Model{
 
 				// loads the profile image
 				$profile_image = new SimpleImage();
-				$filename = './../attachments/'.$file;
-				$default = './../attachments/default.png';
+				$filename = './../application/attachments/'.$file;
+				$default = './../application/attachments/default.png';
 				if(file_exists($filename) && !empty($file))
 					$profile_image->load($filename,IMAGETYPE_JPEG);
 				else
@@ -156,7 +156,7 @@ Class General extends CI_Model{
 	public function DisplayUserIcon($filename){ //not implemented yet
 
 				// loads the profile image for the logged in user
-				$filename = './../attachments/'.$user['upro_filename_original'];
+				$filename = './../application/attachments/'.$user['upro_filename_original'];
 				$profile_image = new SimpleImage();
 				if(file_exists($filename) && !empty($filename))
 					$profile_image->load($filename,IMAGETYPE_JPEG);

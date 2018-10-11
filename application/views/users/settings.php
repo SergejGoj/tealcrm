@@ -53,10 +53,10 @@
 				$user = $this->flexi_auth->get_user_by_id_query($this->flexi_auth->get_user_id())->row_array();
 				$profile_image = new SimpleImage();
 								
-				if(file_exists('./../attachments/'.$user['upro_filename_original']) && !empty($user['upro_filename_original']))
-					$profile_image->load('./../attachments/'.$user['upro_filename_original'],IMAGETYPE_JPEG);
+				if(file_exists('./../application/attachments/'.$user['upro_filename_original']) && !empty($user['upro_filename_original']))
+					$profile_image->load('./../application/attachments/'.$user['upro_filename_original'],IMAGETYPE_JPEG);
 				else
-					$profile_image->load('./../attachments/default.png',IMAGETYPE_JPEG);
+					$profile_image->load('./../application/attachments/default.png',IMAGETYPE_JPEG);
 				$profile_image->resizeToHeight(180);
 				$profile_image->resizeToWidth(180);
 				echo '<img src="'.$profile_image->show().'" alt="" />';
