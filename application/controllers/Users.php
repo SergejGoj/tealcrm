@@ -963,15 +963,6 @@ public function random_color() {
 	}
 
 
-
-function email_inbox()
-{
-
-$data = array();
-
-$this->layout->view('/users/email_inbox', $data);
-}
-
 	/**
 	 * settings,user session protected
 	 *
@@ -1007,38 +998,32 @@ $this->layout->view('/users/email_inbox', $data);
 			// act
 			switch( $section ) {
 				case 'update-profile':
-					// data
-					/*$user_data = array('first_name'=>$post['first_name'],'last_name'=>$post['last_name'],
-						               'uacc_email'=>$post['email']);*/
 
 
-					$user_email_option = $post['user_email_option'];
-					if($user_email_option == 115){
-					$user_email_option = 1;}
-					else{
-					$user_email_option = 0;}
-
-					$profile_data = array(
-						'upro_uacc_fk' => $user_id,
-						'first_name' => $post['first_name'],
-						'last_name' => $post['last_name'],
-						'email_sending_option' => $user_email_option
-					);
-
-					//handle image upload
-					//go down public directory by one
-
-					$user_data = $post['email'];
-
+					// check if email is changing to make sure there isn't a duplicate
+					if ( $_SESSION['user']->email != $post['email'] ){
+						
+						// email is different than before, let's make sure it isn't already in the database
+						if ( $this->ion_auth->email_check($post['email']) ){
+							// email exists, send failure
+							notify_set( array('status'=>'error', 'message'=>'Oops, that email already exists in the system.' ) );
+							// redirect
+							redirect( 'users/settings/update-profile' );
+							exit();
+						}
+						
+					}
 
 					$config['upload_path'] = './../attachments/';
-					$config['allowed_types'] = 'jpg|png';
+					$config['allowed_types'] = 'jpg|png|jpeg';
 					$config['max_size']	= '5120';//5mb
 					//$config['max_width']  = '251';
 					//$config['max_height']  = '251';
 
 					$this->load->library('upload', $config);
 
+
+					$picture = '';
 					//if the image passed JS validation
 					if($post['profile_img_valid'] == "1"){
 						if ( $this->upload->do_upload("profile_img_file") ){
@@ -1060,30 +1045,27 @@ $this->layout->view('/users/email_inbox', $data);
 							$this->image_lib->resize();
 
 							//add to the array $profile_data without invoking a new key
-							$profile_data = array_merge($profile_data, array("upro_filename_original"=>$data['file_name'], "upro_filename_mimetype"=>$data['file_type']));
+							$picture = $data['filename'];
 
 						}
 					}
-
-					$id = $_SESSION['user']->id;
-
-					$result = $this->db->query( "update sc_users set email = '".$user_data."' where uacc_id = '".$user_id."'");
-
-					$this->db->query("UPDATE sc_user_profiles SET email_sending_option = '".$user_email_option."' WHERE upro_id = '".$user_id."'");
+					
+					$profile_data = array(
+						'first_name' => $post['first_name'],
+						'last_name' => $post['last_name'],
+						'email' => $post['email'],
+						'picture' => $picture
+					);					
 					
 					// profile update
 
-					if( $this->flexi_auth->update_custom_user_data("user_profiles", $id->uacc_id, $profile_data) ){
-					//if( $usr->update($profile_data, NULL, TRUE, array("upro_id"=>$user_id)) ){
-//					if( $this->flexi_auth->update_user($user_id, $profile_data) ){
-						// Get any status message that may have been set.
-	//					$message = $this->flexi_auth->get_messages();
-						// set flash
+					if( $this->ion_auth->update($user_id, $profile_data) ){
 						notify_set( array('status'=>'success', 'message'=>'Settings Updated Successfully' ) );
+						
+						// update vars
+						$this->teal_global_vars->recalc_user_info();
+						
 					}else{
-						// Get any status message that may have been set.
-						//$message = $this->flexi_auth->get_messages();
-						// set flash
 						notify_set( array('status'=>'error', 'message'=>'Settings Updated Failed!' ) );
 					}
 
