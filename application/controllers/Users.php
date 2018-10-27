@@ -1053,6 +1053,7 @@ public function random_color() {
 					$profile_data = array(
 						'first_name' => $post['first_name'],
 						'last_name' => $post['last_name'],
+						'name' => $post['first_name'].' '.$post['last_name'],
 						'email' => $post['email'],
 						'picture' => $picture
 					);					

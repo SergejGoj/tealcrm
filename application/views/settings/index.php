@@ -230,16 +230,18 @@ echo form_open('settings', $attributes); ?>
 							  </tr>
 						  </thead>
 						  <tbody>
-							  <?php foreach($flexi_users as $usr){?>
+							  <?php foreach($_SESSION['user_accounts'] as $usr){
+								  
+							  ?>
 									<tr>
-										<td><input type="checkbox" name="ids[]" value="<?php echo $usr->id; ?>"></td>
-										<td><a href="<?php echo site_url('settings/users/' . $usr->id); ?>"><?php echo $usr->username; ?></a></td>
-										<td><?php echo $flexi_groups[$usr->uacc_group_fk];?></td>
-										<td><?php echo $usr->uacc_email;?></td>
+										<td><input type="checkbox" name="ids[]" value="<?php echo $usr['id']; ?>"></td>
+										<td><a href="<?php echo site_url('settings/users/' . $usr['id']); ?>"><?php echo $usr['name']; ?></a></td>
+										<td>GROUP</td>
+										<td><?php echo $usr['email'];?></td>
 										<td class="valign-middle">
-											<a href="<?php echo site_url('settings/users/' . $usr->id); ?>"><i class="btn btn-xs btn-secondary fa fa-pencil"></i></a>
+											<a href="<?php echo site_url('settings/users/' . $usr['id']); ?>"><i class="btn btn-xs btn-secondary fa fa-pencil"></i></a>
 											&nbsp;
-											<a href="javascript:delete_one( '<?php echo $usr->id; ?>' )"><i class="btn btn-xs btn-secondary fa fa-times"></i></a>
+											<a href="javascript:delete_one( '<?php echo $usr['id']; ?>' )"><i class="btn btn-xs btn-secondary fa fa-times"></i></a>
 
 										</td>
 									</tr>

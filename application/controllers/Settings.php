@@ -21,30 +21,6 @@ class Settings extends App_Controller {
 		parent::__construct();
 	}
 
-	/**
-	 * remap
-	 *
-	 * @param string $method
-	 */
-	function _remap($method)
-	{
-		// auth check
-		if ( ! $this->flexi_auth->is_logged_in() )
-		{
-			redirect('auth/login');
-		}
-
-		// check method exists again
-		if(method_exists($this,$method)){
-			// remove classname and method name form uri
-			call_user_func_array(array($this, $method), array_slice($this->uri->rsegments, 2));
-		}else{
-			// erro
-			show_404(sprintf('controller method [%s] not implemented!', $method));
-		}
-	}
-
-
 
 	/**
 	 * index, content, all page routed here if 404 /not found
@@ -77,7 +53,6 @@ class Settings extends App_Controller {
 
 		//uacc_email
 		$user = $_SESSION['user'];
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 		// get all of settings data from database
 		// init
@@ -133,17 +108,6 @@ class Settings extends App_Controller {
 
 
 		}
-
-		//get all users under sc_user_accounts
-		$data['flexi_users'] = $this->flexi_auth->get_users(FALSE, array("uacc_active"=>1))->result();
-		$data['flexi_users_inactive'] = $this->flexi_auth->get_users(FALSE, array("uacc_active"=>0))->result();
-
-		//create array that holds the group_id as key and group_name as value
-		$flexi_grps = array();
-		foreach($this->flexi_auth->get_groups()->result() as $group){
-			$flexi_grps[$group->ugrp_id] = $group->ugrp_name;
-		}
-		$data['flexi_groups'] = $flexi_grps;
 
 		// set drop downs
 
@@ -646,6 +610,7 @@ class Settings extends App_Controller {
 	 */
 	function updateUser()
 	{
+		
 		// data
 		$data = array();
 			// reload SESSION variables
@@ -656,48 +621,40 @@ class Settings extends App_Controller {
 
 		//uacc_email
 		$user = $_SESSION['user'];
+		
 		// set
 		$data['user'] = $user;
 
 		// post
 		$post = $this->input->post(null, true);
 
-		//exist email
-			if($post['user_status'] != 178 && ($post['email'] != $post['orig_email']))
-			{
-			$this->db->select('uacc_email');
-				$this->db->where(array('uacc_email' => $post['email'],'uacc_active' => 1) );
-				$check_email_query = $this->db->get('sc_user_accounts')->result();
-				$check_email_value = count($check_email_query);	
-				if($check_email_value != 0)
-				{
-					notify_set(array('status' => 'error', 'message' => ' Please use new email address not already in use in the system.', 'settings_crm_settings'));
-					redirect('settings/users/'.$post['uid']);
-				}
-			}
 
+		// check if email is changing to make sure there isn't a duplicate
+		if ( $_SESSION['user']->email != $post['email'] ){
+			
+			// email is different than before, let's make sure it isn't already in the database
+			if ( $this->ion_auth->email_check($post['email']) ){
+				// email exists, send failure
+				notify_set( array('status'=>'error', 'message'=>'Oops, that email already exists in the system.' ) );
+				// redirect
+				redirect('settings/users/'.$post['uid']);
+				exit();
+			}
+			
+		}
 
 		// check for info of the user's company, the one we are making changes on
-		if( ! $flexi_user = $this->flexi_auth->get_users(FALSE, array("id"=>$post['uid']))->row() ){
+		if( ! $user = $this->ion_auth->user($post['uid'])->row() ){
 			// set flash
 			notify_set( array('status'=>'error', 'message'=>'No user by the id ' . $post['uid']) );
 
 			// redirect, don't continue the code
 			redirect( 'settings' );
+			exit();
 		}
-
-		//get all users under sc_user_accounts
-		$data['flexi_users'] = $this->flexi_auth->get_users()->result();
-
-		//create array that holds the group_id as key and group_name as value
-		$flexi_grps = array();
-		foreach($this->flexi_auth->get_groups()->result() as $group){
-			$flexi_grps[$group->ugrp_id] = $group->ugrp_name;
-		}
-		$data['flexi_groups'] = $flexi_grps;
 
 		// set
-		$data['user_info'] = $flexi_user;
+		$data['user_info'] = $user;
 
 		// save
 		//if( $post['act'] == "update-user" ){
@@ -1187,7 +1144,7 @@ class Settings extends App_Controller {
 					$data['hashImg_navbar']=>
 						//store the user profile image ( from upro_filename_original ) as the value for the session
 						//if the user has not uploaded an image use the system default image default.png
-						(empty($user['upro_filename_original']) ? 'default.png' : $user['upro_filename_original'])
+						(empty($_SESSION['user']->picture) ? 'default.png' : $_SESSION['user']->picture)
 				)
 			);
 
@@ -1245,24 +1202,19 @@ class Settings extends App_Controller {
 		}
 
 
-		// check
-		if( ! $flexi_user = $this->flexi_auth->get_users(FALSE, array("id"=>$usr_uid))->row() ){
+		// check for info of the user's company, the one we are making changes on
+		if( ! $user = $this->ion_auth->user($usr_uid)->row() ){
 			// set flash
 			notify_set( array('status'=>'error', 'message'=>'No user by the id ' . $usr_uid) );
 
 			// redirect, don't continue the code
 			redirect( 'settings' );
+			exit();
 		}
 
 		//get all users under sc_user_accounts
-		$data['flexi_users'] = $this->flexi_auth->get_users()->result();
+		$data['users'] = $_SESSION['user_accounts'];
 
-		//create array that holds the group_id as key and group_name as value
-		$flexi_grps = array();
-		foreach($this->flexi_auth->get_groups()->result() as $group){
-			$flexi_grps[$group->ugrp_id] = $group->ugrp_name;
-		}
-		$data['flexi_groups'] = $flexi_grps;
 
 		$data['hashImg'] = md5(uniqid());
 
@@ -1272,12 +1224,12 @@ class Settings extends App_Controller {
 					$data['hashImg']=>
 						//store the user profile image ( from upro_filename_original ) as the value for the session
 						//if the user has not uploaded an image use the system default image default.png
-						(empty($flexi_user->upro_filename_original) ? 'default.png' : $flexi_user->upro_filename_original)
+						(empty($user->picture) ? 'default.png' : $user->picture)
 				)
 			);
 
 		// set
-		$data['user_info'] = $flexi_user;
+		$data['user_info'] = $user;
 		//var_dump($flexi_user);
 
 
@@ -1296,24 +1248,13 @@ class Settings extends App_Controller {
 		$provinces = dropdownProvinces();
 		$data['provinces'] = $provinces;
 
-		//create array that holds the group_id as key and group_name as value
-		$flexi_grps = array();
-		foreach($this->flexi_auth->get_groups()->result() as $group){
-			$flexi_grps[$group->ugrp_id] = $group->ugrp_name;
-		}
-		$data['flexi_groups'] = $flexi_grps;
-
 		// set data
 		$data['setting'] = $setts;
 
 		// set
 		$data['section'] = $section;
 
-		$groups = dropdownCreator('uacc_group_fk');
-		$data['groups'] = $groups;
-		
-		$user_status = dropdownCreator('user_status');
-		$data['user_status'] = $user_status;
+		$data['groups'] = $this->ion_auth->groups()->result();
 
 		// load view
 		$this->layout->view('/settings/users', $data);

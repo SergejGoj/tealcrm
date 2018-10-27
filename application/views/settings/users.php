@@ -81,7 +81,7 @@
             <div class="col-md-7">
 				<select id="user_group" name="user_group" class="form-control" size="1">
 				<?php
-				foreach($flexi_groups as $k=>$v){
+				foreach($groups as $k=>$v){
 					if($k == $user_info->uacc_group_fk)
 						echo "<option value='$k' selected>$v</option>";
 					else
@@ -108,10 +108,10 @@
 			
 			<label class = "col-md-3" > User Status</label>
 			<?php
-					if ($user_info->uacc_active == 0){$status = 178;} else {$status = 179;}?>
+					if ($user_info->active == 0){$status = 178;} else {$status = 179;}?>
 			<div class = "col-md-7" >
 			
-			  <?php 	 echo form_dropdown('user_status', $user_status,$status,"class='form-control' id='user_status'"); ?>
+			  <?php 	 echo form_dropdown('user_status', array ("1" => "Active", "0" => "Inactive"),$user_info->active,"class='form-control' id='user_status'"); ?>
 			
 			<input type = "hidden" name = "status" value = "<?php echo $status; ?>" class = "form-control" />
 			</div>
@@ -150,7 +150,7 @@
             <label class="col-md-3">Phone Number</label>
 
             <div class="col-md-7">
-              <input type="text" name="phone_number" value="<?php echo $user_info->upro_phone; ?>" class="form-control" />
+              <input type="text" name="phone_number" value="<?php echo $user_info->phone; ?>" class="form-control" />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->
@@ -162,8 +162,8 @@
             <label class="col-md-3">Email Address</label>
 
             <div class="col-md-7">
-              <input type="text" name="email" value="<?php echo $user_info->uacc_email; ?>" class="form-control" />
-              <input type="hidden" name="orig_email" value="<?php echo $user_info->uacc_email; ?>" />
+              <input type="text" name="email" value="<?php echo $user_info->email; ?>" class="form-control" />
+              <input type="hidden" name="orig_email" value="<?php echo $user_info->email; ?>" />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->
@@ -229,9 +229,7 @@
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->
-           <input type="hidden" name="uacc_email" value="<?php echo $user_info->uacc_email; ?>" />
-           <input type="hidden" name="id" value="<?php echo $user_info->uacc_id; ?>" />
-           <input type="hidden" name="uid" value="<?php echo $user_info->id; ?>" />
+           <input type="hidden" name="id" value="<?php echo $user_info->id; ?>" />
 	       <input type="hidden" name="act" value="change-password" />
         </form>
 
