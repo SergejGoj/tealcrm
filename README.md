@@ -1,3 +1,6 @@
+# VERSION 1.1 UPDATE
+There's a lot of work going into refactoring TealCRM and the next release will contain a lot of changes.  I will be dropping a beta version likely towards the end of November into the 'develop' branch and likely going GA not too long after that.  There are some significant things changing including the ORM and authentication tools changing.  There will be instructions available to migrate to the new version.  Due to the amount of changes this could also be considered a Major release and to recognize that we may simply call this TealCRM 1.5.  Stay tuned to www.tealcrm.com for more info.
+
 # TealCRM
 TealCRM 1.0 running on CodeIgniter 3.x.  TealCRM is a customer relationship management (CRM) tool built on LAMP stack.
 
