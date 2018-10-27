@@ -40,7 +40,7 @@
 
       <div class="tab-pane fade in active" id="update-profile">
 
-        <h3 class="content-title">Editing User: <?php echo $user_info->upro_first_name;?> <?php echo $user_info->upro_last_name;?></h3>
+        <h3 class="content-title">Editing User: <?php echo $user_info->first_name;?> <?php echo $user_info->last_name;?></h3>
 
         <?php display_notify('settings_update_profile') ?>
 
@@ -100,7 +100,7 @@
             <label class="col-md-3">Username</label>
 
             <div class="col-md-7">
-              <input type="text" name="username" value="<?php echo $user_info->uacc_username; ?>" class="form-control" />
+              <input type="text" name="username" value="<?php echo $user_info->username; ?>" class="form-control" />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->
@@ -125,7 +125,7 @@
             <label class="col-md-3">First Name</label>
 
             <div class="col-md-7">
-              <input type="text" name="first_name" value="<?php echo $user_info->upro_first_name; ?>" class="form-control" />
+              <input type="text" name="first_name" value="<?php echo $user_info->first_name; ?>" class="form-control" />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->
@@ -137,7 +137,7 @@
             <label class="col-md-3">Last Name</label>
 
             <div class="col-md-7">
-              <input type="text" name="last_name" value="<?php echo $user_info->upro_last_name; ?>" class="form-control" />
+              <input type="text" name="last_name" value="<?php echo $user_info->last_name; ?>" class="form-control" />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->
@@ -177,7 +177,7 @@
               <button type="reset" class="btn btn-default" onclick="document.location.href = '<?php echo site_url('settings')?>'">Cancel</button>
             </div> <!-- /.col -->
           </div> <!-- /.form-group -->
-           <input type="hidden" name="uid" value="<?php echo $user_info->uacc_uid; ?>" />
+           <input type="hidden" name="uid" value="<?php echo $user_info->id; ?>" />
            <input type="hidden" name="act" value="update-user" />
         </form>
 
@@ -231,7 +231,7 @@
           </div> <!-- /.form-group -->
            <input type="hidden" name="uacc_email" value="<?php echo $user_info->uacc_email; ?>" />
            <input type="hidden" name="id" value="<?php echo $user_info->uacc_id; ?>" />
-           <input type="hidden" name="uid" value="<?php echo $user_info->uacc_uid; ?>" />
+           <input type="hidden" name="uid" value="<?php echo $user_info->id; ?>" />
 	       <input type="hidden" name="act" value="change-password" />
         </form>
 

@@ -22,29 +22,8 @@ class Users extends App_Controller {
 	{
 		// call parent
 		parent::__construct();
-	}
+		
 
-	/**
-	 * remap
-	 *
-	 * @param string $method
-	 */
-	function _remap($method)
-	{
-		// auth check
-		if ( ! $this->flexi_auth->is_logged_in() )
-		{
-			redirect('auth/login');
-		}
-
-		// check method exists again
-		if(method_exists($this, $method)){
-			// remove classname and method name form uri
-			call_user_func_array(array($this, $method), array_slice($this->uri->rsegments, 2));
-		}else{
-		    // error
-			show_404(sprintf('controller method [%s] not implemented!', $method));
-		}
 	}
 
 	/**
@@ -84,6 +63,8 @@ class Users extends App_Controller {
 	 */
 	function dashboard()
 	{
+
+		
 		// data
 		$data = array();
 
@@ -220,6 +201,7 @@ class Users extends App_Controller {
 		$leadcompanies = "";
 		foreach ($query->result() as $row)
 		{
+			
 			if($row->lead_source_id != 0){
 				$leadcompanies = $leadcompanies.'{ label:"' . $_SESSION['drop_down_options'][$row->lead_source_id]['name'] . '", data: '.$row->num.', color: "#'. $this->random_color() .'"},';
 	
@@ -243,11 +225,9 @@ class Users extends App_Controller {
 		// data
 		$data = array();
 
-		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
-
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
+		var_dump($this->session->user);
+		$user = $_SESSION['user'];
 
 		//pass a random string to mask user's profile image
 		//ie: 3dbc33def75830b6bb32ee30b1b5ec1e
@@ -496,9 +476,9 @@ public function random_color() {
 						// birthdate
 						$birth_val = date('Y-m-d', strtotime($birth_val));
 
-						$user_id = $this->flexi_auth->get_user_id();
-						//uacc_uid
-						$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+						$user_id = $_SESSION['user']->id;
+						//id
+						$user = $_SESSION['user'];
 
 						$split = explode("/", $upload_path);
 						$csv_file_name = end($split);
@@ -508,8 +488,8 @@ public function random_color() {
 						// Enter values into required fields
 						$cont->people_id = $this->uuid->v4();
 						//$cont->date_modified = $now;
-						$cont->created_by = $user->uacc_uid;
-						$cont->assigned_user_id = $user->uacc_uid;
+						$cont->created_by = $user->id;
+						$cont->assigned_user_id = $user->id;
 						$cont->lead_source_id = 16; //Other
 						$cont->job_title = $job_val;
 						$cont->company = $acc_val;
@@ -631,16 +611,16 @@ public function random_color() {
 				// now
 				$now = date('Y-m-d H:i:s');
 
-				//uacc_uid
-				$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+				//id
+				$user = $_SESSION['user'];
 
 				$cont = new Person();
 
 				// Enter values into required fields
 				$cont->people_id = $this->uuid->v4();
 				//$cont->date_modified = $now;
-				$cont->created_by = $user->uacc_uid;
-				$cont->assigned_user_id = $user->uacc_uid;
+				$cont->created_by = $user->id;
+				$cont->assigned_user_id = $user->id;
 				$cont->lead_source_id = 16; //Other
 				$cont->job_title = "NA";
 				$cont->company = "NA";
@@ -668,7 +648,7 @@ public function random_color() {
 				$this->db
 					->select('people_id')
 					->from('sc_people')
-					->where('created_by', $user->uacc_uid)
+					->where('created_by', $user->id)
 					->where('email1', $email1_val)
 					->where('first_name', $fname_val)
 					->where('last_name', $lname_val);
@@ -720,7 +700,7 @@ public function random_color() {
 		$sync_success = 0;
 		$sync_fail = 0;
 		$sync_duplicate = 0;
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
 
 		$sync_total = sizeof($json['items']);
 
@@ -739,8 +719,8 @@ public function random_color() {
 				$meetg->date_start = date('Y-m-d H:i:s', strtotime($json['items'][$i]['start']['dateTime']));
 				$meetg->date_end = date('Y-m-d H:i:s', strtotime($json['items'][$i]['end']['dateTime']));
 				$meetg->subject = $json['items'][$i]['summary'];
-				$meetg->created_by = $user->uacc_uid;
-				$meetg->assigned_user_id = $user->uacc_uid;
+				$meetg->created_by = $user->id;
+				$meetg->assigned_user_id = $user->id;
 				if(isset($json['items'][$i]['location']))
 					$meetg->location = $json['items'][$i]['location'];
 				$meetg->event_type = 1;
@@ -852,7 +832,7 @@ public function random_color() {
 													<option value='0'>Please select</option>";
 													foreach($users as $user) :
 													$return .= '
-													<option value="' . $user['uacc_uid'] . '">
+													<option value="' . $user['id'] . '">
 														' . $user[ 'name'] . '
 													</option>';
 													endforeach;
@@ -1003,10 +983,10 @@ $this->layout->view('/users/email_inbox', $data);
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
+		$user = $_SESSION['user'];
 		// set
 		$data['user'] = $user;
 
@@ -1028,7 +1008,7 @@ $this->layout->view('/users/email_inbox', $data);
 			switch( $section ) {
 				case 'update-profile':
 					// data
-					/*$user_data = array('upro_first_name'=>$post['first_name'],'upro_last_name'=>$post['last_name'],
+					/*$user_data = array('first_name'=>$post['first_name'],'last_name'=>$post['last_name'],
 						               'uacc_email'=>$post['email']);*/
 
 
@@ -1040,8 +1020,8 @@ $this->layout->view('/users/email_inbox', $data);
 
 					$profile_data = array(
 						'upro_uacc_fk' => $user_id,
-						'upro_first_name' => $post['first_name'],
-						'upro_last_name' => $post['last_name'],
+						'first_name' => $post['first_name'],
+						'last_name' => $post['last_name'],
 						'email_sending_option' => $user_email_option
 					);
 
@@ -1085,15 +1065,12 @@ $this->layout->view('/users/email_inbox', $data);
 						}
 					}
 
-					$id = $this->flexi_auth->get_custom_user_data("uacc_id", array("uacc_uid"=>$user_id), FALSE)->row();
+					$id = $_SESSION['user']->id;
 
-					/*,
-						'uacc_email' => $post['email'],
-						'uacc_username' => $post['username']*/
+					$result = $this->db->query( "update sc_users set email = '".$user_data."' where uacc_id = '".$user_id."'");
 
-						$result = $this->db->query( "update sc_user_accounts set uacc_email = '".$user_data."' where uacc_id = '".$user_id."'");
-
-						$this->db->query("UPDATE sc_user_profiles SET email_sending_option = '".$user_email_option."' WHERE upro_id = '".$user_id."'");
+					$this->db->query("UPDATE sc_user_profiles SET email_sending_option = '".$user_email_option."' WHERE upro_id = '".$user_id."'");
+					
 					// profile update
 
 					if( $this->flexi_auth->update_custom_user_data("user_profiles", $id->uacc_id, $profile_data) ){
@@ -1168,7 +1145,7 @@ $this->layout->view('/users/email_inbox', $data);
 
 				  $this->email->initialize($config);
 
-				  $this->email->from($_SESSION['user']['uacc_email'], $_SESSION['user']['upro_first_name']." ".$_SESSION['user']['upro_last_name']);
+				  $this->email->from($_SESSION['user']['uacc_email'], $_SESSION['user']['first_name']." ".$_SESSION['user']['last_name']);
 				  $this->email->to($_SESSION['user']['uacc_email']);
 
 				  $this->email->subject('TealCRM Email Test');

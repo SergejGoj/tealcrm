@@ -137,12 +137,12 @@ $this->load->helper('view_helper');
 								<div class="col-md-6">
 									<strong>Created By</strong><br/>
 <?php if (!empty($record->created_by)){ echo date( 'm/d/Y h:ia', strtotime($record->date_entered.' UTC'))?> by<br/>
-				<?php echo $_SESSION['user_accounts'][$record->created_by]['upro_first_name']." ".$_SESSION['user_accounts'][$record->created_by]['upro_last_name']; } ?>								</div>
+				<?php echo $_SESSION['user_accounts'][$record->created_by]['first_name']." ".$_SESSION['user_accounts'][$record->created_by]['last_name']; } ?>								</div>
 								<div class="col-md-6">
 									<strong>Modified By</strong><br/>
 									<?php if (!empty($record->modified_user_id)){ ?>
 													<?php echo date( 'm/d/Y h:ia', strtotime($record->date_modified.' UTC'))?> by<br/>
-													<?php echo $_SESSION['user_accounts'][$record->modified_user_id]['upro_first_name']." ".$_SESSION['user_accounts'][$record->modified_user_id]['upro_last_name'];} ?>								</div>									
+													<?php echo $_SESSION['user_accounts'][$record->modified_user_id]['first_name']." ".$_SESSION['user_accounts'][$record->modified_user_id]['last_name'];} ?>								</div>									
 							</div>							</div>
 			  		</div>
 

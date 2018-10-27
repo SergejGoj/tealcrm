@@ -240,7 +240,7 @@
 						</div>
 						<div class="form-group col-sm-6">
 						<label for="phone_fax">Assign Users</label>
-<?php 	 echo form_dropdown('assigned_user_id', $assignedusers, $_SESSION['user']['uacc_uid'],"class='form-control'"); ?>
+<?php 	 echo form_dropdown('assigned_user_id', $assignedusers, $_SESSION['user']['id'],"class='form-control'"); ?>
 						</div>
 
 					</div>

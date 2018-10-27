@@ -26,19 +26,14 @@ class Deals extends App_Controller {
 
 	public function pipeline(){
 
-		$CI =& get_instance();
-		$CI->teal_global_vars->set_all_global_vars();
-
-
 		// data
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
 
 		$deals = new Deal();
 	    // show newest first
@@ -84,11 +79,10 @@ class Deals extends App_Controller {
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
 
 		$sske = $this->input->post('sales_stage_key_edit');
 		$ssk  =  $this->input->post('sales_stage_key');

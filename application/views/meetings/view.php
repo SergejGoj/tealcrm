@@ -84,8 +84,8 @@
                     <i class="icon-li fa fa-user"></i> <strong>Assigned User</strong>
                 </div>
                 <?php
-                    $first_name = $_SESSION['user_accounts'][$meeting->assigned_user_id]['upro_first_name'];
-                    $last_name = $_SESSION['user_accounts'][$meeting->assigned_user_id]['upro_last_name'];
+                    $first_name = $_SESSION['user_accounts'][$meeting->assigned_user_id]['first_name'];
+                    $last_name = $_SESSION['user_accounts'][$meeting->assigned_user_id]['last_name'];
                     if(($first_name != NULL) && ($last_name != NULL)) {
                         echo $first_name." ".$last_name;
                     } else if($first_name != NULL) {
@@ -93,7 +93,7 @@
                     } else if($last_name != NULL) {
                         echo $last_name;
                     } else {
-                        echo $_SESSION['user_accounts'][$meeting->assigned_user_id]['uacc_username'];
+                        echo $_SESSION['user_accounts'][$meeting->assigned_user_id]['username'];
                     }
                 ?>
             </li>
@@ -102,7 +102,7 @@
                     <div>
                         <i class="icon-li fa fa-user"></i> <strong>Created</strong>
                     </div><?php echo date('m/d/Y h:ia', strtotime($meeting->date_entered . ' UTC')) ?> by<br/>
-                    <?php echo $_SESSION['user_accounts'][$meeting->created_by]['upro_first_name'] . " " . $_SESSION['user_accounts'][$meeting->created_by]['upro_last_name']; ?>
+                    <?php echo $_SESSION['user_accounts'][$meeting->created_by]['first_name'] . " " . $_SESSION['user_accounts'][$meeting->created_by]['last_name']; ?>
                 </li>
             <?php } ?>
             <?php if (!empty($meeting->modified_user_id)) { ?>
@@ -110,7 +110,7 @@
                     <div>
                         <i class="icon-li fa fa-user"></i> <strong>Modified</strong>
                     </div><?php echo date('m/d/Y h:ia', strtotime($meeting->date_modified . ' UTC')) ?> by<br/>
-                    <?php echo $_SESSION['user_accounts'][$meeting->modified_user_id]['upro_first_name'] . " " . $_SESSION['user_accounts'][$meeting->modified_user_id]['upro_last_name']; ?>
+                    <?php echo $_SESSION['user_accounts'][$meeting->modified_user_id]['first_name'] . " " . $_SESSION['user_accounts'][$meeting->modified_user_id]['last_name']; ?>
                 </li>
             <?php } ?>
         </ul>

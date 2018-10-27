@@ -225,8 +225,8 @@
                     <i class="icon-li fa fa-user"></i> <strong>assigned user</strong>
                 </div>
                 <?php
-                    $first_name = $_SESSION['user_accounts'][$task->assigned_user_id]['upro_first_name'];
-                    $last_name = $_SESSION['user_accounts'][$task->assigned_user_id]['upro_last_name'];
+                    $first_name = $_SESSION['user_accounts'][$task->assigned_user_id]['first_name'];
+                    $last_name = $_SESSION['user_accounts'][$task->assigned_user_id]['last_name'];
                     if(($first_name != NULL) && ($last_name != NULL)) {
                         echo $first_name." ".$last_name;
                     } else if($first_name != NULL) {
@@ -234,7 +234,7 @@
                     } else if($last_name != NULL) {
                         echo $last_name;
                     } else {
-                        echo $_SESSION['user_accounts'][$task->assigned_user_id]['uacc_username'];
+                        echo $_SESSION['user_accounts'][$task->assigned_user_id]['username'];
                     }
                 ?>
             </li>
@@ -244,7 +244,7 @@
                     <div>
                         <i class="icon-li fa fa-user"></i> <strong>created</strong>
                     </div><?php echo date('m/d/Y h:ia', strtotime($task->date_entered . ' UTC')) ?> by<br/>
-                    <?php echo $_SESSION['user_accounts'][$task->created_by]['upro_first_name'] . " " . $_SESSION['user_accounts'][$task->created_by]['upro_last_name']; ?>
+                    <?php echo $_SESSION['user_accounts'][$task->created_by]['first_name'] . " " . $_SESSION['user_accounts'][$task->created_by]['last_name']; ?>
                 </li>
             <?php } ?>
             <?php if (!empty($task->modified_user_id)) { ?>
@@ -252,7 +252,7 @@
                     <div>
                         <i class="icon-li fa fa-user"></i> <strong>modified</strong>
                     </div><?php echo date('m/d/Y h:ia', strtotime($task->date_modified . ' UTC')) ?> by<br/>
-                    <?php echo $_SESSION['user_accounts'][$task->modified_user_id]['upro_first_name'] . " " . $_SESSION['user_accounts'][$task->modified_user_id]['upro_last_name']; ?>
+                    <?php echo $_SESSION['user_accounts'][$task->modified_user_id]['first_name'] . " " . $_SESSION['user_accounts'][$task->modified_user_id]['last_name']; ?>
                 </li>
             <?php } ?>
         </ul>

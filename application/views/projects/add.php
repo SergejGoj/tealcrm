@@ -18,7 +18,7 @@
                         </div>
                        <div class="form-group col-sm-6">
                             <label for="assigned_user_id">Assigned User</label>
-							<?php 	 echo form_dropdown('assigned_user_id', $assignedusers1, $_SESSION['user']['uacc_uid'],"class='form-control'"); ?>
+							<?php 	 echo form_dropdown('assigned_user_id', $assignedusers1, $_SESSION['user']['id'],"class='form-control'"); ?>
                         </div>
                     </div>
 

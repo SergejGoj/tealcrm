@@ -18,7 +18,7 @@
 				<div>
 					<i class="icon-li fa fa-user"></i> <strong>created</strong>
 				</div><?php echo date( 'm/d/Y h:sa', strtotime($Gtask[0]->date_entered))?> by<br/>
-				<?php echo $_SESSION['user_accounts'][$Gtask[0]->created_by]['upro_first_name']." ".$_SESSION['user_accounts'][$Gtask[0]->created_by]['upro_last_name'];?>
+				<?php echo $_SESSION['user_accounts'][$Gtask[0]->created_by]['first_name']." ".$_SESSION['user_accounts'][$Gtask[0]->created_by]['last_name'];?>
 			
 			</li>
 <?php } ?>

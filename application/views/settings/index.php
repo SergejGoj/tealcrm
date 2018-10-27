@@ -232,14 +232,14 @@ echo form_open('settings', $attributes); ?>
 						  <tbody>
 							  <?php foreach($flexi_users as $usr){?>
 									<tr>
-										<td><input type="checkbox" name="ids[]" value="<?php echo $usr->uacc_uid; ?>"></td>
-										<td><a href="<?php echo site_url('settings/users/' . $usr->uacc_uid); ?>"><?php echo $usr->uacc_username; ?></a></td>
+										<td><input type="checkbox" name="ids[]" value="<?php echo $usr->id; ?>"></td>
+										<td><a href="<?php echo site_url('settings/users/' . $usr->id); ?>"><?php echo $usr->username; ?></a></td>
 										<td><?php echo $flexi_groups[$usr->uacc_group_fk];?></td>
 										<td><?php echo $usr->uacc_email;?></td>
 										<td class="valign-middle">
-											<a href="<?php echo site_url('settings/users/' . $usr->uacc_uid); ?>"><i class="btn btn-xs btn-secondary fa fa-pencil"></i></a>
+											<a href="<?php echo site_url('settings/users/' . $usr->id); ?>"><i class="btn btn-xs btn-secondary fa fa-pencil"></i></a>
 											&nbsp;
-											<a href="javascript:delete_one( '<?php echo $usr->uacc_uid; ?>' )"><i class="btn btn-xs btn-secondary fa fa-times"></i></a>
+											<a href="javascript:delete_one( '<?php echo $usr->id; ?>' )"><i class="btn btn-xs btn-secondary fa fa-times"></i></a>
 
 										</td>
 									</tr>
@@ -274,14 +274,14 @@ echo form_open('settings', $attributes); ?>
 						  <tbody>
 							  <?php foreach($flexi_users_inactive as $usr_inactive){?>
 									<tr>
-										<td><input type="checkbox" name="userid[]" value="<?php echo $usr_inactive->uacc_uid; ?>"></td>
-										<td><a href="<?php echo site_url('settings/users/' . $usr_inactive->uacc_uid); ?>"><?php echo $usr_inactive->uacc_username; ?></a></td>
+										<td><input type="checkbox" name="userid[]" value="<?php echo $usr_inactive->id; ?>"></td>
+										<td><a href="<?php echo site_url('settings/users/' . $usr_inactive->id); ?>"><?php echo $usr_inactive->username; ?></a></td>
 										<td><?php echo $flexi_groups[$usr_inactive->uacc_group_fk];?></td>
 										<td><?php echo $usr_inactive->uacc_email;?></td>
 										<td class="valign-middle">
-											<a href="<?php echo site_url('settings/users/' . $usr_inactive->uacc_uid); ?>"><i class="btn btn-xs btn-secondary fa fa-pencil"></i></a>
+											<a href="<?php echo site_url('settings/users/' . $usr_inactive->id); ?>"><i class="btn btn-xs btn-secondary fa fa-pencil"></i></a>
 											&nbsp;
-											<a href="javascript:delete_one( '<?php echo $usr_inactive->uacc_uid; ?>' )"><i class="btn btn-xs btn-secondary fa fa-times"></i></a>
+											<a href="javascript:delete_one( '<?php echo $usr_inactive->id; ?>' )"><i class="btn btn-xs btn-secondary fa fa-times"></i></a>
 
 										</td>
 									</tr>

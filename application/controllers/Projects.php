@@ -37,30 +37,7 @@ class Projects extends App_Controller {
 	{
 		// call parent
 		parent::__construct();
-	}	 
-
-	/**
-	 * remap
-	 *
-	 * @param string $method
-	 */
-	function _remap($method)
-	{
-		// auth check
-		if ( ! $this->flexi_auth->is_logged_in() )
-		{
-			redirect('auth/login');
-		}
-
-		// check method exists again
-		if(method_exists($this, $method)){
-			// remove classname and method name form uri
-			call_user_func_array(array($this, $method), array_slice($this->uri->rsegments, 2));
-		}else{
-			// error
-			show_404(sprintf('controller method [%s] not implemented!', $method));
-		}
-	}	 
+	}	  
 	 
 	/**
 	 * View all
@@ -320,17 +297,17 @@ class Projects extends App_Controller {
 	$data = array();
 	
 	//logedin user
-	$user_id = $this->flexi_auth->get_user_id();
+	$user_id = $_SESSION['user']->id;
 
 	//uacc_email
-	$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-	//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+	$user = $_SESSION['user'];
+	//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 	//$where_str = '`uacc_id` <> ' . $user_id;
 	$where_arr  = array('uacc_id <>' => $user_id);
 	// load model
 	//$this->load->model('flexi_auth_model');
-	$users = $this->flexi_auth->get_users_query(array("uacc_uid,CONCAT(upro_first_name, ' ', upro_last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
+	$users = $this->flexi_auth->get_users_query(array("id,CONCAT(first_name, ' ', last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
 	// set
 	$data['users'] = $users;
 	
@@ -363,7 +340,7 @@ class Projects extends App_Controller {
 		
 		$proj->project_id = $id;
 		$proj->assigned_user_id = $post['assigned_user_id'];
-		$proj->created_by = $user['uacc_uid'];
+		$proj->created_by = $user['id'];
 		$proj->company_id = $post['company'];
 		$proj->project_name = $post['project_name'];
 		$proj->description = $post['description'];
@@ -398,11 +375,11 @@ class Projects extends App_Controller {
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 		
 		$projects = new Project();
 
@@ -452,7 +429,7 @@ class Projects extends App_Controller {
 				
 				//SET VALUE FOR UPDATE Project
 				$data = array(
-					"modified_user_id" => $user['uacc_uid'],
+					"modified_user_id" => $user['id'],
 					"assigned_user_id" => $post['assigned_user_id'],
 					"company_id" => $post['company'],
 					"project_name" => $post['project_name'],
@@ -522,9 +499,9 @@ class Projects extends App_Controller {
 		$data = array();
 
 		// get the GUID for the logged in user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row_array();
+		$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row_array();
 
 		$taks = new Task();
 		
@@ -547,7 +524,7 @@ class Projects extends App_Controller {
 			
 			$taks->task_id = $task_id;
 			$taks->due_date = $due_date;
-			$taks->created_by = $user['uacc_uid'];
+			$taks->created_by = $user['id'];
 			$taks->assigned_user_id = $post['assigned_user_id'];
 			$taks->subject = $post['subject'];
 			$taks->company_id = $post['company_id'];

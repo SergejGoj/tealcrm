@@ -191,8 +191,8 @@
 							?> 
 								<td>
                                     <?php
-                                        $first_name = $_SESSION['user_accounts'][$meeting->$field_name]['upro_first_name'];
-                                        $last_name = $_SESSION['user_accounts'][$meeting->$field_name]['upro_last_name'];
+                                        $first_name = $_SESSION['user_accounts'][$meeting->$field_name]['first_name'];
+                                        $last_name = $_SESSION['user_accounts'][$meeting->$field_name]['last_name'];
                                         if(($first_name != NULL) && ($last_name != NULL)) {
                                             echo $first_name." ".$last_name;
                                         } else if($first_name != NULL) {
@@ -200,7 +200,7 @@
                                         } else if($last_name != NULL) {
                                             echo $last_name;
                                         } else {
-                                            echo $_SESSION['user_accounts'][$meeting->$field_name]['uacc_username'];
+                                            echo $_SESSION['user_accounts'][$meeting->$field_name]['username'];
                                         }
                                     ?>
                                 </td>

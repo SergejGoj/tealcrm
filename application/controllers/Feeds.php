@@ -23,34 +23,13 @@ class Feeds extends App_Controller {
 	}
 
 	/**
-	 * remap
-	 *
-	 * @param string $method
-	 */
-	function _remap($method)
-	{
-		// auth check
-		if ( ! $this->flexi_auth->is_logged_in() )
-		{
-			redirect('auth/login');
-		}
-
-		// check method exists again
-		if(method_exists($this, $method)){
-			// remove classname and method name form uri
-			call_user_func_array(array($this, $method), array_slice($this->uri->rsegments, 2));
-		}else{
-		    // error
-			show_404(sprintf('controller method [%s] not implemented!', $method));
-		}
-	}
-
-	/**
 	 * View all
 	 *
 	 * @url <site>/feeds
 	 */
 	public function index(){
+		
+		echo "hi";	
 		// data
 		$data = array();
 
@@ -104,15 +83,7 @@ class Feeds extends App_Controller {
 		// data
 		$data = array();
 
-		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
-		//uacc_uid
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_id, uacc_uid')->row();
-
-		//get first and last name of the person who posted this
-		$this->load->model("general");
 		$user_name = $this->general->getFirstLastName($user_id);
-
 
 		//$where_str = '`uacc_id` <> ' . $user_id;
 		$where_arr  = array('by_uacc_id <>' => $user_id);
@@ -146,17 +117,17 @@ class Feeds extends App_Controller {
 			if( $nts->save() ){
 				// set flash
 
-				if(!isset($user_name->upro_first_name) && !isset($user_name->upro_last_name)){
+				if(!isset($user_name->first_name) && !isset($user_name->last_name)){
 					$name = 'User';
 				}
-				elseif (isset($user_name->upro_first_name) && !isset($user_name->upro_last_name)){
-					$name = $user_name->upro_first_name;
+				elseif (isset($user_name->first_name) && !isset($user_name->last_name)){
+					$name = $user_name->first_name;
 				}
-				elseif (!isset($user_name->upro_first_name) && isset($user_name->upro_last_name)){
-					$name = $user_name->upro_last_name;
+				elseif (!isset($user_name->first_name) && isset($user_name->last_name)){
+					$name = $user_name->last_name;
 				}
 				else{
-					$name = $user_name->upro_firstname . ' ' . $user_name->upro_last_name;
+					$name = $user_name->upro_firstname . ' ' . $user_name->last_name;
 				}
 				
 				echo '
@@ -194,16 +165,11 @@ class Feeds extends App_Controller {
 		$data = array();
 
 		//logedin user(id)
-		$user_id = $this->flexi_auth->get_user_id();
-		//uacc_uid
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user_id = $_SESSION['user']->id;
+		//id
+		$user = $_SESSION['user'];
 
-		//$where_str = '`uacc_id` <> ' . $user_id;
-		$where_arr  = array('uacc_id <>' => $user_id);
-		// load model
-		$users = $this->flexi_auth->get_users_query(array("uacc_uid,CONCAT(upro_first_name, ' ', upro_last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
-		// set
-	    $data['users'] = $users;
+	    $data['users'] = $_SESSION['user_accounts'];
 
 		// init
 		$nts = new Note();
@@ -217,7 +183,7 @@ class Feeds extends App_Controller {
 			$post = $this->input->post(null, true);
 			// now
 			// set
-			$nts->modified_user_id = $user->uacc_uid;
+			$nts->modified_user_id = $user->id;
 			$nts->assigned_user_id = $post['assigned_user_id'];
 			$nts->subject = $post['subject'];
 			$nts->company_id = $post['company_id'];

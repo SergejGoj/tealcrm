@@ -54,7 +54,7 @@ class AdvancedSearch {
 
 		$data = array(
 			'date_entered' => $now,
-			'created_by' => $_SESSION['user']['uacc_uid'],
+			'created_by' => $_SESSION['user']['id'],
 			'title' => $this->saved_search_name,
 			'module' => $this->module,
 			'search_string' => $search_params);

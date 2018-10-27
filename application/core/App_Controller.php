@@ -14,6 +14,8 @@
     var $module = array();
     var $_data  = array();
     
+    var $user;
+    
     // constructor    
     function __construct($model = null,$module = null, $singular = null)
     {
@@ -21,10 +23,6 @@
       parent::__construct();     
       // log
       log_message('debug', 'App_Controller Class Initialized');       
-
-      $this->auth = new stdClass;
-
-      $this->load->library('flexi_auth'); 
       
       // Define a global variable to store data that is then used by the end view page.
       $this->data = null;
@@ -33,6 +31,7 @@
       $this->module['name'] = $module;
       $this->module['model'] = $model; 
       $this->module['singular'] = $singular;
+      
       
     }  
     
@@ -65,15 +64,24 @@
 	function _remap($method)
 	{
 		// auth check
-		if ( ! $this->flexi_auth->is_logged_in() )
+		$this->load->library('ion_auth');
+		
+		if (!$this->ion_auth->logged_in() )
 		{
 			redirect('auth/login');
 		}
 
 		// check method exists again
 		if(method_exists($this, $method)){
+			
+			// make available user data
+			$this->user = $this->ion_auth->user()->row();
+			
 			// remove classname and method name form uri
 			call_user_func_array(array($this, $method), array_slice($this->uri->rsegments, 2));
+			
+			
+			
 		}else{
 			// error
 			show_404(sprintf('controller method [%s] not implemented!', $method));
@@ -217,11 +225,10 @@
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-    $user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
 
 		// save
 		if( 'save' == $this->input->post('act', true) ){
@@ -278,7 +285,7 @@
             if ( ! upload_file(
                   5, // Notes module is ID of 5 in the system
                   $record[$_SESSION['modules'][$this->module['name']]['db_key']], // id of the record
-                  $user['uacc_uid'],
+                  $user['id'],
                   $this
                 ) ){
                   redirect( $this->module['name'].'/index' );
@@ -288,7 +295,7 @@
         } // end if there is a file upload
         
         // set additional system fields
-				$record['created_by'] = $user['uacc_uid'];
+				$record['created_by'] = $user['id'];
         $record['assigned_user_id'] = $post['assigned_user_id'];
         $record['date_entered'] = gmdate('Y-m-d H:i:s');
 
@@ -336,10 +343,10 @@
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
+		$user = $_SESSION['user'];
 
 		$assignedusers1 = getAssignedUsers1();
 		$data['assignedusers1'] = $assignedusers1;
@@ -393,7 +400,7 @@
             if ( ! upload_file(
                   5, // Notes module is ID of 5 in the system
                   $record_id, // id of the record
-                  $user['uacc_uid'],
+                  $user['id'],
                   $this
                 ) ){
                   redirect( $this->module['name'].'/index' );
@@ -407,7 +414,7 @@
 
         // set some update parameters to go along with it
         $record['date_modified'] = gmdate('Y-m-d H:i:s');
-        $record['modified_user_id'] = $user['uacc_uid'];
+        $record['modified_user_id'] = $user['id'];
 
         // cycle through field dictionary and associate appropriate fields
         foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
@@ -619,17 +626,17 @@
 		// check
 		if( isset($id) ){
 
-      $user_id = $this->flexi_auth->get_user_id();
+      $user_id = $_SESSION['user']->id;
 
       //uacc_email
-      $user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
+      $user = $_SESSION['user'];
 
       // soft_delete(array(fields=>values):where clause)
       $this->db->where($_SESSION['modules'][$this->module['name']]['db_key'],$id);
       $data = array (
         'deleted' => 1,
         'date_modified' => gmdate('Y-m-d H:i:s'),
-        'modified_user_id' => $user['uacc_uid'],
+        'modified_user_id' => $user['id'],
       );
 			if( $this->db->update($this->config->item('db_prefix').$this->module['name'], $data ) ){
 				// set flash
@@ -658,10 +665,10 @@
 		if( isset($post['ids']) && ! empty($post['ids']) ){
 
 
-      $user_id = $this->flexi_auth->get_user_id();
+      $user_id = $_SESSION['user']->id;
 
       //uacc_email
-      $user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
+      $user = $_SESSION['user'];
     
 			// ids
 			$ids = $post['ids'];
@@ -674,7 +681,7 @@
       $data = array (
         'deleted' => 1,
         'date_modified' => gmdate('Y-m-d H:i:s'),
-        'modified_user_id' => $user['uacc_uid'],
+        'modified_user_id' => $user['id'],
       );
 
       foreach($post['ids'] as $record){

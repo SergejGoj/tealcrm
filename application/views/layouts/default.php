@@ -1,14 +1,4 @@
 <!DOCTYPE html>
-<?php
-// check to make sure SESSION VARS are working, if not reset them
-
-if(!isset($_SESSION['tealcrm_live'])){
-	$CI =& get_instance();
-	$CI->teal_global_vars->set_all_global_vars();
-}
-
-
-?>
 
 <html lang="en">
   <head>
@@ -168,7 +158,7 @@ if(!isset($_SESSION['tealcrm_live'])){
               <ul class="dropdown-menu">
                 <li><a href="<?php echo site_url('users/settings')?>">User Settings</a></li>
                 <li><a href="<?php echo site_url('users/import')?>">Import Data</a></li>
-	              <?php if ($this->flexi_auth->in_group('Master Admin')): ?>
+	              <?php if (!$this->ion_auth->in_group("admin")): ?>
 	               <li>
 	                <a href="<?php echo site_url('settings')?>">
 	                  CRM Settings
@@ -211,7 +201,7 @@ if(!isset($_SESSION['tealcrm_live'])){
 
     </div> <!-- /container -->
 
-<center><a href="http://www.tealcrm.com" style="font-size:9px">TealCRM Version 1.0 - Open Source</a></center>
+<center><a href="http://www.tealcrm.com" style="font-size:9px">TealCRM Version 1.1 - Open Source</a></center>
 
 
   </body>

@@ -82,7 +82,7 @@
             <label class="col-md-3">Username</label>
 
             <div class="col-md-7">
-              <input type="text" name="username" value="<?php echo $user['uacc_username']?>" class="form-control" disabled />
+              <input type="text" name="username" value="<?php echo $user['username']?>" class="form-control" disabled />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->
@@ -94,7 +94,7 @@
             <label class="col-md-3">First Name</label>
 
             <div class="col-md-7">
-              <input type="text" name="first_name" value="<?php echo $user['upro_first_name']?>" class="form-control" />
+              <input type="text" name="first_name" value="<?php echo $user['first_name']?>" class="form-control" />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->
@@ -106,7 +106,7 @@
             <label class="col-md-3">Last Name</label>
 
             <div class="col-md-7">
-              <input type="text" name="last_name" value="<?php echo $user['upro_last_name']?>" class="form-control" />
+              <input type="text" name="last_name" value="<?php echo $user['last_name']?>" class="form-control" />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->

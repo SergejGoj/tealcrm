@@ -85,27 +85,18 @@ Class General extends CI_Model{
 
 	//return an object containing user's first and last name from the table sc_user_profiles
 	public function getFirstLastName($uid){
-		$q = $this
-				->db
-				->select('upro_first_name, upro_last_name')
-				->where("upro_uacc_fk", $uid)
-				->limit(1)
-				->get("sc_user_profiles");
-		if( $q ->num_rows > 0 ){
-			return $q->row();
-		}else{
-			return " - ";
-		}
+		
+		$user = $this->ion_auth->user($uid)->row();
+		return $user;
+
 	}
 
 	//return an object containing user's profile picture name from the table sc_user_profiles
 	public function getProfilePictureName($uuid){
-		$q = $this
-				->db
-				->select('upro_filename_original')
-				->where("upro_uacc_fk", $uuid)
-				->get("sc_user_profiles");
-			return $q->row();
+
+		$user = $this->ion_auth->user($uuid)->row();
+		return $user->picture;
+
 	}
 
 	public function DisplayOtherUserIcon($file){ //not implemented yet

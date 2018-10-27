@@ -247,7 +247,7 @@ DISABLED ALERTS FOR PHASE 1
             <ul class="dropdown-menu" role="menu">
 
 			  <li>
-                  <span class="progress-stat-label" style="width:100%"><?php echo $user['upro_first_name'].' '.$user['upro_last_name'];?></span>
+                  <span class="progress-stat-label" style="width:100%"><?php echo $user['first_name'].' '.$user['last_name'];?></span>
                   <br/>
 			  </li>
 
