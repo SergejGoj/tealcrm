@@ -13,29 +13,6 @@ class Ajax extends App_Controller {
 		// call parent
 		parent::__construct();
 	}
-	
-	/**
-	 * remap
-	 *
-	 * @param string $method
-	 */
-	function _remap($method)
-	{
-		// auth check
-		if ( ! $this->flexi_auth->is_logged_in() )
-		{
-			redirect('auth/login');
-		}
-
-		// check method exists again
-		if(method_exists($this, $method)){
-			// remove classname and method name form uri
-			call_user_func_array(array($this, $method), array_slice($this->uri->rsegments, 2));
-		}else{
-			// error
-			show_404(sprintf('controller method [%s] not implemented!', $method));
-		}
-	}
 
 	public function index(){
 		//$this->load->view('welcome_message');
@@ -74,9 +51,9 @@ class Ajax extends App_Controller {
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
-		//uacc_uid
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user_id = $_SESSION['user']->id;
+		//id
+		$user = $_SESSION['user']->id;
 
 		$assignedusers = getAssignedUsers();
 
@@ -128,9 +105,9 @@ class Ajax extends App_Controller {
 	*/
 	public function accountsAutocomplete(){
 
-		$user_id = $this->flexi_auth->get_user_id();
-		//uacc_uid
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user_id = $_SESSION['user']->id;
+		//id
+		$user = $_SESSION['user'];
 
 		$hint = $this->input->get('q');
 
@@ -143,9 +120,9 @@ class Ajax extends App_Controller {
 
 	public function personsAutocomplete(){
 
-			$user_id = $this->flexi_auth->get_user_id();
-			//uacc_uid
-			$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+			$user_id = $_SESSION['user']->id;
+			//id
+			$user = $_SESSION['user'];
 
 			$hint = $this->input->get('q');
 
@@ -158,9 +135,9 @@ class Ajax extends App_Controller {
 
 	public function dealsAutocomplete(){
 
-			$user_id = $this->flexi_auth->get_user_id();
-			//uacc_uid
-			$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+			$user_id = $_SESSION['user']->id;
+			//id
+			$user = $_SESSION['user'];
 
 			$hint = $this->input->get('q');
 
@@ -173,9 +150,9 @@ class Ajax extends App_Controller {
 
 	public function projectsAutocomplete(){
 
-			$user_id = $this->flexi_auth->get_user_id();
-			//uacc_uid
-			$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+			$user_id = $_SESSION['user']->id;
+			//id
+			$user = $_SESSION['user'];
 
 			$hint = $this->input->get('q');
 
@@ -188,9 +165,9 @@ class Ajax extends App_Controller {
 
 	public function productsAutocomplete(){
 
-			$user_id = $this->flexi_auth->get_user_id();
-			//uacc_uid
-			$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+			$user_id = $_SESSION['user']->id;
+			//id
+			$user = $_SESSION['user'];
 
 			$hint = $this->input->get('q');
 
@@ -202,9 +179,9 @@ class Ajax extends App_Controller {
 	}
 	public function tasksAutocomplete(){
 
-		$user_id = $this->flexi_auth->get_user_id();
-		//uacc_uid
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user_id = $_SESSION['user']->id;
+		//id
+		$user = $_SESSION['user'];
 
 		$hint = $this->input->get('q');
 
@@ -217,9 +194,9 @@ class Ajax extends App_Controller {
 
 	public function templatesAutocomplete(){
 
-			$user_id = $this->flexi_auth->get_user_id();
-			//uacc_uid
-			$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+			$user_id = $_SESSION['user']->id;
+			//id
+			$user = $_SESSION['user'];
 
 			$hint = $this->input->get('q');
 
@@ -309,9 +286,9 @@ class Ajax extends App_Controller {
 		if($filter_value == "sales_stage_id") $filter_value = "sales_stage";
 		if($filter_value == "lead_status_id") $filter_value = "lead_status";
 
-		$user_id = $this->flexi_auth->get_user_id();
-		//uacc_uid
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user_id = $_SESSION['user']->id;
+		//id
+		$user = $_SESSION['user'];
 
 
 		//if datetime then return two fields for start and end date
@@ -341,15 +318,11 @@ class Ajax extends App_Controller {
 
 		// drop down list for assigned users has to be accessed from a different table
 		if( $filter_type == "assignedUsers" ){
-
-			// THIS SHOULD BE ADDED AS A SESSION INSTEAD OF DOING A DB CALL
-			$where_arr  = array('uacc_id <>' => $user_id);
-			$users = $this->flexi_auth->get_users_query(array("uacc_uid,CONCAT(upro_first_name, ' ', upro_last_name) AS name", FALSE), $where_arr)->result_array();
-
-			$return = '<select id="filtervalue1" name="assigned_user_id" class="form-control filter_data_value" size="1">';
-			foreach($users as $user){
-				$return .= '<option value="' . $user['uacc_uid'] . '">' . $user['name'] . '</option>';
+			
+			foreach($_SESSION['user_accounts'] as $user){
+				$return .= '<option value="' . $user['id'] . '">' . $user['name'] . '</option>';
 			}
+			
 			$return .= "</select>";
 		}
 
@@ -379,12 +352,6 @@ class Ajax extends App_Controller {
 		$post = $this->input->post(null, true);
 		$key = $post['key'];
 
-		/*
-		$user_id = $this->flexi_auth->get_user_id();
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_id')->row();
-		$this->db->select("upro_mailchimp_apikey");
-		$this->db->where("upro_id", $user->uacc_id);
-		*/
 		$config = array(
 			'apikey' => $key,      // Insert your api key
 			'secure' => FALSE   // Optional (defaults to FALSE)
@@ -542,9 +509,9 @@ class Ajax extends App_Controller {
 
 		$parent_task->where("task_id", $parent_id)->get();
 		//var_dump($parent_task->task_id);
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row_array();
+		$user = $_SESSION['user'];
 
 		for($i=0; $i<sizeof($tasks_array); $i++){
 			$new_task = new Task();
@@ -565,7 +532,7 @@ class Ajax extends App_Controller {
 			else
 				$new_task->due_date = gmdate('Y-m-d H:i:s', strtotime($due_dates_array[$i]));
 
-			$new_task->created_by = $user['uacc_uid'];
+			$new_task->created_by = $user['id'];
 			$new_task->assigned_user_id = $parent_task->assigned_user_id;
 			$new_task->subject = trim($tasks_array[$i]);
 			$new_task->company_id = $parent_task->company_id;

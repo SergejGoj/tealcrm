@@ -21,30 +21,6 @@ class Settings extends App_Controller {
 		parent::__construct();
 	}
 
-	/**
-	 * remap
-	 *
-	 * @param string $method
-	 */
-	function _remap($method)
-	{
-		// auth check
-		if ( ! $this->flexi_auth->is_logged_in() )
-		{
-			redirect('auth/login');
-		}
-
-		// check method exists again
-		if(method_exists($this,$method)){
-			// remove classname and method name form uri
-			call_user_func_array(array($this, $method), array_slice($this->uri->rsegments, 2));
-		}else{
-			// erro
-			show_404(sprintf('controller method [%s] not implemented!', $method));
-		}
-	}
-
-
 
 	/**
 	 * index, content, all page routed here if 404 /not found
@@ -73,11 +49,10 @@ class Settings extends App_Controller {
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
 
 		// get all of settings data from database
 		// init
@@ -133,17 +108,6 @@ class Settings extends App_Controller {
 
 
 		}
-
-		//get all users under sc_user_accounts
-		$data['flexi_users'] = $this->flexi_auth->get_users(FALSE, array("uacc_active"=>1))->result();
-		$data['flexi_users_inactive'] = $this->flexi_auth->get_users(FALSE, array("uacc_active"=>0))->result();
-
-		//create array that holds the group_id as key and group_name as value
-		$flexi_grps = array();
-		foreach($this->flexi_auth->get_groups()->result() as $group){
-			$flexi_grps[$group->ugrp_id] = $group->ugrp_name;
-		}
-		$data['flexi_groups'] = $flexi_grps;
 
 		// set drop downs
 
@@ -307,7 +271,7 @@ class Settings extends App_Controller {
 				// now
 
 				$data = array(
-					"modified_user_id" => $_SESSION['user']['uacc_uid'],
+					"modified_user_id" => $_SESSION['user']['id'],
 					"product_name" => $post['product_name'],
 					"product_type" => $post['product_type'],
 					"manufacturer_part_number" => $post['manufacturer_part_number'],
@@ -383,7 +347,7 @@ class Settings extends App_Controller {
 				$dls->quantity_in_stock = $post['quantity_in_stock'];
 				$dls->description = $post['description'];
 				$dls->active = $post['active'];
-				$dls->created_by = $_SESSION['user']['uacc_uid'];
+				$dls->created_by = $_SESSION['user']['id'];
 
 				// Save new user
 				if( $dls->save() ){
@@ -515,7 +479,7 @@ class Settings extends App_Controller {
 				// now
 				if ($this->form_validation->run() == TRUE){
 				$data = array(
-					"modified_user_id" => $_SESSION['user']['uacc_uid'],
+					"modified_user_id" => $_SESSION['user']['id'],
 					"name" => $post['name'],
 					//"html_body" => $post['html_content']
 					"html_body" => $_REQUEST['html_content']
@@ -569,7 +533,7 @@ class Settings extends App_Controller {
 			// Enter values into required fields
 			$dls->template_id = $id;
 			$dls->name = $post['name'];
-			$dls->created_by = $_SESSION['user']['uacc_uid'];
+			$dls->created_by = $_SESSION['user']['id'];
 			//$dls->html_body = $post['html_content'];
 			$dls->html_body = $_REQUEST['html_content'];
 
@@ -646,58 +610,51 @@ class Settings extends App_Controller {
 	 */
 	function updateUser()
 	{
+		
 		// data
 		$data = array();
 			// reload SESSION variables
 		$CI =& get_instance();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
+		$user = $_SESSION['user'];
+		
 		// set
 		$data['user'] = $user;
 
 		// post
 		$post = $this->input->post(null, true);
 
-		//exist email
-			if($post['user_status'] != 178 && ($post['email'] != $post['orig_email']))
-			{
-			$this->db->select('uacc_email');
-				$this->db->where(array('uacc_email' => $post['email'],'uacc_active' => 1) );
-				$check_email_query = $this->db->get('sc_user_accounts')->result();
-				$check_email_value = count($check_email_query);	
-				if($check_email_value != 0)
-				{
-					notify_set(array('status' => 'error', 'message' => ' Please use new email address not already in use in the system.', 'settings_crm_settings'));
-					redirect('settings/users/'.$post['uid']);
-				}
-			}
 
+		// check if email is changing to make sure there isn't a duplicate
+		if ( $_SESSION['user']->email != $post['email'] ){
+			
+			// email is different than before, let's make sure it isn't already in the database
+			if ( $this->ion_auth->email_check($post['email']) ){
+				// email exists, send failure
+				notify_set( array('status'=>'error', 'message'=>'Oops, that email already exists in the system.' ) );
+				// redirect
+				redirect('settings/users/'.$post['uid']);
+				exit();
+			}
+			
+		}
 
 		// check for info of the user's company, the one we are making changes on
-		if( ! $flexi_user = $this->flexi_auth->get_users(FALSE, array("uacc_uid"=>$post['uid']))->row() ){
+		if( ! $user = $this->ion_auth->user($post['uid'])->row() ){
 			// set flash
 			notify_set( array('status'=>'error', 'message'=>'No user by the id ' . $post['uid']) );
 
 			// redirect, don't continue the code
 			redirect( 'settings' );
+			exit();
 		}
-
-		//get all users under sc_user_accounts
-		$data['flexi_users'] = $this->flexi_auth->get_users()->result();
-
-		//create array that holds the group_id as key and group_name as value
-		$flexi_grps = array();
-		foreach($this->flexi_auth->get_groups()->result() as $group){
-			$flexi_grps[$group->ugrp_id] = $group->ugrp_name;
-		}
-		$data['flexi_groups'] = $flexi_grps;
 
 		// set
-		$data['user_info'] = $flexi_user;
+		$data['user_info'] = $user;
 
 		// save
 		//if( $post['act'] == "update-user" ){
@@ -726,7 +683,7 @@ class Settings extends App_Controller {
 						##STEP 1: make changes to table sc_user_accounts
 						//*NOTE: flexi is using id not uid
 						//get the user id from the uuid passed via form.
-						$id = $this->flexi_auth->get_custom_user_data("uacc_id", array("uacc_uid"=>$post['uid']), FALSE)->row();
+						$id = $this->flexi_auth->get_custom_user_data("uacc_id", array("id"=>$post['uid']), FALSE)->row();
                         //$u = new User();
                         //$u->where('upro_uacc_fk', $post['uid'])->get();
                         //var_dump($u);
@@ -736,7 +693,7 @@ class Settings extends App_Controller {
 								} else {
 								$status = 1;}
 							$user_data = array(
-							'uacc_username' => $post['username'],
+							'username' => $post['username'],
 							'uacc_email' => $post['email'],
 							'uacc_group_fk' => $post['user_group'],
 							'uacc_active' => $status
@@ -746,8 +703,8 @@ class Settings extends App_Controller {
 
 						##STEP 2: make changes to table sc_user_profiles
 						$profile_data = array(
-							'upro_first_name' => $post['first_name'],
-							'upro_last_name' => $post['last_name'],
+							'first_name' => $post['first_name'],
+							'last_name' => $post['last_name'],
 							'upro_phone' => $post['phone_number']
 						);
 						$account_data = $post['email'];
@@ -792,8 +749,8 @@ class Settings extends App_Controller {
 
                         $user = new User();
 
-						$uacc_uid=$_SESSION['user_accounts'][$post['uid']]['uacc_uid'];
-						$ss_query1 = "SELECT * from sc_user_accounts WHERE (uacc_uid = '".$uacc_uid."')";
+						$id=$_SESSION['user_accounts'][$post['uid']]['id'];
+						$ss_query1 = "SELECT * from sc_user_accounts WHERE (id = '".$id."')";
 						$user_id_result = $this->db->query($ss_query1);
 						$user1 = $user_id_result->result();
 
@@ -1151,6 +1108,7 @@ class Settings extends App_Controller {
 	*/
 	public function users( $usr_uid, $section='crm-settings' ){
 
+echo "hello";
 
 		// field validation
 		$this->load->helper(array('form', 'url'));
@@ -1170,11 +1128,11 @@ class Settings extends App_Controller {
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 		//pass a random string to mask user's profile image
 		//ie: 3dbc33def75830b6bb32ee30b1b5ec1e
@@ -1187,7 +1145,7 @@ class Settings extends App_Controller {
 					$data['hashImg_navbar']=>
 						//store the user profile image ( from upro_filename_original ) as the value for the session
 						//if the user has not uploaded an image use the system default image default.png
-						(empty($user['upro_filename_original']) ? 'default.png' : $user['upro_filename_original'])
+						(empty($_SESSION['user']->picture) ? 'default.png' : $_SESSION['user']->picture)
 				)
 			);
 
@@ -1245,24 +1203,19 @@ class Settings extends App_Controller {
 		}
 
 
-		// check
-		if( ! $flexi_user = $this->flexi_auth->get_users(FALSE, array("uacc_uid"=>$usr_uid))->row() ){
+		// check for info of the user's company, the one we are making changes on
+		if( ! $user = $this->ion_auth->user($usr_uid)->row() ){
 			// set flash
 			notify_set( array('status'=>'error', 'message'=>'No user by the id ' . $usr_uid) );
 
 			// redirect, don't continue the code
 			redirect( 'settings' );
+			exit();
 		}
 
 		//get all users under sc_user_accounts
-		$data['flexi_users'] = $this->flexi_auth->get_users()->result();
+		$data['users'] = $_SESSION['user_accounts'];
 
-		//create array that holds the group_id as key and group_name as value
-		$flexi_grps = array();
-		foreach($this->flexi_auth->get_groups()->result() as $group){
-			$flexi_grps[$group->ugrp_id] = $group->ugrp_name;
-		}
-		$data['flexi_groups'] = $flexi_grps;
 
 		$data['hashImg'] = md5(uniqid());
 
@@ -1272,12 +1225,12 @@ class Settings extends App_Controller {
 					$data['hashImg']=>
 						//store the user profile image ( from upro_filename_original ) as the value for the session
 						//if the user has not uploaded an image use the system default image default.png
-						(empty($flexi_user->upro_filename_original) ? 'default.png' : $flexi_user->upro_filename_original)
+						(empty($user->picture) ? 'default.png' : $user->picture)
 				)
 			);
 
 		// set
-		$data['user_info'] = $flexi_user;
+		$data['user_info'] = $user;
 		//var_dump($flexi_user);
 
 
@@ -1296,24 +1249,15 @@ class Settings extends App_Controller {
 		$provinces = dropdownProvinces();
 		$data['provinces'] = $provinces;
 
-		//create array that holds the group_id as key and group_name as value
-		$flexi_grps = array();
-		foreach($this->flexi_auth->get_groups()->result() as $group){
-			$flexi_grps[$group->ugrp_id] = $group->ugrp_name;
-		}
-		$data['flexi_groups'] = $flexi_grps;
-
 		// set data
 		$data['setting'] = $setts;
 
 		// set
 		$data['section'] = $section;
 
-		$groups = dropdownCreator('uacc_group_fk');
-		$data['groups'] = $groups;
+		$data['groups'] = $this->ion_auth->groups()->result();
 		
-		$user_status = dropdownCreator('user_status');
-		$data['user_status'] = $user_status;
+		pr($data['groups']);
 
 		// load view
 		$this->layout->view('/settings/users', $data);
@@ -1360,11 +1304,11 @@ class Settings extends App_Controller {
 		//logedin user
 
 
-	$user_id = $this->flexi_auth->get_user_id();
+	$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 		//pass a random string to mask user's profile image
 		//ie: 3dbc33def75830b6bb32ee30b1b5ec1e
@@ -1395,7 +1339,7 @@ class Settings extends App_Controller {
 					$_SESSION['new_user']['last_name']=$post['last_name'];
 					$_SESSION['new_user']['phone_number']=$post['phone_number'];
 					$_SESSION['new_user']['uacc_email']=$post['email'];
-					$_SESSION['new_user']['uacc_username']=$post['username'];
+					$_SESSION['new_user']['username']=$post['username'];
 					$_SESSION['new_user']['uacc_password']=$post['password'];
 					$_SESSION['new_user']['uacc_group_fk']=$post['user_group'];
 					$_SESSION['new_user']['uacc_active']=1;
@@ -1432,15 +1376,15 @@ class Settings extends App_Controller {
 							$activate = 1;
 
                         /*$user_data = array(
-                            'upro_first_name' => 'last_name',
-                            'upro_last_name' => 'first_name'
+                            'first_name' => 'last_name',
+                            'last_name' => 'first_name'
                         );*/
                         $user_account =array(
                           'uacc_email' => $email,
-                          'uacc_username' => $username,
+                          'username' => $username,
                           //'uacc_password' => $password,
                           'uacc_group_fk' => $group_id,
-                          'uacc_uid' =>  $uid,
+                          'id' =>  $uid,
                            'uacc_active' => $activate
                         );
 
@@ -1453,8 +1397,8 @@ class Settings extends App_Controller {
 
 
                         $user_profile = array(
-                            'upro_first_name' => $first_name,
-                            'upro_last_name' => $last_name,
+                            'first_name' => $first_name,
+                            'last_name' => $last_name,
                             'upro_phone' => $phone_number,
                             'upro_uacc_fk' => $id
                         );
@@ -1473,7 +1417,7 @@ class Settings extends App_Controller {
                                     if( $new_uacc_id = $this->flexi_auth->insert_user($email, $username, $password, array(), $group_id, $activate) ){
 
                                         //add a new unique id to the new user
-                                        $this->db->query("UPDATE (`sc_user_accounts`) SET `uacc_uid`='$uid' WHERE `uacc_id`='$new_uacc_id' ");
+                                        $this->db->query("UPDATE (`sc_user_accounts`) SET `id`='$uid' WHERE `uacc_id`='$new_uacc_id' ");
 
                                        if($new_upro_id= $this->flexi_auth->insert_profile($first_name, $last_name, $phone_number, array())) {
                                            //add new profile matching the user id
@@ -1526,29 +1470,13 @@ class Settings extends App_Controller {
 
 
 		// reload SESSION variables
-	$CI =& get_instance();
-	$CI->teal_global_vars->set_all_global_vars();
-	$data['email_exist'] = 0;
+		$CI =& get_instance();
+		$CI->teal_global_vars->set_all_global_vars();
+		$data['email_exist'] = 0;
 		// load view
 		$this->layout->view('/settings/add', $data);
 	}
 }
-
-   /**
-	* Search
-	*
-	* @param void
-	* @return void
-	*/
-	public function search()
-	{
-		// view data init
-		$data = array();
-
-		// load view
-		$this->layout->view('/people/search', $data);
-	}
-
 
 	 /**
 	* Delete
@@ -1558,7 +1486,7 @@ class Settings extends App_Controller {
 	*/
 	public function delete( $company_id ){
 
-		$id = $this->flexi_auth->get_custom_user_data("uacc_id", array("uacc_uid"=>$company_id), FALSE)->row();
+		$id = $this->flexi_auth->get_custom_user_data("uacc_id", array("id"=>$company_id), FALSE)->row();
 
 
 	    $master_admin =$this->db->query("select * from sc_user_accounts where uacc_group_fk = '3' and uacc_active = 1")->result();
@@ -1608,7 +1536,7 @@ class Settings extends App_Controller {
 			foreach($ids as $company_id)
 			{
 
-			    $active_users = $this->db->query("select uacc_group_fk from sc_user_accounts where uacc_uid = '".$company_id."'")->result();
+			    $active_users = $this->db->query("select uacc_group_fk from sc_user_accounts where id = '".$company_id."'")->result();
 
 			   if($active_users[0]->uacc_group_fk == 3)
 			   {
@@ -1629,7 +1557,7 @@ class Settings extends App_Controller {
 			// loop
 			foreach ($ids as $company_id){
 
-				$id = $this->flexi_auth->get_custom_user_data("uacc_id", array("uacc_uid"=>$company_id), FALSE)->row();
+				$id = $this->flexi_auth->get_custom_user_data("uacc_id", array("id"=>$company_id), FALSE)->row();
 
 				//set the user to inactive by changing uacc_active from 1 to 0
 				if( $this->flexi_auth->update_user(intval($id->uacc_id), array("uacc_active"=>0)) ){
@@ -1671,8 +1599,8 @@ class Settings extends App_Controller {
 			// loop
 			foreach ($userid as $company_id){
 
-				$id = $this->flexi_auth->get_custom_user_data("uacc_id", array("uacc_uid"=>$company_id), FALSE)->row();
-				$id = $this->flexi_auth->get_custom_user_data("uacc_id,	uacc_email, uacc_username", array("uacc_uid"=>$company_id), FALSE)->row();
+				$id = $this->flexi_auth->get_custom_user_data("uacc_id", array("id"=>$company_id), FALSE)->row();
+				$id = $this->flexi_auth->get_custom_user_data("uacc_id,	uacc_email, username", array("id"=>$company_id), FALSE)->row();
 				
 				$email = $this->flexi_auth->get_custom_user_data("uacc_id, uacc_email",array("uacc_email"=>$id->uacc_email,"uacc_active"=>1))->row();
 				
@@ -1688,7 +1616,7 @@ class Settings extends App_Controller {
 			   	}
 				}
 				else{
-					$exist_user[] = $id->uacc_username;
+					$exist_user[] = $id->username;
 					$exist_email[] = $email->uacc_email;
 					
 					}
@@ -1810,11 +1738,11 @@ class Settings extends App_Controller {
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 
 		$modules = dropdownCreator('module');

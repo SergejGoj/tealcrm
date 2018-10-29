@@ -514,7 +514,7 @@ function update_last_viewed($UID, $module_id, $description){
 	$id = $CI->uuid->v4();
 	
 	$data = array(
-			   'user_id' => $_SESSION['user']['uacc_uid'],
+			   'user_id' => $_SESSION['user']['id'],
 			   'record_view_id' => $id,
 			   'description' => $description,
 			   'module_id' => $module_id,

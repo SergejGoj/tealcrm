@@ -3,15 +3,15 @@ class Fields_autocomplete extends CI_Model {
 
 	/**
 	* param: $hint some characters provided by the user to search for companies that contain that $hint
-	* param: (optional) $uacc_uid user unique id (36 long)
+	* param: (optional) $id user unique id (36 long)
 	* return: empty array $list IDs and Names if no companies matches the provided hint or list of IDs and Names
 	 */
-	public function getAccountsList($hint, $uacc_uid=''){
+	public function getAccountsList($hint, $id=''){
 		//format datetime into "time ago"
 		$list = array();
 
-		if($uacc_uid != '')
-			$query = $this->db->select("company_id,company_name")->like("company_name", $hint)->where(array("created_by"=>$uacc_uid,"deleted"=>0))->order_by("company_name", "asc")->get("sc_companies");
+		if($id != '')
+			$query = $this->db->select("company_id,company_name")->like("company_name", $hint)->where(array("created_by"=>$id,"deleted"=>0))->order_by("company_name", "asc")->get("sc_companies");
 		else
 			$query = $this->db->select("company_id,company_name")->like("company_name", $hint)->where("deleted",0)->order_by("company_name", "asc")->get("sc_companies");
 
@@ -26,15 +26,15 @@ class Fields_autocomplete extends CI_Model {
 
 	/**
 	* param: $hint some characters provided by the user to search for people that contain that $hint
-	* param: (optional) $uacc_uid user unique id (36 long)
+	* param: (optional) $id user unique id (36 long)
 	* return: empty array $list IDs and Names if no persons matches the provided hint or list of IDs and Names
 	 */
-	public function getPersonsList($hint, $uacc_uid=''){
+	public function getPersonsList($hint, $id=''){
 		//format datetime into "time ago"
 		$list = array();
 
-		if($uacc_uid != '')
-			$query = $this->db->select('people_id,first_name,last_name,company_id')->like("first_name", $hint)->or_like("last_name", $hint)->where(array("created_by"=>$uacc_uid,"deleted"=>0))->order_by("company_id", "desc")->get("sc_people");
+		if($id != '')
+			$query = $this->db->select('people_id,first_name,last_name,company_id')->like("first_name", $hint)->or_like("last_name", $hint)->where(array("created_by"=>$id,"deleted"=>0))->order_by("company_id", "desc")->get("sc_people");
 		else
 			$query = $this->db->select("people_id,first_name,last_name,company_id")->like("first_name", $hint)->or_like("last_name", $hint)->where("deleted",0)->order_by("company_id", "desc")->get("sc_people");
 
@@ -55,15 +55,15 @@ class Fields_autocomplete extends CI_Model {
 	}
 	/**
 	* param: $hint some characters provided by the user to search for deals that contain that $hint
-	* param: (optional) $uacc_uid user unique id (36 long)
+	* param: (optional) $id user unique id (36 long)
 	* return: empty array $list IDs and Names if no deals matches the provided hint or list of IDs and Names
 	 */
-	public function getDealsList($hint, $uacc_uid=''){
+	public function getDealsList($hint, $id=''){
 		//format datetime into "time ago"
 		$list = array();
 
-		if($uacc_uid != '')
-			$query = $this->db->select("deal_id,name")->like("name", $hint)->where("created_by",$uacc_uid)->order_by("name", "asc")->get("sc_deals");
+		if($id != '')
+			$query = $this->db->select("deal_id,name")->like("name", $hint)->where("created_by",$id)->order_by("name", "asc")->get("sc_deals");
 		else
 			$query = $this->db->select("deal_id,name")->like("name", $hint)->order_by("name", "asc")->get("sc_deals");
 
@@ -76,12 +76,12 @@ class Fields_autocomplete extends CI_Model {
 		return $list;
 	}
 
-	public function getProjectsList($hint, $uacc_uid=''){
+	public function getProjectsList($hint, $id=''){
 		//format datetime into "time ago"
 		$list = array();
 
-		if($uacc_uid != '')
-			$query = $this->db->select("project_id,project_name")->like("project_name", $hint)->where(array("created_by"=>$uacc_uid,"deleted"=>0, "archived"=>0))->order_by("project_name", "asc")->get("sc_projects");
+		if($id != '')
+			$query = $this->db->select("project_id,project_name")->like("project_name", $hint)->where(array("created_by"=>$id,"deleted"=>0, "archived"=>0))->order_by("project_name", "asc")->get("sc_projects");
 		else
 			$query = $this->db->select("project_id,project_name")->like("project_name", $hint)->where(array("deleted"=>0, "archived"=>0))->order_by("project_name", "asc")->get("sc_projects");
 
@@ -95,12 +95,12 @@ class Fields_autocomplete extends CI_Model {
 	}
 
 
-	public function getListnew($hint, $uacc_uid=''){
+	public function getListnew($hint, $id=''){
 		//format datetime into "time ago"
 		$list = array();
 
-		if($uacc_uid != '')
-			$query = $this->db->select("deal_id,name")->like("name", $hint)->where(array("created_by"=>$uacc_uid,"deleted",0))->order_by("name", "asc")->get("sc_deals");
+		if($id != '')
+			$query = $this->db->select("deal_id,name")->like("name", $hint)->where(array("created_by"=>$id,"deleted",0))->order_by("name", "asc")->get("sc_deals");
 		else
 			$query = $this->db->select("deal_id,name")->like("name", $hint)->where("deleted",0)->order_by("name", "asc")->get("sc_deals");
 
@@ -112,12 +112,12 @@ class Fields_autocomplete extends CI_Model {
 		}
 		return $list;
 	}
-	public function getTasksList($hint, $uacc_uid=''){
+	public function getTasksList($hint, $id=''){
 		//format datetime into "time ago"
 		$list = array();
 
-		if($uacc_uid != '')
-			$query = $this->db->select("task_id,subject")->like("subject", $hint)->where(array("created_by"=>$uacc_uid,"deleted"=>0,"parent_id"=>0))->order_by("subject", "asc")->get("sc_tasks");
+		if($id != '')
+			$query = $this->db->select("task_id,subject")->like("subject", $hint)->where(array("created_by"=>$id,"deleted"=>0,"parent_id"=>0))->order_by("subject", "asc")->get("sc_tasks");
 		else
 			$query = $this->db->select("task_id,subject")->like("subject", $hint)->where(array("deleted"=>0,"parent_id"=>0))->order_by("subject", "asc")->get("sc_tasks");
 
@@ -141,15 +141,15 @@ class Fields_autocomplete extends CI_Model {
 	}
 	/**
 	* param: $hint some characters provided by the user to search for products that contain that $hint
-	* param: (optional) $uacc_uid user unique id (36 long)
+	* param: (optional) $id user unique id (36 long)
 	* return: empty array $list IDs and Names if no products matches the provided hint or list of IDs and Names
 	 */
-	public function getProductsList($hint, $uacc_uid=''){
+	public function getProductsList($hint, $id=''){
 		//format datetime into "time ago"
 		$list = array();
 
-		if($uacc_uid != '')
-			$query = $this->db->select("product_id,product_name,cost,list_price,description")->like("product_name", $hint)->where(array("created_by"=>$uacc_uid,"deleted"=>0,"active"=>0))->order_by("product_name", "asc")->get("sc_products");
+		if($id != '')
+			$query = $this->db->select("product_id,product_name,cost,list_price,description")->like("product_name", $hint)->where(array("created_by"=>$id,"deleted"=>0,"active"=>0))->order_by("product_name", "asc")->get("sc_products");
 		else
 			$query = $this->db->select("product_id,product_name,cost,list_price,description")->like("product_name", $hint)->where(array("deleted"=>0,"active"=>0))->order_by("product_name", "asc")->get("sc_products");
 
@@ -162,13 +162,13 @@ class Fields_autocomplete extends CI_Model {
 		return $list;
 	}
 
-	public function getTemplatesList($hint, $uacc_uid=''){
+	public function getTemplatesList($hint, $id=''){
 		//format datetime into "time ago"
 
 		$list = array();
 
-		if($uacc_uid != '')
-			$query = $this->db->select("template_id,name,html_body")->like("name", $hint)->where(array("created_by"=>$uacc_uid,"deleted"=>0))->order_by("name", "asc")->get("sc_templates");
+		if($id != '')
+			$query = $this->db->select("template_id,name,html_body")->like("name", $hint)->where(array("created_by"=>$id,"deleted"=>0))->order_by("name", "asc")->get("sc_templates");
 		else
 			$query = $this->db->select("template_id,name,html_body")->like("name", $hint)->where(array("deleted"=>0))->order_by("name", "asc")->get("sc_templates");
 

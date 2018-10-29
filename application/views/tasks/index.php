@@ -153,12 +153,12 @@
                                             <?php
                                             foreach ($_SESSION['user_accounts'] as $user) {
                                                 ?>
-                                                <option value="<?php echo $user['uacc_uid']; ?>"
+                                                <option value="<?php echo $user['id']; ?>"
                                                     <?php if (isset($_SESSION['search']['tasks']['assigned_user_id'])) {
-                                                        foreach ($_SESSION['search']['tasks']['assigned_user_id'] as $opn) if ($opn == $user['uacc_uid']) {
+                                                        foreach ($_SESSION['search']['tasks']['assigned_user_id'] as $opn) if ($opn == $user['id']) {
                                                             echo 'selected';
                                                         };
-                                                    } ?>><?php echo $user['upro_first_name'] . ' ' . $user['upro_last_name']; ?></option>
+                                                    } ?>><?php echo $user['first_name'] . ' ' . $user['last_name']; ?></option>
                                             <?php } ?>
                                         </select>
                                     </td>
@@ -329,8 +329,8 @@
                                         <?php } else if ($field_label[$field_name]["field_type"] == "task_special_field") { ?>
                                             <td>
                                                 <?php
-                                                    $first_name = $_SESSION['user_accounts'][$task->$field_name]['upro_first_name'];
-                                                    $last_name = $_SESSION['user_accounts'][$task->$field_name]['upro_last_name'];
+                                                    $first_name = $_SESSION['user_accounts'][$task->$field_name]['first_name'];
+                                                    $last_name = $_SESSION['user_accounts'][$task->$field_name]['last_name'];
                                                     if(($first_name != NULL) && ($last_name != NULL)) {
                                                         echo $first_name." ".$last_name;
                                                     } else if($first_name != NULL) {
@@ -338,7 +338,7 @@
                                                     } else if($last_name != NULL) {
                                                         echo $last_name;
                                                     } else {
-                                                        echo $_SESSION['user_accounts'][$task->$field_name]['uacc_username'];
+                                                        echo $_SESSION['user_accounts'][$task->$field_name]['username'];
                                                     }
                                                 ?>
                                             </td>

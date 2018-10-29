@@ -21,29 +21,6 @@ class Search extends App_Controller {
 		// call parent
 		parent::__construct();		
 	}
-	
-	/**
-	 * remap
-	 * 
-	 * @param string $method
-	 */
-	function _remap($method)
-	{			
-		// auth check
-		if ( ! $this->flexi_auth->is_logged_in() )
-		{
-			redirect('auth/login');
-		}
-		
-		// check method exists again
-		if(method_exists($this, $method)){		
-			// remove classname and method name form uri	
-			call_user_func_array(array($this, $method), array_slice($this->uri->rsegments, 2));
-		}else{
-		    // error
-			show_404(sprintf('controller method [%s] not implemented!', $method));		
-		}		
-	}
 
 	/**
 	 * View search results all
@@ -62,11 +39,10 @@ class Search extends App_Controller {
 		$data = array();	
 
 		//logedin user	
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 		
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();	
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];	
 
 		//pass a random string to mask user's profile image
 		//ie: 3dbc33def75830b6bb32ee30b1b5ec1e

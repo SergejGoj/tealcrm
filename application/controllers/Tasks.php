@@ -439,9 +439,9 @@ class Tasks extends App_Controller {
 		$data = array();
 
 		// get the GUID for the logged in user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row_array();
+		$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row_array();
 
 		// init
 		$taks = new Task();
@@ -450,7 +450,7 @@ class Tasks extends App_Controller {
 		$where_arr  = array('uacc_id <>' => $user_id);
 		// load model
 		//$this->load->model('flexi_auth_model');
-		$users = $this->flexi_auth->get_users_query(array("uacc_uid,CONCAT(upro_first_name, ' ', upro_last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
+		$users = $this->flexi_auth->get_users_query(array("id,CONCAT(first_name, ' ', last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
 		// set
 	    $data['users'] = $users;
 
@@ -508,7 +508,7 @@ class Tasks extends App_Controller {
 				$taks->task_id = $id;
 				//$taks->date_modified = $now;
 				$taks->due_date = $due_date;
-				$taks->created_by = $user['uacc_uid'];
+				$taks->created_by = $user['id'];
 				$taks->assigned_user_id = $post['assigned_user_id'];
 				$taks->subject = $post['subject'];
 				$taks->company_id = $post['company_id'];
@@ -602,7 +602,7 @@ class Tasks extends App_Controller {
 		$data['status_ids'] = $status_ids;
 
 		//default assigned user for new person to the admin user of this company
-		$data['assigned_user_id'] = $user['uacc_uid'];
+		$data['assigned_user_id'] = $user['id'];
 
 		// fetch company name
 		$person_names = dropdownpeople();
@@ -654,17 +654,17 @@ class Tasks extends App_Controller {
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 		//$where_str = '`uacc_id` <> ' . $user_id;
 		$where_arr  = array('uacc_id <>' => $user_id);
 		// load model
 		//$this->load->model('flexi_auth_model');
-		$users = $this->flexi_auth->get_users_query(array("uacc_uid,CONCAT(upro_first_name, ' ', upro_last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
+		$users = $this->flexi_auth->get_users_query(array("id,CONCAT(first_name, ' ', last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
 		// set
 	    $data['users'] = $users;
 
@@ -708,7 +708,7 @@ class Tasks extends App_Controller {
 			$taks->date_entered = $now;
 			//$taks->date_modified = $now;
 			$taks->due_date = $post['due_date'];
-			$taks->created_by = $user['uacc_uid'];
+			$taks->created_by = $user['id'];
 			$taks->assigned_user_id = $post['assigned_user_id'];
 			$taks->subject = $post['subject'];
 			$taks->company_id = $post['company_id'];
@@ -732,7 +732,7 @@ class Tasks extends App_Controller {
 					$task_child->date_entered = $now;
 					//$taks->date_modified = $now;
 					$task_child->due_date = $due_date;
-					$task_child->created_by = $user['uacc_uid'];
+					$task_child->created_by = $user['id'];
 					$task_child->assigned_user_id = $post['assigned_user_id'];
 					$task_child->subject = $post['tasks'][$i];
 					$task_child->company_id = $post['company_id'];
@@ -771,18 +771,18 @@ class Tasks extends App_Controller {
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 		$data['user_id'] = $user_id;
 
 		//$where_str = '`uacc_id` <> ' . $user_id;
 		$where_arr  = array('uacc_id <>' => $user_id);
 		// load model
-		$users = $this->flexi_auth->get_users_query(array("uacc_uid,CONCAT(upro_first_name, ' ', upro_last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
+		$users = $this->flexi_auth->get_users_query(array("id,CONCAT(first_name, ' ', last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
 		// set
 	    $data['users'] = $users;
 
@@ -883,7 +883,7 @@ class Tasks extends App_Controller {
 				$data = array(
 					"date_modified"=>$now,
 					"subject"=>$post['subject'],
-					"modified_user_id"=>$user['uacc_uid'],
+					"modified_user_id"=>$user['id'],
 					"assigned_user_id"=>$post['assigned_user_id'],
 					"company_id"=>$company_id,
 					"people_id"=>$person_id,
@@ -1127,7 +1127,7 @@ class Tasks extends App_Controller {
 
 		// set assigned to
 		if(strlen($taks->assigned_user_id) >= 36){
-			$data['assigned_user'] = $_SESSION['user_accounts'][$taks->assigned_user_id]['uacc_username'];
+			$data['assigned_user'] = $_SESSION['user_accounts'][$taks->assigned_user_id]['username'];
 		}
 		else{
 			$data['assigned_user'] = "Not set";
@@ -1746,17 +1746,17 @@ public function update( $task_id ){
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 		//$where_str = '`uacc_id` <> ' . $user_id;
 		$where_arr  = array('uacc_id <>' => $user_id);
 		// load model
 		//$this->load->model('flexi_auth_model');
-		$users = $this->flexi_auth->get_users_query(array("uacc_uid,CONCAT(upro_first_name, ' ', upro_last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
+		$users = $this->flexi_auth->get_users_query(array("id,CONCAT(first_name, ' ', last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
 
 
 				//go over the array of tasks (children) and save every single one with the parent_id=$parent_id
@@ -1784,7 +1784,7 @@ public function update( $task_id ){
 					$task_child->date_entered = $now;
 					//$taks->date_modified = $now;
 					$task_child->due_date = $due_date;
-					$task_child->created_by = $user['uacc_uid'];
+					$task_child->created_by = $user['id'];
 					$task_child->assigned_user_id = $parent_project[0]->assigned_user_id;
 					//$task_child->subject = $parent_project[0]->subject;
 					$task_child->subject = $post['tasks'][$i];
@@ -1809,17 +1809,17 @@ public function update( $task_id ){
 	// GOOGLE TASK INDEX
 	public function googletaskindex()
 	{
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 		
 		$data = array();
 		
 		$this->db->select('google_task_id,date_entered,created_by,due_date,subject,description,status');
 		$this->db->from('sc_google_task');
-		$this->db->where(array('deleted'=>0, 'created_by'=>$user['uacc_uid']));
+		$this->db->where(array('deleted'=>0, 'created_by'=>$user['id']));
 		$this->db->order_by('date_entered','desc');
 		$query = $this->db->get();
 		

@@ -182,12 +182,12 @@ function getAssignedUsers(){
 
 		foreach($_SESSION['user_accounts'] as $row){
 
-				if (!empty($row['upro_first_name']) || !empty($row['upro_last_name'])) {
-				$assignedusers[$row['uacc_uid']] = $row['upro_first_name']." ".$row['upro_last_name'];	
+				if (!empty($row['first_name']) || !empty($row['last_name'])) {
+				$assignedusers[$row['id']] = $row['first_name']." ".$row['last_name'];	
 				}
 
 				else {
-				$assignedusers[$row['uacc_uid']] = $row['uacc_username'];		
+				$assignedusers[$row['id']] = $row['username'];		
 				}
 
 				
@@ -199,14 +199,14 @@ function getAssignedUsers1(){
 
 $assignedusers1 = array();
 
-		foreach($_SESSION['user_accounts1'] as $row1){
+		foreach($_SESSION['user_accounts'] as $row1){
 
-			if (!empty($row1['upro_first_name']) || !empty($row1['upro_last_name'])) {
-					$assignedusers1[$row1['uacc_uid']] = $row1['upro_first_name']." ".$row1['upro_last_name'];
+			if (!empty($row1['first_name']) || !empty($row1['last_name'])) {
+					$assignedusers1[$row1['id']] = $row1['first_name']." ".$row1['last_name'];
 				}
 
 			else {
-					$assignedusers1[$row1['uacc_uid']] = $row1['uacc_username'];
+					$assignedusers1[$row1['id']] = $row1['username'];
 			}
 
 			

@@ -63,8 +63,8 @@ function format_field($module_name,$field,$data,$record_id = NULL){
             return $data;
         break; // end text
         case "User": 
-            $first_name = $_SESSION['user_accounts'][$data]['upro_first_name'];
-            $last_name = $_SESSION['user_accounts'][$data]['upro_last_name'];
+            $first_name = $_SESSION['user_accounts'][$data]['first_name'];
+            $last_name = $_SESSION['user_accounts'][$data]['last_name'];
             if(($first_name != NULL) && ($last_name != NULL)) {
                 return ( $first_name." ".$last_name );
             } else if($first_name != NULL) {
@@ -72,7 +72,7 @@ function format_field($module_name,$field,$data,$record_id = NULL){
             } else if($last_name != NULL) {
                 return ($last_name);
             } else {
-                return ($_SESSION['user_accounts'][$data]['uacc_username']);
+                return ($_SESSION['user_accounts'][$data]['username']);
             }           
         break; // end User
         case "Dropdown": 

@@ -86,7 +86,7 @@
 
     </div> <!-- /container -->
 
-<center><a href="http://www.tealcrm.com" style="font-size:9px">TealCRM Version 1.0 - Open Source</a></center>
+<center><a href="http://www.tealcrm.com" style="font-size:9px">TealCRM Version 1.1 - Open Source</a></center>
 
   </body>
 </html>

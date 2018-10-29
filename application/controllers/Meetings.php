@@ -23,28 +23,6 @@ class Meetings extends App_Controller {
 		parent::__construct();
 	}
 
-	/**
-	 * remap
-	 *
-	 * @param string $method
-	 */
-	function _remap($method)
-	{
-		// auth check
-		if ( ! $this->flexi_auth->is_logged_in() )
-		{
-			redirect('auth/login');
-		}
-
-		// check method exists again
-		if(method_exists($this, $method)){
-			// remove classname and method name form uri
-			call_user_func_array(array($this, $method), array_slice($this->uri->rsegments, 2));
-		}else{
-		    // error
-			show_404(sprintf('controller method [%s] not implemented!', $method));
-		}
-	}
 
 	/**
 	 * View all
@@ -52,9 +30,6 @@ class Meetings extends App_Controller {
 	 * @url <site>/meetings
 	 */
 	public function index(){
-
-		$CI =& get_instance();
-		$CI->teal_global_vars->set_all_global_vars();
 
 		// data
 		$data = array();
@@ -214,17 +189,17 @@ class Meetings extends App_Controller {
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 		//$where_str = '`uacc_id` <> ' . $user_id;
 		$where_arr  = array('uacc_id <>' => $user_id);
 		// load model
 		//$this->load->model('flexi_auth_model');
-		$users = $this->flexi_auth->get_users_query(array("uacc_uid,CONCAT(upro_first_name, ' ', upro_last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
+		$users = $this->flexi_auth->get_users_query(array("id,CONCAT(first_name, ' ', last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
 		// set
 	    $data['users'] = $users;
 
@@ -264,7 +239,7 @@ class Meetings extends App_Controller {
 			$meetg->date_start = $post['date_start'];
 			$meetg->date_end = $post['date_end'] ;
 			$meetg->subject = $post['subject'];
-			$meetg->created_by = $user['uacc_uid'];
+			$meetg->created_by = $user['id'];
 			$meetg->assigned_user_id = $post['assigned_user_id'];
 			$meetg->location = $post['location'];
 			$meetg->event_type = (int)$post['event_type'];
@@ -390,11 +365,11 @@ class Meetings extends App_Controller {
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 		//pass a random string to mask user's profile image
 		//ie: 3dbc33def75830b6bb32ee30b1b5ec1e
@@ -415,7 +390,7 @@ class Meetings extends App_Controller {
 		//$where_str = '`uacc_id` <> ' . $user_id;
 		$where_arr  = array('uacc_id <>' => $user_id);
 		// load model
-		$users = $this->flexi_auth->get_users_query(array("uacc_uid,CONCAT(upro_first_name, ' ', upro_last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
+		$users = $this->flexi_auth->get_users_query(array("id,CONCAT(first_name, ' ', last_name) AS name", FALSE), $where_arr)->result_array();//$this->flexi_auth_model->get_users()->result_array();
 		// set
 	    $data['users'] = $users;
 
@@ -478,7 +453,7 @@ class Meetings extends App_Controller {
 			// set array(fields=>values) to update
 			$data = array(
 				"subject"=>$post['subject'],
-				"modified_user_id"=>$user['uacc_uid'],
+				"modified_user_id"=>$user['id'],
 				"assigned_user_id"=>$post['assigned_user_id'],
 				"location"=>$post['location'],
 				"event_type"=>(int)$post['event_type'],
@@ -708,11 +683,11 @@ class Meetings extends App_Controller {
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 
 		//get a list of all calendar events to populate javascript
@@ -749,12 +724,12 @@ class Meetings extends App_Controller {
 		$data = array();
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
-		//uacc_uid
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user_id = $_SESSION['user']->id;
+		//id
+		$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 		$where_arr  = array('uacc_id <>' => $user_id);
-		$users = $this->flexi_auth->get_users_query(array("uacc_uid,CONCAT(upro_first_name, ' ', upro_last_name) AS name", FALSE), $where_arr)->result_array();
+		$users = $this->flexi_auth->get_users_query(array("id,CONCAT(first_name, ' ', last_name) AS name", FALSE), $where_arr)->result_array();
 
 		// set
 	    $data['users'] = $users;
@@ -777,7 +752,7 @@ class Meetings extends App_Controller {
 			$meetg->date_start = $post['date_start'];
 			$meetg->date_end = $post['date_end'] ;
 			$meetg->subject = $post['subject'];
-			$meetg->created_by = $user->uacc_uid;
+			$meetg->created_by = $user->id;
 			$meetg->assigned_user_id = $post['assigned_user_id'];
 			$meetg->location = $post['location'];
 			$meetg->event_type = (int)$post['event_type'];

@@ -21,40 +21,6 @@ class Pages extends App_Controller {
 		parent::__construct();
 	}
 	
-	/**
-	 * remap
-	 * 
-	 * @param string $method
-	 */
-	function _remap($method)
-	{		
-		// auth check
-		if ( ! $this->flexi_auth->is_logged_in() )
-		{
-			redirect('auth/login');
-		}
-		
-		// routed as 404/cms
-		if($method == 'index'){
-			// check first
-			if($action = $this->uri->segment(1)){
-				// check
-				if(method_exists($this,$action)){	
-					// reset
-					$method = $action;
-				}
-			}
-		}
-
-		// check method exists again
-		if(method_exists($this, $method)){			
-			// remove classname and method name form uri	
-			call_user_func_array(array($this, $method), array_slice($this->uri->rsegments, 2));
-		}else{
-			// erro
-			show_404(sprintf('controller method [%s] not implemented!', $method));				
-		}		
-	}	
 	
 	/**
 	 * index, content, all page routed here if 404 /not found

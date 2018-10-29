@@ -10,21 +10,12 @@
           &nbsp;&nbsp;CRM Settings
           </a>
         </li>
-        <li <?php if( 'user-management' == $section ):?>class="active"<?php endif;?>>
-          <a href="<?php echo site_url('settings')?>/#user-management" data-toggle="tab">
+        <li>
+          <a href="<?php echo site_url('settings')?>/users">
           <i class="fa fa-male"></i>
           &nbsp;&nbsp;User Management
           </a>
         </li>
-<!--
-        <li <?php if( 'plans-billing' == $section ):?>class="active"<?php endif;?>>
-          <a href="<?php echo site_url('settings')?>/billing">
-          <i class="fa fa-dollar"></i>
-          &nbsp;&nbsp;Usage Information
-          </a>
-        </li>
--->
-
         <li <?php if( 'drop-down-editor' == $section ):?>class="active"<?php endif;?>>
           <a href="<?php echo site_url('settings')?>/drop_down_editor">
           <i class="fa fa-archive"></i>
@@ -194,156 +185,6 @@ echo form_open('settings', $attributes); ?>
           </div> <!-- /.form-group -->
            <input type="hidden" name="act" value="crm-settings" />
         </form>
-
-
-      </div> <!-- /.tab-pane -->
-
-
-      <div class="tab-pane fade <?php if( 'user-management' == $section ):?>in active<?php endif;?>" id="user-management">
-
-        <h3 class="content-title">User Management</h3>
-		<div class="row">
-			<div class="col-md-12">
-				<div class="table-responsive">
-					<div class="form-group">
-						<ul id="myTab1" class="nav nav-tabs">
-							<li class="<?php //if($search_tab == "basic"){ echo 'active';}?>">
-							<a href="#search" data-toggle="tab">Active Users</a>
-							</li>
-
-							<li class="<?php //if($search_tab == "advanced" || $search_tab == "saved"){ echo 'active';}?>">
-							<a href="#advanced" data-toggle="tab">Inactive Users</a>
-							</li>
-						</ul>
-						<div id="myTab1Content" class="tab-content">
-						<div class="tab-pane fade active in<?php //if($search_tab == "basic"){ echo 'active in';}?>" id="search">
-						<form class="form-horizontal" name="frmlist" id="frmlist" action="<?php echo site_url('people')?>" method="post">
-			  <div class="table-responsive">
-					  <table class="table table-striped table-bordered thumbnail-table">
-						  <thead>
-							  <tr>
-									<th><input type="checkbox" name="select_all" value="ids[]"></th>
-									<th>Name</th>
-									<th>Type</th>
-									<th>Email</th>
-									<th>Actions</th>
-							  </tr>
-						  </thead>
-						  <tbody>
-							  <?php foreach($flexi_users as $usr){?>
-									<tr>
-										<td><input type="checkbox" name="ids[]" value="<?php echo $usr->uacc_uid; ?>"></td>
-										<td><a href="<?php echo site_url('settings/users/' . $usr->uacc_uid); ?>"><?php echo $usr->uacc_username; ?></a></td>
-										<td><?php echo $flexi_groups[$usr->uacc_group_fk];?></td>
-										<td><?php echo $usr->uacc_email;?></td>
-										<td class="valign-middle">
-											<a href="<?php echo site_url('settings/users/' . $usr->uacc_uid); ?>"><i class="btn btn-xs btn-secondary fa fa-pencil"></i></a>
-											&nbsp;
-											<a href="javascript:delete_one( '<?php echo $usr->uacc_uid; ?>' )"><i class="btn btn-xs btn-secondary fa fa-times"></i></a>
-
-										</td>
-									</tr>
-							  <?php } ?>
-						  </tbody>
-					  </table>
-					  <div>
-						  <div class="list-footer-left">
-							  <button type="button" class="btn btn-danger" onclick="delete_all()">Inactive</button>
-							  <button type="button" class="btn btn-success" onclick="window.location.href='<?php echo site_url('settings/add')?>'">Add New</button>
-						  </div>
-					  </div>
-					  <input type="hidden" name="act" value="">
-			  </div> <!-- /.table-responsive -->
- 		    </form>
-
-
-						</div>
-						<div class="tab-pane fade <?php //if($search_tab == "basic"){ echo 'active in';}?>" id="advanced">
-						<form class="form-horizontal" name="frmlist1" id="frmlist1" action="<?php echo site_url('people')?>" method="post">
-			  <div class="table-responsive">
-					  <table class="table table-striped table-bordered thumbnail-table">
-						  <thead>
-							  <tr>
-									<th><input type="checkbox" name="select_all" value="ids[]"></th>
-									<th>Name</th>
-									<th>Type</th>
-									<th>Email</th>
-									<th>Actions</th>
-							  </tr>
-						  </thead>
-						  <tbody>
-							  <?php foreach($flexi_users_inactive as $usr_inactive){?>
-									<tr>
-										<td><input type="checkbox" name="userid[]" value="<?php echo $usr_inactive->uacc_uid; ?>"></td>
-										<td><a href="<?php echo site_url('settings/users/' . $usr_inactive->uacc_uid); ?>"><?php echo $usr_inactive->uacc_username; ?></a></td>
-										<td><?php echo $flexi_groups[$usr_inactive->uacc_group_fk];?></td>
-										<td><?php echo $usr_inactive->uacc_email;?></td>
-										<td class="valign-middle">
-											<a href="<?php echo site_url('settings/users/' . $usr_inactive->uacc_uid); ?>"><i class="btn btn-xs btn-secondary fa fa-pencil"></i></a>
-											&nbsp;
-											<a href="javascript:delete_one( '<?php echo $usr_inactive->uacc_uid; ?>' )"><i class="btn btn-xs btn-secondary fa fa-times"></i></a>
-
-										</td>
-									</tr>
-							  <?php } ?>
-						  </tbody>
-					  </table>
-					  <div>
-						  <div class="list-footer-left">
-							  <button type="button" class="btn btn-success" onclick="active_all()">Active</button>
-
-						  </div>
-					  </div>
-					  <input type="hidden" name="act" value="">
-			  </div> <!-- /.table-responsive -->
- 		    </form>
-
-
-						</div>
-						</div> <!-- /.form-group -->
-				</div> <!-- /.table-responsive -->
-			</div> <!-- /.col -->
-		</div> <!-- /.row -->
-    </div>
-
-</div>
-
-
-		   <!-- /.col -->
-
-
-
-           <!-- /.row -->
-
-       <!-- /.tab-pane -->
-
-	 <div class="tab-pane fade <?php if( 'custom_layouts' == $section ):?>in active<?php endif;?>" id="custom_layouts">
-
-        <h3 class="content-title">Custom Layouts</h3>
-
-
-        <?php //display_notify('settings_plans-billing') ?>
-
-		<div class="row">
-
-        <div class="col-sm-7 col-md-6">
-
-          <div class="well">
-            <h4>Coming Soon...!<h4>
-          </div> <!-- /.well -->
-
-        </div> <!-- /.col -->
-
-      </div> <!-- /.row -->
-
-      </div> <!-- /.tab-pane -->
-
-
-      <div class="tab-pane fade <?php if( 'drop-down-editor' == $section ):?>in active<?php endif;?>" id="drop-down-editor">
-
-        <h3 class="content-title">Drop Down Editor</h3>
-
-        <br><br>
 
 
       </div> <!-- /.tab-pane -->

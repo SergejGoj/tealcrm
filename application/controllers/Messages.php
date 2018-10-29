@@ -12,29 +12,6 @@ class Messages extends App_Controller {
 		// call parent
 		parent::__construct();
 	}
-
-	/**
-	 * remap
-	 *
-	 * @param string $method
-	 */
-	function _remap($method)
-	{
-		// auth check
-		if ( ! $this->flexi_auth->is_logged_in() )
-		{
-			redirect('auth/login');
-		}
-
-		// check method exists again
-		if(method_exists($this, $method)){
-			// remove classname and method name form uri
-			call_user_func_array(array($this, $method), array_slice($this->uri->rsegments, 2));
-		}else{
-		    // error
-			show_404(sprintf('controller method [%s] not implemented!', $method));
-		}
-	}
 	
 	/**
 	 * Index Page for this controller.
@@ -43,11 +20,11 @@ class Messages extends App_Controller {
 	 */
 	public function index()
 	{
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 		
 		$data = Array();
 
@@ -56,7 +33,7 @@ class Messages extends App_Controller {
 		// set
 		$messages->select('message_id,subject,message,from_name,from_email,timestamp,category,status,relationship_id');
 
-		$messages->where('created_by',$user['uacc_uid']);
+		$messages->where('created_by',$user['id']);
 		
 		// show newest first
 		$messages->order_by('timestamp', 'DESC');
@@ -193,9 +170,9 @@ class Messages extends App_Controller {
 				
 				if($mail['response'] == "SENT")
 				{
-					$user_id = $this->flexi_auth->get_user_id();		
+					$user_id = $_SESSION['user']->id;		
 
-					$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row_array();
+					$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row_array();
 					
 					$now = gmdate('Y-m-d H:i:s');
 					
@@ -233,7 +210,7 @@ class Messages extends App_Controller {
 					"from_email" => $this->input->post('to_email'),
 					"timestamp" => $now,
 					"category" => "SENT",
-					"created_by" => $user['uacc_uid'],
+					"created_by" => $user['id'],
 					"status" => $status,
 					"relationship_id" => $relationship_id
 					);
@@ -284,7 +261,7 @@ class Messages extends App_Controller {
 		
 				  $this->email->initialize($config);
 		
-				  $this->email->from($_SESSION['user']['uacc_email'], $_SESSION['user']['upro_first_name']." ".$_SESSION['user']['upro_last_name']);
+				  $this->email->from($_SESSION['user']['uacc_email'], $_SESSION['user']['first_name']." ".$_SESSION['user']['last_name']);
 				  $this->email->to($this->input->post('to_email')); 
 				  
 				  // check for bcc

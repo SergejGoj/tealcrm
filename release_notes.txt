@@ -15,7 +15,7 @@ Export structure/data and re-import for install
 
 5. Language for a user
 ALTER TABLE `sc_user_profiles`
-	ADD COLUMN `language` VARCHAR(50) NOT NULL DEFAULT '0' AFTER `upro_last_name`;
+	ADD COLUMN `language` VARCHAR(50) NOT NULL DEFAULT '0' AFTER `last_name`;
 
 6. More upgrade stuff.  Column list view tables are deleted and need to be converted into list_layout.
 

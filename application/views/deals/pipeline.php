@@ -388,20 +388,20 @@
                                                     <p class="normal">
                                                         <?php echo "$" . number_format($deal->value, 2); ?> |
                                                         <?php
-                                                        $un_query = "SELECT * from `sc_user_accounts` where (uacc_uid = '" . $deal->assigned_user_id . "')";
+                                                        $un_query = "SELECT * from `sc_user_accounts` where (id = '" . $deal->assigned_user_id . "')";
                                                         $un_result = $this->db->query($un_query);
                                                         $un_row = $un_result->result();
                                                         foreach ($un_row as $user) {
-                                                            $first_name = $_SESSION['user_accounts'][$deal->assigned_user_id]['upro_first_name'];
-                                                            $last_name = $_SESSION['user_accounts'][$deal->assigned_user_id]['upro_last_name'];
+                                                            $first_name = $_SESSION['user_accounts'][$deal->assigned_user_id]['first_name'];
+                                                            $last_name = $_SESSION['user_accounts'][$deal->assigned_user_id]['last_name'];
                                                             if (($first_name != NULL) && ($last_name != NULL)) {
                                                                 $user_name = $first_name . " " . $last_name;
                                                             } else if ($first_name != NULL) {
                                                                 $user_name = $first_name;
-                                                            } else if ($user->upro_last_name != NULL) {
+                                                            } else if ($user->last_name != NULL) {
                                                                 $user_name = $last_name;
                                                             } else if ($last_name != NULL) {
-                                                                $user_name = $user->uacc_username;
+                                                                $user_name = $user->username;
                                                             } else {
                                                                 $user_name = 'nobody';
                                                             }

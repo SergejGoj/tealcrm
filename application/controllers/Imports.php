@@ -40,29 +40,6 @@ class Imports extends App_Controller {
 		parent::__construct();
 	}
 
-	/**
-	 * remap
-	 *
-	 * @param string $method
-	 */
-	function _remap($method)
-	{
-		// auth check
-		if ( ! $this->flexi_auth->is_logged_in() )
-		{
-			redirect('auth/login');
-		}
-
-		// check method exists again
-		if(method_exists($this, $method)){
-			// remove classname and method name form uri
-			call_user_func_array(array($this, $method), array_slice($this->uri->rsegments, 2));
-		}else{
-		    // error
-			show_404(sprintf('controller method [%s] not implemented!', $method));
-		}
-	}
-
 	/*
 	 * this is not one of the modules; thus no need for index (no direct access without function ie: example.com/class/function/ID)
 	 * dummy index to redirect user to dashboard if no function passed along with the URL
@@ -86,11 +63,11 @@ class Imports extends App_Controller {
 		$upload_dir = './../attachments/';
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $_SESSION['user'];
+		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 		$form_post_data = $this->input->post();
 		$module = $form_post_data['module'];
@@ -139,7 +116,7 @@ class Imports extends App_Controller {
 				$where_arr  = array('uacc_id <>' => $user_id);
 				// load model
 				//$this->load->model('flexi_auth_model');
-				$users = $this->flexi_auth->get_users_query(array("uacc_uid,CONCAT(upro_first_name, ' ', upro_last_name) AS name", FALSE), $where_arr)->result_array();
+				$users = $this->flexi_auth->get_users_query(array("id,CONCAT(first_name, ' ', last_name) AS name", FALSE), $where_arr)->result_array();
 
 				$return = $this->step_two_table($upload_path, $drop_first_row, $users, $module, $delimiter, $link_accounts, $create_accounts, $dupe_array);
 				//var_dump($return);
@@ -232,7 +209,7 @@ class Imports extends App_Controller {
 					$this->session->set_userdata("csv_filename_session",$new_name);
 
 					//move the file
-					//$upload_path = "./uploads/".$user->uacc_uid."/".basename($new_name);
+					//$upload_path = "./uploads/".$user->id."/".basename($new_name);
 					$upload_path = $upload_dir.basename($new_name);
 					if(!is_dir("./../attachments/")){
 						mkdir("./../attachments/", 0777, true);
@@ -408,9 +385,9 @@ error_reporting(0);
 		$sync_fail_errors = array();
 		$error_string = "";
 
-		$user_id = $this->flexi_auth->get_user_id();
-		//uacc_uid
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user_id = $_SESSION['user']->id;
+		//id
+		$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 		$return = false;
 
@@ -419,7 +396,7 @@ error_reporting(0);
 				$uuid_v4_clmn = "company_id"; // the column that takes the new unique id
 				$dont_show = $this->dont_show_accounts;
 				$sc_table = $this->sc_table_companies;
-				$special_fields = array("lead_source"=>16, "created_by"=>$user->uacc_uid, "assigned_user_id"=>$user->uacc_uid); // fields that take unique values under different modules
+				$special_fields = array("lead_source"=>16, "created_by"=>$user->id, "assigned_user_id"=>$user->id); // fields that take unique values under different modules
 				$ddlist_values = array("account_type"=>"account_type","lead_source_id"=>"lead_source","lead_status_id"=>"lead_status"); // ie: sales_stage_id from sc_deals and sales_stage from sc_drop_down_options
 				$requireds = array("company_name");
 				$req_titles = array("Company Name"); // we use this to show error messages of the missing required fields
@@ -430,7 +407,7 @@ error_reporting(0);
 				$uuid_v4_clmn = "people_id"; // the column that takes the new unique id
 				$dont_show = $this->dont_show_people;
 				$sc_table = $this->sc_table_people;
-				$special_fields = array("created_by"=>$user->uacc_uid, "assigned_user_id"=>$user->uacc_uid); // fields that take unique values under different modules
+				$special_fields = array("created_by"=>$user->id, "assigned_user_id"=>$user->id); // fields that take unique values under different modules
 				$ddlist_values = array("lead_source_id"=>"lead_source");
 				$requireds = array("first_name", "last_name");
 				$req_titles = array("First Name", "Last Name"); // we use this to show error messages of the missing required fields
@@ -441,7 +418,7 @@ error_reporting(0);
 				$uuid_v4_clmn = "deal_id"; // the column that takes the new unique id
 				$dont_show = $this->dont_show_deals;
 				$sc_table = $this->sc_table_deals;
-				$special_fields = array("created_by"=>$user->uacc_uid, "assigned_user_id"=>$user->uacc_uid); // fields that take unique values under different modules
+				$special_fields = array("created_by"=>$user->id, "assigned_user_id"=>$user->id); // fields that take unique values under different modules
 				$ddlist_values = array("sales_stage_id"=>"sales_stage"); // ie: sales_stage_id from sc_deals and sales_stage from sc_drop_down_options
 				$requireds = array("name", "value", "expected_close_date");
 				$req_titles = array("Deal Name", "Value", "Expected Close Date"); // we use this to show error messages of the missing required fields
@@ -452,7 +429,7 @@ error_reporting(0);
 				$uuid_v4_clmn = "note_id"; // the column that takes the new unique id
 				$dont_show = $this->dont_show_notes;
 				$sc_table = $this->sc_table_notes;
-				$special_fields = array("created_by"=>$user->uacc_uid, "assigned_user_id"=>$user->uacc_uid); // fields that take unique values under different modules
+				$special_fields = array("created_by"=>$user->id, "assigned_user_id"=>$user->id); // fields that take unique values under different modules
 				$ddlist_values = array();
 				$requireds = array("subject");
 				$req_titles = array("Subject"); // we use this to show error messages of the missing required fields
@@ -462,7 +439,7 @@ error_reporting(0);
 				$uuid_v4_clmn = "task_id"; // the column that takes the new unique id
 				$dont_show = $this->dont_show_tasks;
 				$sc_table = $this->sc_table_tasks;
-				$special_fields = array("created_by"=>$user->uacc_uid, "assigned_user_id"=>$user->uacc_uid); // fields that take unique values under different modules
+				$special_fields = array("created_by"=>$user->id, "assigned_user_id"=>$user->id); // fields that take unique values under different modules
 				$ddlist_values = array("priority_id"=>"priority_id", "status_id"=>"status_id"); // ie: sales_stage_id from sc_deals and sales_stage from sc_drop_down_options
 				$requireds = array("subject");
 				$req_titles = array("Subject"); // we use this to show error messages of the missing required fields
@@ -473,7 +450,7 @@ error_reporting(0);
 				$uuid_v4_clmn = "meeting_id";
 				$dont_show = $this->dont_show_meetings;
 				$sc_table = $this->sc_table_meetings;
-				$special_fields = array("created_by"=>$user->uacc_uid, "status"=>1, "assigned_user_id"=>$user->uacc_uid); // fields that take unique values under different modules
+				$special_fields = array("created_by"=>$user->id, "status"=>1, "assigned_user_id"=>$user->id); // fields that take unique values under different modules
 				$ddlist_values = array("event_type"=>"event_type"); // ie: sales_stage_id from sc_deals and sales_stage from sc_drop_down_options
 				$requireds = array("subject", "date_start", "date_end");
 				$req_titles = array("Subject", "Start Date", "End Date"); // we use this to show error messages of the missing required fields
@@ -697,8 +674,8 @@ error_reporting(0);
 									
 									// Create the new Company if Creating Company is enabled.
 									if ($module == "people" && $create_accounts == "on" && !empty($fields_array["company_name"])) {
-										$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
-										$user_id = $user->uacc_uid;
+										$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
+										$user_id = $user->id;
 										$company = new Company();
 										$company->company_name = $fields_array["company_name"];
 										$company->company_id = $this->uuid->v4();
@@ -737,12 +714,12 @@ error_reporting(0);
 								else if($col_name=='assigned_user_id')
 								{
 								$name=explode(" ",$fields_array[$col_name]);
-								$uid = $this->db->select("upro_uacc_fk")->from("sc_user_profiles")->where(array("upro_first_name"=>$name[0], "upro_last_name"=>$name[1]))->get();
+								$uid = $this->db->select("upro_uacc_fk")->from("sc_user_profiles")->where(array("first_name"=>$name[0], "last_name"=>$name[1]))->get();
 								$uid = $uid->result_array();
 								$uu = $uid[0]['upro_uacc_fk'];
-								$uuid = $this->db->select("uacc_uid")->from("sc_user_accounts")->where(array("uacc_id"=>$uu, "uacc_active"=>1))->get();
+								$uuid = $this->db->select("id")->from("sc_user_accounts")->where(array("uacc_id"=>$uu, "uacc_active"=>1))->get();
 								$uuid = $uuid->result_array();
-								$obj->$col_name = $uuid[0]['uacc_uid'];
+								$obj->$col_name = $uuid[0]['id'];
 								}
 								elseif($col_name=='project_id')
 								{
@@ -864,7 +841,7 @@ error_reporting(0);
 		$upload_dir = './../attachments/'.$_SERVER['HTTP_HOST'].'/';
 
 		//logedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user_id = $_SESSION['user']->id;
 
 
 		$url = "https://www.google.com/m8/feeds/people/$google_email/full?access_token=$access_token&alt=json";
@@ -911,7 +888,7 @@ error_reporting(0);
 		}
 
 		$where_arr  = array('uacc_id <>' => $user_id);
-		$users = $this->flexi_auth->get_users_query(array("uacc_uid,CONCAT(upro_first_name, ' ', upro_last_name) AS name", FALSE), $where_arr)->result_array();
+		$users = $this->flexi_auth->get_users_query(array("id,CONCAT(first_name, ' ', last_name) AS name", FALSE), $where_arr)->result_array();
 
 		$return = $this->process_import_gmail($user_id, $google_name, $google_email, $access_token, $people_id, $people_name, $people_email1, $people_email2, $people_hphone, $people_mphone, $people_address, $people_note, $users);
 		if($return != ""){
@@ -1011,15 +988,15 @@ error_reporting(0);
 				// now
 				$now = gmdate('Y-m-d H:i:s');
 
-				//uacc_uid
-				$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+				//id
+				$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 				$cont = new Person();
 
 				// Enter values into required fields
 				$cont->people_id = $this->uuid->v4();
 				//$cont->date_modified = $now;
-				$cont->created_by = $user->uacc_uid;
+				$cont->created_by = $user->id;
 				//$cont->assigned_user_id = $post['assigned_user_id'];
 				$cont->lead_source_id = 16; //Other
 				$cont->job_title = "NA";
@@ -1048,7 +1025,7 @@ error_reporting(0);
 				$this->db
 					->select('people_id')
 					->from('sc_people')
-					->where('created_by', $user->uacc_uid)
+					->where('created_by', $user->id)
 					->where('email1', $email1_val)
 					->where('first_name', $fname_val)
 					->where('last_name', $lname_val);
@@ -1100,7 +1077,7 @@ error_reporting(0);
 		$sync_success = 0;
 		$sync_fail = 0;
 		$sync_duplicate = 0;
-		$user = $this->flexi_auth->get_user_by_id_query($user_id,'uacc_uid')->row();
+		$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
 
 		$sync_total = sizeof($json['items']);
 
@@ -1119,7 +1096,7 @@ error_reporting(0);
 				$meetg->date_start = gmdate('Y-m-d H:i:s', strtotime($json['items'][$i]['start']['dateTime']));
 				$meetg->date_end = gmdate('Y-m-d H:i:s', strtotime($json['items'][$i]['end']['dateTime']));
 				$meetg->subject = $json['items'][$i]['summary'];
-				$meetg->created_by = $user->uacc_uid;
+				$meetg->created_by = $user->id;
 				//$meetg->assigned_user_id = $post['assigned_user_id'];
 				if(isset($json['items'][$i]['location']))
 					$meetg->location = $json['items'][$i]['location'];
@@ -1232,7 +1209,7 @@ error_reporting(0);
 													<option value='0'>Please select</option>";
 													foreach($users as $user) :
 													$return .= '
-													<option value="' . $user['uacc_uid'] . '">
+													<option value="' . $user['id'] . '">
 														' . $user[ 'name'] . '
 													</option>';
 													endforeach;

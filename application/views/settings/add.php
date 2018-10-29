@@ -24,7 +24,7 @@
             <label class="col-md-3">Username</label>
 
             <div class="col-md-7">
-              <input type="text" name="username" value="<?php if(isset($_SESSION['new_user']['first_name'])) echo $_SESSION['new_user']['uacc_username']; ?>" class="form-control" />
+              <input type="text" name="username" value="<?php if(isset($_SESSION['new_user']['first_name'])) echo $_SESSION['new_user']['username']; ?>" class="form-control" />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->

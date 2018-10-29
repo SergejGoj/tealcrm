@@ -26,7 +26,9 @@ class Mask extends App_Controller {
 		
 		//sample link: http://tealcrm.localhost.com/assets/imgmask.php?f=default.png
 		
-		$file_name = "./../attachments/" . $this->session->userdata($_GET['f']);
+		$file_name = "./../application/attachments/" . $_GET['f'];
+
+
 		if(is_file($file_name)){
 			$type = $this->getFileType($file_name);
 			if($this->acceptableType($type)) {
@@ -36,7 +38,7 @@ class Mask extends App_Controller {
 				exit;
 			}
 		}else{
-			$file_name = "./../attachments/default.png";
+			$file_name = "./../application/attachments/default.png";
 			echo file_get_contents($file_name);
 			$this->session->unset_userdata($_GET['f']);
 			exit;		

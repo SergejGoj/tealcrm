@@ -1,19 +1,21 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class teal_global_vars extends CI_Model {
+class teal_global_vars {
+	
+	var $CI;
 
-	// The following method prevents an error occurring when $this->data is modified.
-	// Error Message: 'Indirect modification of overloaded property Demo_cart_admin_model::$data has no effect'.
-	public function &__get($key)
+	function __construct()
 	{
-		$CI =& get_instance();
-		return $CI->$key;
-	}
+		// call parent
+		$this->CI =& get_instance();	
 
+	}
 
 	// this function sets the default variables upon successful login to TEAL
 	// we are using the PHP session vars as it can hold a lot more static data than the codeigniter cookie method
 	public function set_all_global_vars(){
+		
+
 
 		// standard variables throughout the system
 
@@ -23,7 +25,7 @@ class teal_global_vars extends CI_Model {
 		//custom field value
 		$custom_field = Array();
 
-		$query = $this->db->query("SELECT cf_module ,cf_name, cf_type ,cf_label ,cf_id FROM sc_custom_fields where delete_status = 0");
+		$query = $this->CI->db->query("SELECT cf_module ,cf_name, cf_type ,cf_label ,cf_id FROM sc_custom_fields where delete_status = 0");
 
 		foreach ($query->result_array() as $row)
 		{
@@ -32,10 +34,10 @@ class teal_global_vars extends CI_Model {
 		$_SESSION['custom_field'] = $custom_field;
 		//custom field end
 
-// get drop down options model with key being the DROP_DOWN_ID
+		// get drop down options model with key being the DROP_DOWN_ID
 		$drop_down_options =  Array();
 
-		$query = $this->db->query("SELECT * FROM sc_drop_down_options where deleted=0 ORDER BY order_by, name");
+		$query = $this->CI->db->query("SELECT * FROM sc_drop_down_options where deleted=0 ORDER BY order_by, name");
 
 		foreach ($query->result_array() as $row)
 		{
@@ -47,38 +49,29 @@ class teal_global_vars extends CI_Model {
 
 		// get user companies
 
-		$query = $this->db->query("SELECT scua.uacc_uid, scua.uacc_email, scua.uacc_username, scup.upro_first_name, scup.upro_last_name, scup.upro_phone, scup.upro_filename_mimetype, scup.upro_filename_original, scup.email_sending_option, scup.username, scup.password, scup.imap_address, scup.ssl_value, scup.mail_server_port, scup.imap_active, scup.language FROM sc_user_accounts scua INNER JOIN sc_user_profiles scup ON scup.upro_uacc_fk = scua.uacc_id where scua.uacc_active = 1");
+		$query = $this->CI->db->query("SELECT * FROM sc_users WHERE active = 1");
 
 		foreach ($query->result_array() as $row)
 		{
-			$user_accounts[$row['uacc_uid']] = $row;
+			$user_accounts[$row['id']] = $row;
 		}
 
 		$_SESSION['user_accounts']=$user_accounts;
 
-		$query1 = $this->db->query("SELECT scua.uacc_uid, scua.uacc_email, scua.uacc_username, scup.upro_first_name, scup.upro_last_name, scup.upro_phone, scup.upro_filename_mimetype, scup.upro_filename_original, scup.email_sending_option, scup.username, scup.password, scup.imap_address, scup.ssl_value, scup.mail_server_port, scup.imap_active FROM sc_user_accounts scua INNER JOIN sc_user_profiles scup ON scup.upro_uacc_fk = scua.uacc_id where scua.uacc_active = 1");
-
-
-		foreach ($query1->result_array() as $row1)
-		{
-			$user_accounts1[$row1['uacc_uid']] = $row1;
-		}
-
-		$_SESSION['user_accounts1']=$user_accounts1;
 		//*******************************
 		// -- SET SIGNED IN USER DETAILS
 		///
 		//loggedin user
-		$user_id = $this->flexi_auth->get_user_id();
+		$user = $this->CI->ion_auth->user()->row();
+		$user_id = $user->id;
 
 		//uacc_email
-		$user = $this->flexi_auth->get_user_by_id_query($user_id)->row_array();
 		$_SESSION['user'] = $user;
 
 
 		//***************************
 		// SET TIME ZONE
-		$query = $this->db->query("SELECT * FROM sc_settings LIMIT 1");
+		$query = $this->CI->db->query("SELECT * FROM sc_settings LIMIT 1");
 		
 		
 		foreach ($query->result_array() as $row)
@@ -110,7 +103,7 @@ class teal_global_vars extends CI_Model {
 		//***************************
 		// SET SAVED SEARCH
 		// load all saved searches for use in views
-		$query = $this->db->query("SELECT search_id, title, module,search_string FROM sc_saved_search");
+		$query = $this->CI->db->query("SELECT search_id, title, module,search_string FROM sc_saved_search");
 
 		foreach ($query->result_array() as $row)
 		{
@@ -122,7 +115,7 @@ class teal_global_vars extends CI_Model {
 		// LOAD FIELD DICTIONARY
 		// 	
 
-		$query = $this->db->query("SELECT * from sc_field_dictionary WHERE deleted is null");
+		$query = $this->CI->db->query("SELECT * from sc_field_dictionary WHERE deleted is null");
 
 		foreach ($query->result_array() as $row)
 		{
@@ -137,7 +130,7 @@ class teal_global_vars extends CI_Model {
 		// LOAD MODULE RELATIONSHIPS
 		// used for displaying related data		
 
-		$query = $this->db->query("SELECT * from sc_module_relationships WHERE deleted is null");
+		$query = $this->CI->db->query("SELECT * from sc_module_relationships WHERE deleted is null");
 
 		foreach ($query->result_array() as $row)
 		{
@@ -151,7 +144,7 @@ class teal_global_vars extends CI_Model {
 		// LOAD MODULE DETAILS
 		// used for displaying data related to specific modules	
 
-		$query = $this->db->query("SELECT * from sc_modules");
+		$query = $this->CI->db->query("SELECT * from sc_modules");
 
 		foreach ($query->result_array() as $row)
 		{
@@ -168,8 +161,8 @@ class teal_global_vars extends CI_Model {
 		//**************************
 		// LOAD LANGUAGE PACK
 		// based on the users preferences
-		$language = $_SESSION['user']['language'];
-		$query = $this->db->query("SELECT * from sc_language WHERE language = '" . $language . "'");
+		$language = $_SESSION['user']->language;
+		$query = $this->CI->db->query("SELECT * from sc_language WHERE language = '" . $language . "'");
 
 		foreach ($query->result_array() as $row)
 		{
@@ -192,6 +185,33 @@ class teal_global_vars extends CI_Model {
 
 	}
 
+
+	// Re-calculate the user information
+
+	public function recalc_user_info(){
+
+		// get user companies
+
+		$query = $this->CI->db->query("SELECT * FROM sc_users WHERE active = 1");
+
+		foreach ($query->result_array() as $row)
+		{
+			$user_accounts[$row['id']] = $row;
+		}
+
+		$_SESSION['user_accounts']=$user_accounts;
+
+		//*******************************
+		// -- SET SIGNED IN USER DETAILS
+		///
+		//loggedin user
+		$user = $this->CI->ion_auth->user()->row();
+		$user_id = $user->id;
+
+		//uacc_email
+		$_SESSION['user'] = $user;
+
+	}
 
 }
 /* End of file demo_auth_model.php */

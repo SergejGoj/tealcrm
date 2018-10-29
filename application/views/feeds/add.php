@@ -23,7 +23,7 @@
 				<select id="assigned_user_id" name="assigned_user_id" class="form-control" size="1">
 					<option value="0">Please select</option>
 					<?php foreach($users as $user) :?>
-					<option value="<?php echo $user['uacc_uid'];?>"><?php echo $user['name'];?></option>
+					<option value="<?php echo $user['id'];?>"><?php echo $user['name'];?></option>
 					<?php endforeach; ?>
 				</select>
 			  </div>
