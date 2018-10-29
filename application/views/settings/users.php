@@ -2,10 +2,6 @@
 
     <div class="col-md-3 col-sm-4 layout-sidebar">
 
-      <div class="nav-layout-sidebar-skip">
-        <strong>Tab Navigation</strong> / <a href="<?php echo site_url('settings/users')?>#settings-content">Skip to Content</a>
-      </div>
-
       <ul id="myTab" class="nav nav-layout-sidebar nav-stacked">
         <li>
           <a href="<?php echo site_url('settings')?>">

@@ -158,7 +158,8 @@
               <ul class="dropdown-menu">
                 <li><a href="<?php echo site_url('users/settings')?>">User Settings</a></li>
                 <li><a href="<?php echo site_url('users/import')?>">Import Data</a></li>
-	              <?php if (!$this->ion_auth->in_group("admin")): ?>
+               
+	              <?php if ($this->ion_auth->in_group(1)): ?>
 	               <li>
 	                <a href="<?php echo site_url('settings')?>">
 	                  CRM Settings

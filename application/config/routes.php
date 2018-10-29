@@ -47,6 +47,9 @@ $route['contact-us']            = "pages/contact_us";
 $route['offline/bypass/(\d+)']  = "pages/offline_bypass/$1";
 $route['offline']               = "pages/offline";
 
+
+$route['settings/users']               = "auth/index";
+
 // [pager]
 $route['companies/(\d+)']        = "companies/index/$1";
 $route['people/(\d+)']        = "people/index/$1";

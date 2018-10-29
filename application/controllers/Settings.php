@@ -1108,6 +1108,7 @@ class Settings extends App_Controller {
 	*/
 	public function users( $usr_uid, $section='crm-settings' ){
 
+echo "hello";
 
 		// field validation
 		$this->load->helper(array('form', 'url'));
@@ -1255,6 +1256,8 @@ class Settings extends App_Controller {
 		$data['section'] = $section;
 
 		$data['groups'] = $this->ion_auth->groups()->result();
+		
+		pr($data['groups']);
 
 		// load view
 		$this->layout->view('/settings/users', $data);
@@ -1467,29 +1470,13 @@ class Settings extends App_Controller {
 
 
 		// reload SESSION variables
-	$CI =& get_instance();
-	$CI->teal_global_vars->set_all_global_vars();
-	$data['email_exist'] = 0;
+		$CI =& get_instance();
+		$CI->teal_global_vars->set_all_global_vars();
+		$data['email_exist'] = 0;
 		// load view
 		$this->layout->view('/settings/add', $data);
 	}
 }
-
-   /**
-	* Search
-	*
-	* @param void
-	* @return void
-	*/
-	public function search()
-	{
-		// view data init
-		$data = array();
-
-		// load view
-		$this->layout->view('/people/search', $data);
-	}
-
 
 	 /**
 	* Delete

@@ -54,7 +54,6 @@ $autoload['packages'] = array(APPPATH.'third_party/ion_auth');
 $autoload['libraries'] = array('layout','database', 'datamapper', 'session', 'xmlrpc', 
 	                           'encrypt', 'parser', 'carabiner', 'user_agent', 'uuid', 'pagination','teal_global_vars');
 	                           
-	                           // remove 'security',
 
 
 /*

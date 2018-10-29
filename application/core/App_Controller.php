@@ -236,10 +236,11 @@
 			// field validation
 			$this->load->helper(array('form', 'url'));
       $this->load->library('form_validation');
-      
+            
       // sort through field dictionary and set all rules for fields
       foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
-        $this->form_validation->set_rules($fields['field_name'], $fields['field_label'], $fields['validation_rules']);
+        $this->form_validation->set_rules($fields['field_name'], $_SESSION['language'][strtolower($this->module['name'])][$fields['field_name']], $fields['validation_rules']);
+         
       }
 
 			if ($this->form_validation->run() == TRUE){
@@ -285,7 +286,7 @@
             if ( ! upload_file(
                   5, // Notes module is ID of 5 in the system
                   $record[$_SESSION['modules'][$this->module['name']]['db_key']], // id of the record
-                  $user['id'],
+                  $user->id,
                   $this
                 ) ){
                   redirect( $this->module['name'].'/index' );
@@ -295,7 +296,7 @@
         } // end if there is a file upload
         
         // set additional system fields
-				$record['created_by'] = $user['id'];
+		$record['created_by'] = $user->id;
         $record['assigned_user_id'] = $post['assigned_user_id'];
         $record['date_entered'] = gmdate('Y-m-d H:i:s');
 
@@ -400,7 +401,7 @@
             if ( ! upload_file(
                   5, // Notes module is ID of 5 in the system
                   $record_id, // id of the record
-                  $user['id'],
+                  $user->id,
                   $this
                 ) ){
                   redirect( $this->module['name'].'/index' );
@@ -414,7 +415,7 @@
 
         // set some update parameters to go along with it
         $record['date_modified'] = gmdate('Y-m-d H:i:s');
-        $record['modified_user_id'] = $user['id'];
+        $record['modified_user_id'] = $user->id;
 
         // cycle through field dictionary and associate appropriate fields
         foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
@@ -636,7 +637,7 @@
       $data = array (
         'deleted' => 1,
         'date_modified' => gmdate('Y-m-d H:i:s'),
-        'modified_user_id' => $user['id'],
+        'modified_user_id' => $user->id,
       );
 			if( $this->db->update($this->config->item('db_prefix').$this->module['name'], $data ) ){
 				// set flash
@@ -681,7 +682,7 @@
       $data = array (
         'deleted' => 1,
         'date_modified' => gmdate('Y-m-d H:i:s'),
-        'modified_user_id' => $user['id'],
+        'modified_user_id' => $user->id,
       );
 
       foreach($post['ids'] as $record){
