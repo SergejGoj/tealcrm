@@ -21,6 +21,25 @@ class Auth extends CI_Controller
 		$this->lang->load('auth');
 	}
 
+    // set message, status, message
+    function notify_set($errors){            
+      // set      
+         set_flashdata('SESS_NOTIFY', $errors);
+    }
+      
+    // get message and set in globals, status, message
+    function notify_get($return=false){ 
+      // fetch   
+        $message = get_flashdata('SESS_NOTIFY');
+        // check
+        if(isset($message['message'])){ 
+           // return
+           if($return) return $message;                 
+           // set
+           $GLOBALS['errors'] = $message;        
+        }
+    } 
+    
 	/**
 	 * Redirect if needed, otherwise display the user list
 	 */
@@ -211,7 +230,7 @@ class Auth extends CI_Controller
 			];
 
 			// render
-			$this->_render_page('auth' . DIRECTORY_SEPARATOR . 'change_password', $this->data);
+			redirect('users/settings', 'refresh');
 		}
 		else
 		{
@@ -653,6 +672,101 @@ class Auth extends CI_Controller
 		redirect('/', 'refresh');
 	}
 
+
+	/**
+	* Redirect a user checking if is admin
+	*/
+	public function user_edit(){
+		$user = $this->ion_auth->user()->row();
+		$groups = $this->ion_auth->groups()->result_array();
+		$currentGroups = $this->ion_auth->get_users_groups()->result();
+
+		// validate form input
+		$this->form_validation->set_rules('first_name', $this->lang->line('edit_user_validation_fname_label'), 'trim|required');
+		$this->form_validation->set_rules('last_name', $this->lang->line('edit_user_validation_lname_label'), 'trim|required');
+
+
+		if(isset($_POST['profile_img_valid'])  ){
+			
+			if($_POST['profile_img_valid'] == 1){
+				
+				$filename = $this->uuid->v4();
+				
+				$config['file_name'] = $filename;
+				$config['upload_path'] = './../application/attachments/';
+				$config['allowed_types'] = 'jpg|jpeg|png';
+				$config['max_size']	= '5120';//5mb
+	
+				$this->load->library('upload', $config);			
+				if ( !$this->upload->do_upload('profile_img_file') ) {
+	                $this->data['error'] = $this->upload->display_errors();
+	            }
+				else {
+	                $file = $this->upload->data();
+				
+				$uploaded_file_name = $file['file_name'];
+				//$this->image_lib->clear();
+				$config1['image_library'] = 'gd2';
+				$config1['source_image'] = './../application/attachments/'.$filename;
+				$config1['new_image'] = './../application/attachments/'.$filename;
+				$config1['quality'] = '100%';
+				$config1['create_thumb'] = TRUE;
+				$config1['maintain_ratio'] = false;
+				$config1['thumb_marker'] = '';
+				$config1['width'] = 250;
+				$config1['height'] = 250;
+				//$this->image_lib->initialize($config1);
+				$this->load->library('image_lib', $config1);
+				$this->image_lib->resize();
+				
+				$picture = $file['file_name'];
+	
+				}
+			} // end if 1
+		}		
+		
+		if (isset($_POST) && !empty($_POST))
+		{
+		
+			if ($this->form_validation->run() === TRUE)
+			{
+														
+				$data = [
+					'name' => $this->input->post('first_name') . ' ' . $this->input->post('last_name'),
+					'first_name' => $this->input->post('first_name'),
+					'last_name' => $this->input->post('last_name'),
+					'phone' => $this->input->post('phone'),
+					'email' => $this->input->post('email')
+				];
+				
+				if(isset($picture)){
+					$data['picture'] = $picture;
+				}
+
+				// check to see if we are updating the user
+				if ($this->ion_auth->update($user->id, $data))
+				{
+					// redirect them back to the admin page if admin, or to the base url if non admin
+					$this->teal_global_vars->recalc_user_info(); // sets all variables for Users logging into system
+					notify_set( array('status'=>'success', 'message'=>"User successfully updated.") );
+					redirect('users/settings');
+
+				}
+				else
+				{
+					// redirect them back to the admin page if admin, or to the base url if non admin
+					notify_set( array('status'=>'error', 'message'=>$this->ion_auth->errors()) );
+					redirect('users/settings');
+				}
+
+			}
+		}		
+		
+		
+				
+	}
+
+
 	/**
 	 * Edit a user
 	 *
@@ -673,7 +787,6 @@ class Auth extends CI_Controller
 		// validate form input
 		$this->form_validation->set_rules('first_name', $this->lang->line('edit_user_validation_fname_label'), 'trim|required');
 		$this->form_validation->set_rules('last_name', $this->lang->line('edit_user_validation_lname_label'), 'trim|required');
-		$this->form_validation->set_rules('phone', $this->lang->line('edit_user_validation_phone_label'), 'trim|required');
 
 		// check for image
 		//var_dump($this->input);
@@ -724,21 +837,7 @@ class Auth extends CI_Controller
 		
 			if ($this->form_validation->run() === TRUE)
 			{
-
-				// check email
-				
-				if($this->input->post('email') != $user->email){
-					// make sure we don't have duplicate emails
-					if ( $this->ion_auth->email_check($this->input->post('email')) ) {
-						
-						// show error, stop process
-						notify_set( array('status'=>'error', 'message'=>'Error - email is already in use') );
-						$this->redirectUser();
-						exit();
-						
-					}
-				}
-														
+									
 				$data = [
 					'name' => $this->input->post('first_name') . ' ' . $this->input->post('last_name'),
 					'first_name' => $this->input->post('first_name'),

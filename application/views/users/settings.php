@@ -37,7 +37,7 @@
 
         <br><br>
 
-<?php echo form_open_multipart('auth/edit_user/' . $user->id,array ('class' => 'form-horizontal'), array ('id' => $user->id));?>
+<?php echo form_open_multipart('auth/user_edit',array ('class' => 'form-horizontal'), array ('id' => $user->id));?>
 
           <div class="form-group">
 

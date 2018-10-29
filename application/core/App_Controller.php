@@ -99,7 +99,7 @@
 	 function index(){
 
     // data to display to the view
-		$data = array();
+	$data = array();
 
     // build query for index
     $this->db->select('*')->from($this->config->item('db_prefix').$this->module['name'])
