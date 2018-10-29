@@ -37,7 +37,7 @@
 
         <br><br>
 
-        <form name="frmprofile" id="frmprofile" action="<?php echo site_url('users/settings/update-profile')?>" method="post" class="form-horizontal" enctype="multipart/form-data">
+<?php echo form_open_multipart('auth/edit_user/' . $user->id,array ('class' => 'form-horizontal'), array ('id' => $user->id));?>
 
           <div class="form-group">
 
@@ -149,14 +149,14 @@
 
         <br><br>
 
-        <form name="frmpass" id="frmpass" action="<?php echo site_url('users/settings/change-password')?>" method="post" class="form-horizontal">
+		<?php echo form_open('auth/change_password/',array ('class' => 'form-horizontal'), array ('id' => $user->id));?>
 
           <div class="form-group">
 
             <label class="col-md-3">Old Password</label>
 
             <div class="col-md-7">
-              <input type="password" name="old_password" id="old_password" class="form-control" />
+              <input type="password" name="old" id="old_password" class="form-control" />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->
@@ -170,7 +170,7 @@
             <label class="col-md-3">New Password</label>
 
             <div class="col-md-7">
-              <input type="password" name="new_password" id="new_password" class="form-control" />
+              <input type="password" name="new" id="new_password" class="form-control" />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->
@@ -181,7 +181,7 @@
             <label class="col-md-3">New Password Confirm</label>
 
             <div class="col-md-7">
-              <input type="password" name="confirm_new_password" id="confirm_new_password" class="form-control" />
+              <input type="password" name="new_confirm" id="confirm_new_password" class="form-control" />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->

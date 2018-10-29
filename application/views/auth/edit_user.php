@@ -190,14 +190,14 @@
 
         <br><br>
 
-        <form name="frmpass" id="frmpass" action="<?php echo site_url('settings/updateUser')?>" method="post" class="form-horizontal">
+<?php echo form_open('auth/change_password_by_admin/' . $user_info->id,array ('class' => 'form-horizontal'), array ('id' => $user_info->id));?>
 
           <div class="form-group">
 
             <label class="col-md-3">New Password</label>
 
             <div class="col-md-7">
-              <input type="password" name="new_password" id="new_password" class="form-control" />
+              <input type="password" name="new" id="new" class="form-control" />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->
@@ -208,7 +208,7 @@
             <label class="col-md-3">New Password Confirm</label>
 
             <div class="col-md-7">
-              <input type="password" name="confirm_new_password" id="confirm_new_password" class="form-control" />
+              <input type="password" name="new_confirm" id="new_confirm" class="form-control" />
             </div> <!-- /.col -->
 
           </div> <!-- /.form-group -->
@@ -228,26 +228,6 @@
 
 <?php echo form_close();?>
 
-        <script type="text/javascript">
-          // document ready
-          jQuery(document).ready(function(){
-            var validator = jQuery("#frmpass").validate({
-              rules: {
-                new_password: {required: true, rangelength: [8,16]},
-                confirm_new_password: {required : true, equalTo: '#new_password'},
-              },
-              messages: {
-                new_password: {required: "Enter new password", rangelength: $.validator.format("Please enter a password between {0} and {1} characters long.")},
-                confirm_new_password: {required :"Confirm new password", equalTo: 'Confirm password does not match password'},
-              },
-              errorPlacement: function(error, element) {
-                error.insertAfter(element.parent().parent().find('label:first'));
-              },
-              errorElement: 'em',
-              errorClass: 'login_error'
-            });
-          });
-        </script>
       </div> <!-- /.tab-pane -->
 
 

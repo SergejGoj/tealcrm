@@ -126,6 +126,42 @@ class Auth extends CI_Controller
 		$this->session->set_flashdata('message', $this->ion_auth->messages());
 		redirect('auth/login', 'refresh');
 	}
+	
+	/**
+	 * Change password by administrator
+	 */	
+	 public function change_password_by_admin($id){
+		 
+		$this->form_validation->set_rules('new', $this->lang->line('change_password_validation_new_password_label'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|matches[new_confirm]');
+		$this->form_validation->set_rules('new_confirm', $this->lang->line('change_password_validation_new_password_confirm_label'), 'required');		 
+		
+		if ($this->form_validation->run() === FALSE){
+			$this->data['message'] = (validation_errors()) ? validation_errors() : $this->session->flashdata('message');
+		}
+		else{
+			$identity = $this->session->userdata('identity');
+
+			$data = array(
+					'password' => $this->input->post('new')
+					 );
+	
+			$change = $this->ion_auth->update($id,$data);
+
+			if ($change)
+			{
+				//if the password was successfully changed
+				$this->session->set_flashdata('message', $this->ion_auth->messages());
+				redirect('auth/edit_user/'.$id, 'refresh');
+			}
+			else
+			{
+				$this->session->set_flashdata('message', $this->ion_auth->errors());
+				redirect('auth/change_password', 'refresh');
+			}			
+		}
+		 
+		 
+	 }
 
 	/**
 	 * Change password
@@ -483,9 +519,47 @@ class Auth extends CI_Controller
 			$this->form_validation->set_rules('email', $this->lang->line('create_user_validation_email_label'), 'trim|required|valid_email|is_unique[' . $tables['users'] . '.email]');
 		}
 		$this->form_validation->set_rules('phone', $this->lang->line('create_user_validation_phone_label'), 'trim');
-		$this->form_validation->set_rules('company', $this->lang->line('create_user_validation_company_label'), 'trim');
 		$this->form_validation->set_rules('password', $this->lang->line('create_user_validation_password_label'), 'required|min_length[' . $this->config->item('min_password_length', 'ion_auth') . ']|matches[password_confirm]');
 		$this->form_validation->set_rules('password_confirm', $this->lang->line('create_user_validation_password_confirm_label'), 'required');
+
+		if(isset($_POST['profile_img_valid'])  ){
+			
+			if($_POST['profile_img_valid'] == 1){
+				
+				$filename = $this->uuid->v4();
+				
+				$config['file_name'] = $filename;
+				$config['upload_path'] = './../application/attachments/';
+				$config['allowed_types'] = 'jpg|jpeg|png';
+				$config['max_size']	= '5120';//5mb
+	
+				$this->load->library('upload', $config);			
+				if ( !$this->upload->do_upload('profile_img_file') ) {
+	                $this->data['error'] = $this->upload->display_errors();
+	            }
+				else {
+	                $file = $this->upload->data();
+				
+				$uploaded_file_name = $file['file_name'];
+				//$this->image_lib->clear();
+				$config1['image_library'] = 'gd2';
+				$config1['source_image'] = './../application/attachments/'.$filename;
+				$config1['new_image'] = './../application/attachments/'.$filename;
+				$config1['quality'] = '100%';
+				$config1['create_thumb'] = TRUE;
+				$config1['maintain_ratio'] = false;
+				$config1['thumb_marker'] = '';
+				$config1['width'] = 250;
+				$config1['height'] = 250;
+				//$this->image_lib->initialize($config1);
+				$this->load->library('image_lib', $config1);
+				$this->image_lib->resize();
+				
+				$picture = $file['file_name'];
+	
+				}
+			} // end if 1
+		}	
 
 		if ($this->form_validation->run() === TRUE)
 		{
@@ -496,9 +570,13 @@ class Auth extends CI_Controller
 			$additional_data = [
 				'first_name' => $this->input->post('first_name'),
 				'last_name' => $this->input->post('last_name'),
-				'company' => $this->input->post('company'),
-				'phone' => $this->input->post('phone'),
+				'phone' => $this->input->post('phone')
 			];
+				
+			if(isset($picture)){
+				$additional_data['picture'] = $picture;
+			}
+			
 		}
 		if ($this->form_validation->run() === TRUE && $this->ion_auth->register($identity, $password, $email, $additional_data))
 		{
