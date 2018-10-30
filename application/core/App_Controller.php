@@ -207,7 +207,7 @@
     $data['module_name'] = $this->module['name'];
     $data['module_singular'] = $this->module['singular'];
 
-		$this->layout->view('/modules/index', $data);
+	$this->layout->view('/modules/index', $data);
   
     
 
@@ -340,17 +340,17 @@
 	 */
 	public function edit( $record_id ){
 
-		// data
-		$data = array();
+	// data
+	$data = array();
 
-		//logedin user
-		$user_id = $_SESSION['user']->id;
+	//logedin user
+	$user_id = $_SESSION['user']->id;
 
-		//uacc_email
-		$user = $_SESSION['user'];
+	//uacc_email
+	$user = $_SESSION['user'];
 
-		$assignedusers1 = getAssignedUsers1();
-		$data['assignedusers1'] = $assignedusers1;
+	$assignedusers1 = getAssignedUsers1();
+	$data['assignedusers1'] = $assignedusers1;
 
     // find the record
     $org_record = $this->db->select('*')->from($this->config->item('db_prefix').$this->module['name'])

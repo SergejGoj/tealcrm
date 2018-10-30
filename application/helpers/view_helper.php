@@ -260,7 +260,7 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
                 set_value($field, $data) . '</textarea>';
             break;
             case "Date":
-                if(!is_null($data) && $date != '0000-00-00'){
+                if(!is_null($data) && $data != '0000-00-00'){
                     $date = date('m/d/Y',strtotime(date('Y-m-d')));
                 }
                 else{
@@ -270,7 +270,7 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
             break; // end date        
             case "Related_Company":
                     $CI =& get_instance();
-                    if(!is_null($data)){
+                    if(!is_null($data) && !empty($data)){
                         // get the name of the company to populate in the search box
                         $query = $CI->db->from($CI->config->item('db_prefix').'companies')->where('company_id', $data)->get();
                         $row = $query->row();
@@ -285,7 +285,7 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
             break; // end Related Company
             case "Related_Person":
                     $CI =& get_instance();
-                    if(!is_null($data)){
+                    if(!is_null($data) && !empty($data)){
                         // get the name of the company to populate in the search box
                         $query = $CI->db->from($CI->config->item('db_prefix').'people')->where('people_id', $data)->get();
                         $row = $query->row();
