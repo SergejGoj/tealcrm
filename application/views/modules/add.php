@@ -98,11 +98,18 @@ cancel = function (elm) {
 // document ready
 jQuery(document).ready(function () {
     // picker
-    jQuery('.datetime').datetimepicker({
+    $('.date_no_time').datetimepicker({
     format: 'm/d/Y',
     mask: true,
     timepicker: false,
     });
+ 
+     // picker
+    $('.date_with_time').datetimepicker({
+    format: 'm/d/Y H:i',
+    mask: true,
+    timepicker: true,
+    });   
 
     var validator = jQuery("#frmedit").validate({
         ignore: "",

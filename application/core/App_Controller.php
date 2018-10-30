@@ -259,7 +259,7 @@
 
           if(isset($post[$fields['field_name']])){
 
-            if($fields['field_type'] == 'Date'){
+            if($fields['field_type'] == 'Date' || $fields['field_type'] == 'DateTime'){
               $record[$fields['field_name']] = date ('Y-m-d H:i:s', strtotime($post[$fields['field_name']]));
             }
             else{
@@ -424,7 +424,7 @@
 
             // need to clean up dates
             // eventually we will have a class to scrub this stuff
-            if($fields['field_type'] == 'Date'){
+            if($fields['field_type'] == 'Date' || $fields['field_type'] == 'DateTime'){
               $record[$fields['field_name']] = date ('Y-m-d H:i:s', strtotime($post[$fields['field_name']]));
             }
             else{

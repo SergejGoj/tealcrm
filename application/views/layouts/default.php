@@ -93,36 +93,27 @@
 		              <ul class="dropdown-menu">
 		                <li><a href="<?php echo site_url(strtolower($module['module_name']).'/add');?>">Add <?php echo $_SESSION['language'][strtolower($module['module_name'])]['module_singular']; ?></a></li>
 		                <li><a href="<?php echo site_url(strtolower($module['module_name']));?>">View <?php echo $_SESSION['language'][strtolower($module['module_name'])]['module_name']; ?></a></li>
+		                <?php // check if there are add-on actions:
+			              if ( ! empty ( $module['custom_actions'] ) ){
+				              
+				              $actions = explode(",",$module['custom_actions']);
+				              
+				              foreach ($actions as $action){
+					              
+					              ?>
+								  	<li><a href="<?php echo site_url(strtolower($module['module_name']).'/'.$action);?>">View <?php echo $_SESSION['language'][strtolower($module['custom_actions'])][$action]; ?></a></li>
+					              <?php
+				              }
+				              
+			              }
+			                ?>
+			                
 		              </ul>
 		            </li>				  
 				  
 				<?php  
 			  }
 			  ?>
-
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="pe-7s-calculator"></i>
-                        <p>Deals</p>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a href="<?php echo site_url('deals/add')?>">Add Deal</a></li>
-                <li><a href="<?php echo site_url('deals')?>">View Deals</a></li>
-                <li><a href="<?php echo site_url('deals/pipeline')?>">Visual Sales Pipeline</a></li>
-              </ul>
-            </li>
-            </li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="pe-7s-coffee"></i>
-                        <p>Meetings</p>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a href="<?php echo site_url('meetings/add')?>">Add Meeting</a></li>
-                <li><a href="<?php echo site_url('meetings')?>">View Meetings</a></li>
-                <li><a href="<?php echo site_url('meetings/calendar')?>">Calendar</a></li>
-              </ul>
-            </li>
             <li class="action_menu_items">
                 <a href="https://www.tealcrm.com/documentation/" target="_blank">
                     <i class="pe-7s-help1"></i>

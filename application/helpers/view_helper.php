@@ -101,6 +101,7 @@ function format_field($module_name,$field,$data,$record_id = NULL){
         break;
         case "Currency":
             return $data;
+        break;            
         case "Date":
             if(isset($data) && !is_null($data) && $data != '0000-00-00'){
                 return date("F j, Y", strtotime($data));
@@ -108,7 +109,15 @@ function format_field($module_name,$field,$data,$record_id = NULL){
             else{
                 return $_SESSION['language']['global']['not_set'];
             }
-        break; // end date        
+        break; // end date
+        case "DateTime":
+            if(isset($data) && !is_null($data) && $data != '0000-00-00 00:00:00'){
+                return date("F j, Y H:i:s", strtotime($data));
+            }
+            else{
+                return $_SESSION['language']['global']['not_set'];
+            }
+        break; // end date                 
         case "Related_Company":
             // fetch name of the company
             if(!empty($data)){
@@ -266,8 +275,17 @@ function format_editable_field($module_name,$field,$data,$adv_search = false){
                 else{
                     $date = '';
                 }
-                return '<input class="form-control datetime" value = "' . $date . '" id="' . $field . '" name="' . $field . '" type="text" autocomplete="off">';
-            break; // end date        
+                return '<input class="form-control date_no_time" value = "' . $date . '" id="' . $field . '" name="' . $field . '" type="text" autocomplete="off">';
+            break; // end date    
+            case "DateTime":
+                if(!is_null($data) && $data != '0000-00-00 00:00:00'){
+                    $date = date('m/d/Y H:i:s',strtotime($data));
+                }
+                else{
+                    $date = '';
+                }
+                return '<input type="text" name="' . $field . '" id="' . $field . '" class="form-control date_with_time" value = "' . $date . '" aria-required="true" aria-invalid="false">';
+            break; // end date                   
             case "Related_Company":
                     $CI =& get_instance();
                     if(!is_null($data) && !empty($data)){
