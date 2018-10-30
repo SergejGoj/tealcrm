@@ -101,13 +101,13 @@ class Users extends App_Controller {
 	    $meetings->limit(5);
 
 		// where clause
-		$array = array('deleted' => 0, 'status !=' => 103, 'event_type' => 93,'date_start <=' => date('Y-m-d 23:59:59',now()));
+		$array = array('deleted' => 0, 'status_id !=' => 103, 'event_type' => 93,'date_start <=' => date('Y-m-d 23:59:59',now()));
 
 		// show only meetings that are MEETINGS
 		$meetings->where($array);
 
 	    // select
-	    $meetings->select('subject,meeting_id,date_start,date_end,status')->get();
+	    $meetings->select('subject,meeting_id,date_start,date_end,status_id')->get();
 
 
 		//echo $this->db->last_query();
@@ -123,13 +123,13 @@ class Users extends App_Controller {
 	    $calls->limit(5);
 
 		// where clause
-		$array = array('deleted' => 0, 'status !=' => 103, 'event_type' => 95, 'date_start <=' => date('Y-m-d 23:59:59',now()));
+		$array = array('deleted' => 0, 'status_id !=' => 103, 'event_type' => 95, 'date_start <=' => date('Y-m-d 23:59:59',now()));
 
 		// show only meetings that are MEETINGS
 		$calls->where($array);
 
 	    // select
-	    $calls->select('subject,meeting_id,date_start,date_end,event_type,status')->get();
+	    $calls->select('subject,meeting_id,date_start,date_end,event_type,status_id')->get();
 	//echo $this->db->last_query();
 		$data['calls'] = $calls;
 
@@ -726,7 +726,7 @@ public function random_color() {
 				$meetg->event_type = 1;
 				//$meetg->company_id = $post['company_id'];
 				//$meetg->people_id = $post['people_id'];
-				$meetg->status = 1;
+				$meetg->status_id = 1;
 				if(!isset($json['items'][$i]['description'])) $meetg->description = $json['items'][$i]['summary'];
 				else $meetg->description = $json['items'][$i]['description'];
 
