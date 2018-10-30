@@ -378,7 +378,7 @@
       
       // sort through field dictionary and set all rules for fields
       foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
-        $this->form_validation->set_rules($fields['field_name'], $fields['field_label'], $fields['validation_rules']);
+        $this->form_validation->set_rules($fields['field_name'], $_SESSION['language'][strtolower($this->module['name'])][$fields['field_name']], $fields['validation_rules']);
       }
 
 			if ($this->form_validation->run() == TRUE){

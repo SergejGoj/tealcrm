@@ -144,7 +144,7 @@ class teal_global_vars {
 		// LOAD MODULE DETAILS
 		// used for displaying data related to specific modules	
 
-		$query = $this->CI->db->query("SELECT * from sc_modules");
+		$query = $this->CI->db->query("SELECT * from sc_modules WHERE menu_order IS NOT NULL ORDER BY menu_order");
 
 		foreach ($query->result_array() as $row)
 		{
@@ -156,6 +156,7 @@ class teal_global_vars {
 			$_SESSION['modules'][strtolower($row['module_name'])]['search_options'] = $row['search_options'];
 			$_SESSION['modules'][strtolower($row['module_name'])]['list_layout'] = $row['list_layout'];
 			$_SESSION['modules'][strtolower($row['module_name'])]['icon'] = $row['icon'];
+			$_SESSION['modules'][strtolower($row['module_name'])]['menu_order'] = $row['menu_order'];
 		}
 
 		//**************************
