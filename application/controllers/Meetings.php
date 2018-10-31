@@ -249,8 +249,9 @@ class Meetings extends App_Controller {
 	*/
 	public function viewEventMeeting(){
 		// post
-		$post = $this->input->post(null, true);
+		$post = $this->input->get(null, true);
 		$meeting_id = $post['i'];
+		
 
 		// data
 		$data = array();

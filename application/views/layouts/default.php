@@ -101,7 +101,7 @@
 				              foreach ($actions as $action){
 					              
 					              ?>
-								  	<li><a href="<?php echo site_url(strtolower($module['module_name']).'/'.$action);?>">View <?php echo $_SESSION['language'][strtolower($module['custom_actions'])][$action]; ?></a></li>
+								  	<li><a href="<?php echo site_url(strtolower($module['module_name']).'/'.$action);?>"><?php echo $_SESSION['language'][strtolower($module['module_name'])][$action]; ?></a></li>
 					              <?php
 				              }
 				              
