@@ -30,7 +30,7 @@ class Tasks extends App_Controller {
 	function _remap($method)
 	{
 		// auth check
-		if ( ! $this->flexi_auth->is_logged_in() )
+		if ( !$this->ion_auth || ! $this->ion_auth->logged_in() )
 		{
 			redirect('auth/login');
 		}

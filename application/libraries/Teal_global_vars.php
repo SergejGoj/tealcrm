@@ -8,7 +8,7 @@ class teal_global_vars {
 	{
 		// call parent
 		$this->CI =& get_instance();	
-
+        $this->set_all_global_vars();
 	}
 
 	// this function sets the default variables upon successful login to TEAL
@@ -63,7 +63,7 @@ class teal_global_vars {
 		///
 		//loggedin user
 		$user = $this->CI->ion_auth->user()->row();
-		$user_id = $user->id;
+//		$user_id = $user->id;
 
 		//uacc_email
 		$_SESSION['user'] = $user;
