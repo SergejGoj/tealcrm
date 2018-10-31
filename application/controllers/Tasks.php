@@ -463,49 +463,6 @@ class Tasks extends App_Controller {
 
 		//$this->layout->view('/tasks/project', $data);
 	}
-	
-	// GOOGLE TASK INDEX
-	public function googletaskindex()
-	{
-		$user_id = $_SESSION['user']->id;
-
-		//uacc_email
-		$user = $_SESSION['user'];
-		//$user = $this->flexi_auth->get_user_by_id_query($user_id,'id')->row();
-		
-		$data = array();
-		
-		$this->db->select('google_task_id,date_entered,created_by,due_date,subject,description,status');
-		$this->db->from('sc_google_task');
-		$this->db->where(array('deleted'=>0, 'created_by'=>$user['id']));
-		$this->db->order_by('date_entered','desc');
-		$query = $this->db->get();
-		
-		$Gtask = $query->result();
-		
-		$data['Gtask'] = $Gtask;
-		
-		$this->layout->view('tasks/googletaskindex', $data);
-
-	}
-	
-	//GOOGLE TASK VIEW
-	public function googletaskview($google_task_id)
-	{
-	
-		$data = array();
-		$this->db->select('google_task_id,date_entered,created_by,due_date,subject,description,status');
-		$this->db->from('sc_google_task');
-		$this->db->where('google_task_id',$google_task_id);
-		$query = $this->db->get();
-		
-		$Gtask = $query->result();
-		
-		$data['Gtask'] = $Gtask;
-
-		$this->layout->view('/tasks/googletaskview', $data);
-	
-	}
 
 }
 
