@@ -197,7 +197,7 @@
 		$data['records'] = $results;
 
 		// grab the list view layout
-		$data['list_layout'] = explode(",",$_SESSION['modules'][strtolower($this->module['name'])]['list_layout']);
+		$data['list_layout'] = json_decode($_SESSION['modules'][strtolower($this->module['name'])]['list_layout']);
 
     // grab advanced search options
     $data['search_options'] = explode(",",$_SESSION['modules'][strtolower($this->module['name'])]['search_options']);
