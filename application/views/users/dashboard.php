@@ -124,7 +124,7 @@
                       	<?php } ?>
                       	</a></td>
                       	<td><?php echo date('g:i A', strtotime($call->date_start.' UTC'))?></td>
-                      	<td><?php echo $_SESSION['drop_down_options'][$call->status]['name'];?></td>
+                      	<td><?php echo $_SESSION['drop_down_options'][$call->status_id]['name'];?></td>
                       </tr>
                       <?php endforeach; endif;?>
               </table>

@@ -207,7 +207,7 @@
     $data['module_name'] = $this->module['name'];
     $data['module_singular'] = $this->module['singular'];
 
-		$this->layout->view('/modules/index', $data);
+	$this->layout->view('/modules/index', $data);
   
     
 
@@ -259,7 +259,7 @@
 
           if(isset($post[$fields['field_name']])){
 
-            if($fields['field_type'] == 'Date'){
+            if($fields['field_type'] == 'Date' || $fields['field_type'] == 'DateTime'){
               $record[$fields['field_name']] = date ('Y-m-d H:i:s', strtotime($post[$fields['field_name']]));
             }
             else{
@@ -340,17 +340,17 @@
 	 */
 	public function edit( $record_id ){
 
-		// data
-		$data = array();
+	// data
+	$data = array();
 
-		//logedin user
-		$user_id = $_SESSION['user']->id;
+	//logedin user
+	$user_id = $_SESSION['user']->id;
 
-		//uacc_email
-		$user = $_SESSION['user'];
+	//uacc_email
+	$user = $_SESSION['user'];
 
-		$assignedusers1 = getAssignedUsers1();
-		$data['assignedusers1'] = $assignedusers1;
+	$assignedusers1 = getAssignedUsers1();
+	$data['assignedusers1'] = $assignedusers1;
 
     // find the record
     $org_record = $this->db->select('*')->from($this->config->item('db_prefix').$this->module['name'])
@@ -378,7 +378,7 @@
       
       // sort through field dictionary and set all rules for fields
       foreach ($_SESSION['field_dictionary'][$this->module['name']] as $fields) {
-        $this->form_validation->set_rules($fields['field_name'], $fields['field_label'], $fields['validation_rules']);
+        $this->form_validation->set_rules($fields['field_name'], $_SESSION['language'][strtolower($this->module['name'])][$fields['field_name']], $fields['validation_rules']);
       }
 
 			if ($this->form_validation->run() == TRUE){
@@ -424,7 +424,7 @@
 
             // need to clean up dates
             // eventually we will have a class to scrub this stuff
-            if($fields['field_type'] == 'Date'){
+            if($fields['field_type'] == 'Date' || $fields['field_type'] == 'DateTime'){
               $record[$fields['field_name']] = date ('Y-m-d H:i:s', strtotime($post[$fields['field_name']]));
             }
             else{

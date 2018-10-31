@@ -1,3 +1,9 @@
+<?php
+
+$this->load->helper('view_helper');
+
+?>
+
 <h2>Deals</h2>
 
 
@@ -388,7 +394,7 @@
                                                     <p class="normal">
                                                         <?php echo "$" . number_format($deal->value, 2); ?> |
                                                         <?php
-                                                        $un_query = "SELECT * from `sc_user_accounts` where (id = '" . $deal->assigned_user_id . "')";
+                                                        $un_query = "SELECT * from `sc_users` where (id = '" . $deal->assigned_user_id . "')";
                                                         $un_result = $this->db->query($un_query);
                                                         $un_row = $un_result->result();
                                                         foreach ($un_row as $user) {

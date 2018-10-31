@@ -132,7 +132,7 @@
 			eventClick: function(event){
 				$.ajax({
 					url: '/meetings/viewEventMeeting',
-					type: 'POST',
+					type: 'GET',
 					aync: true,
 					data: {i:$(this).attr("data-id")},
 					success: function(result){
@@ -230,8 +230,7 @@
 		<div class="tab-content">
 			<div class="tab-pane active" id="new_meeting">
 
-
-				<form name="frmadd1" id="frmadd1" action="<?php echo site_url('meetings/add')?>" method="post" class="form parsley-form">
+			<?php echo form_open('meetings/add', array ('class' => 'form parsley-form')); ?>
 
 					 <div class="row">
 						<div class="form-group col-sm-6">
@@ -240,7 +239,7 @@
 						</div>
 						<div class="form-group col-sm-6">
 						<label for="phone_fax">Assign Users</label>
-<?php 	 echo form_dropdown('assigned_user_id', $assignedusers, $_SESSION['user']['id'],"class='form-control'"); ?>
+<?php 	 echo form_dropdown('assigned_user_id', $assignedusers, $_SESSION['user']->id,"class='form-control'"); ?>
 						</div>
 
 					</div>

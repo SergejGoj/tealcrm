@@ -104,7 +104,7 @@
 			
 			<label class = "col-md-3" > User Status</label>
 			<?php
-					if ($user_info->active == 0){$status = 178;} else {$status = 179;}?>
+					if ($user_info->active == 0){$status_id = 178;} else {$status_id = 179;}?>
 			<div class = "col-md-7" >
 			
 			  <?php 	 echo form_dropdown('user_status', array ("1" => "Active", "0" => "Inactive"),$user_info->active,"class='form-control' id='user_status'"); ?>

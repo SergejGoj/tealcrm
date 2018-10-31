@@ -78,72 +78,42 @@
 	        
           <ul class="nav navbar-nav navbar-right">
 
-
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="pe-7s-flag"></i>
-                        <p>Companies</p>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a href="<?php echo site_url('companies/add')?>">Add Company</a></li>
-                <li><a href="<?php echo site_url('companies')?>">View Companies</a></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="pe-7s-id"></i>
-                        <p>People</p>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a href="<?php echo site_url('people/add')?>">Add Person</a></li>
-                <li><a href="<?php echo site_url('people')?>">View People</a></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="pe-7s-calculator"></i>
-                        <p>Deals</p>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a href="<?php echo site_url('deals/add')?>">Add Deal</a></li>
-                <li><a href="<?php echo site_url('deals')?>">View Deals</a></li>
-                <li><a href="<?php echo site_url('deals/pipeline')?>">Visual Sales Pipeline</a></li>
-              </ul>
-            </li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="pe-7s-note"></i>
-                        <p>Notes</p>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a href="<?php echo site_url('notes/add')?>">Add Note</a></li>
-                <li><a href="<?php echo site_url('notes')?>">View Notes</a></li>
-              </ul>
-            </li>
-            </li>            
-             <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="pe-7s-folder"></i>
-                        <p>Tasks</p>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a href="<?php echo site_url('tasks/add')?>">Add Task</a></li>
-                <li><a href="<?php echo site_url('tasks')?>">View Tasks</a></li>
-                <li><a href="<?php echo site_url('projects')?>">Projects</a></li>
-              </ul>
-            </li>
-            </li>
-            <li class="dropdown">
-              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                        <i class="pe-7s-coffee"></i>
-                        <p>Meetings</p>
-              </a>
-              <ul class="dropdown-menu">
-                <li><a href="<?php echo site_url('meetings/add')?>">Add Meeting</a></li>
-                <li><a href="<?php echo site_url('meetings')?>">View Meetings</a></li>
-                <li><a href="<?php echo site_url('meetings/calendar')?>">Calendar</a></li>
-              </ul>
-            </li>
+		  <?php
+			  
+			  // load the menu bar
+			  
+			  
+			  foreach ( $_SESSION['modules'] as $module ){
+				?>			  
+		            <li class="dropdown">
+		              <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+		                        <i class="<?php echo $module['icon']; ?>"></i>
+		                        <p><?php echo $_SESSION['language'][strtolower($module['module_name'])]['module_name']; ?></p>
+		              </a>
+		              <ul class="dropdown-menu">
+		                <li><a href="<?php echo site_url(strtolower($module['module_name']).'/add');?>">Add <?php echo $_SESSION['language'][strtolower($module['module_name'])]['module_singular']; ?></a></li>
+		                <li><a href="<?php echo site_url(strtolower($module['module_name']));?>">View <?php echo $_SESSION['language'][strtolower($module['module_name'])]['module_name']; ?></a></li>
+		                <?php // check if there are add-on actions:
+			              if ( ! empty ( $module['custom_actions'] ) ){
+				              
+				              $actions = explode(",",$module['custom_actions']);
+				              
+				              foreach ($actions as $action){
+					              
+					              ?>
+								  	<li><a href="<?php echo site_url(strtolower($module['module_name']).'/'.$action);?>"><?php echo $_SESSION['language'][strtolower($module['module_name'])][$action]; ?></a></li>
+					              <?php
+				              }
+				              
+			              }
+			                ?>
+			                
+		              </ul>
+		            </li>				  
+				  
+				<?php  
+			  }
+			  ?>
             <li class="action_menu_items">
                 <a href="https://www.tealcrm.com/documentation/" target="_blank">
                     <i class="pe-7s-help1"></i>

@@ -60,8 +60,6 @@ function upload_file($module, $record_id, $created_by, $CI){
     }else{
         $attachment_warning = $CI->upload->display_errors();
         $file_data = $CI->upload->data();
-        echo $file_data['file_type'];
-        echo $CI->upload->display_errors(); exit();
         notify_set( array('status'=>'error', 'message'=> $_SESSION['language']['global']['error_uploading']) );
         return false;
     }

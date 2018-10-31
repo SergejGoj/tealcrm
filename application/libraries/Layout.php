@@ -33,8 +33,11 @@ class Layout
     }
 
     function view($view, $data=null, $return=false)
-    {
+    {	    
+	    
+	    //var_dump($view);exit();
         $loadedData = array() + $data;
+        xdebug_break();
         $loadedData['content_for_layout'] = $this->ci->load->view($this->getTheme() . $view, $data, true);
 
         if($return)

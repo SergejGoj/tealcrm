@@ -128,12 +128,19 @@ $( "#company_viewer" ).autocomplete({
     }
 });
 
-// picker
-jQuery('.datetime').datetimepicker({
+    // picker
+    $('.date_no_time').datetimepicker({
     format: 'm/d/Y',
     mask: true,
     timepicker: false,
-});
+    });
+ 
+     // picker
+    $('.date_with_time').datetimepicker({
+    format: 'm/d/Y H:i',
+    mask: true,
+    timepicker: true,
+    });   
 
 
 });
